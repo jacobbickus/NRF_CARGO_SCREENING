@@ -85,9 +85,13 @@ Mantis Output Post-Analysis
 
 Included in Run_Analysis/MantisROOT.cc are various functions to aid in quick analysis of simulated data. See MantisROOT_ReadME.md for more information.
 MantisROOT.cc can be loaded and compiled with CERN ROOT with the following terminal line of code:
+
 `> root MantisROOT.cc `
+
 `> MantisROOT* m = new MantisROOT()`
+
 For help on the list of functions run:
+
 `> m->Help()`
 
  
@@ -196,11 +200,13 @@ __Version__:  Mantis and been built against and tested with Geant4 10.5 and 10.7
 
 
 For Easy Set up run the following lines of code:
+
 `> git clone https://github.com/jacobbickus/mantis.git && mkdir RunMantis && cd RunMantis && cmake ../mantis && make -jN`
 
 The Following Instructions should work once the Geant4 and CERN ROOT are installed:
 
 Be sure to untar the NRF Database using 
+
 `> tar xfz NRF_Database.tar.gz`
 
 Export the path to the untarred NRF Database for example in the user's bash:
@@ -220,6 +226,7 @@ To Run in Batch Mode
 "vis_save.mac" will make a .wrl visualization file based on the commands provided in "vis_save.mac".
 
 "mantis.in" will not create a visualization. 
+
 `> ./mantis -m macro(mantis.in or vis_save.mac) -o <root output filename> -s <seed>`
 
 Creating a Bremsstrahlung Input Beam
@@ -233,7 +240,9 @@ Importance Sampling Simulations
 ==
 
 The Output from the simulation can be prepared for an importance sampling simulation by running either:
+
 MantisROOT::Sampling("bremsstrahlung.root")
+
 MantisROOT::SimpleSampling("bremsstrahlung.root")
 
 Non-Importance Sampling Simulations 
