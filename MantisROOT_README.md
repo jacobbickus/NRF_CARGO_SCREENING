@@ -17,7 +17,7 @@ MEMBER FUNCTIONS
 ***************************************************************************************************************************************************************
 ***************************************************************************************************************************************************************
 
-CheckAngles
+Check Emission Angles
 ==
 
 void CheckAngles(const char* filename, int estimate=-1)
@@ -31,7 +31,7 @@ Usefull for determining emission angle cuts to place for developing efficient si
 
 ***************************************************************************************************************************************************************
 
-CheckDet
+Check Detector Events 
 ==
 
 void CheckDet(const char* filename, bool weighted=false, int estimate=-1)
@@ -45,7 +45,7 @@ For a subset of the data include the third input. Set estimate to -1 for all eve
 
 ***************************************************************************************************************************************************************
 
-CheckEvents
+Check Events
 ==
 
 void CheckEvents(const char* filename, bool Weighted, bool Corrected)
@@ -59,7 +59,7 @@ Example: mantis->CheckEvents("test.root",true, true) would Check WEIGHTED CORREC
 
 ***************************************************************************************************************************************************************
 
-CheckIntObj
+Check Interrogation Object
 ==
 
 void CheckIntObj(const char* onFile, const char* offFile, double Er=1.73354, bool Weighted=false)
@@ -70,7 +70,7 @@ If the spectra contain weights be sure to add the boolean true to the fourth inp
 
 ***************************************************************************************************************************************************************
 
-CombineFiles
+Combine Files
 ==
 
 void CombineFiles(std::vector<string> filenames, std::vector<string> ObjectsToCombine, const char* Outfilename)
@@ -82,7 +82,7 @@ Example: mantis->CombineFiles({"file1.root","file2.root"},{"IntObjIn","DetInfo"}
 
 ***************************************************************************************************************************************************************
 
-CopyTrees
+Copy Trees
 ==
 
 void CopyTrees(const char* filename, std::vector<string> TTreeNamesToCopy, const char* outfilename)
@@ -94,7 +94,7 @@ Example: mantis->CopyTrees("test.root",{"IntObjIn","DetInfo"})
 
 ***************************************************************************************************************************************************************
 
-CreateDetEfficiencyCurve
+Create Photocathode Efficiency Curve
 ==
 
 void CreateDetEfficiencyCurve(vector<double>, energies vector<double> efficiencies, string PCName)
@@ -110,7 +110,7 @@ Creates TGraph of either "GaAsP" or "Bialkali" Photocathode Quantum Efficiency
 
 ***************************************************************************************************************************************************************
 
-CreateScintillationDistribution
+Create Scintillation Distribution
 ==
 
 void CreateScintillationDistribution(vector<double> energies, vector<double> crossX)
@@ -181,7 +181,7 @@ Computes the integral of the TTree after the TCut has been applied.
 
 ***************************************************************************************************************************************************************
 
-OpenFile
+Open File
 ==
 
 TFile* OpenFile(const char* filename)
@@ -191,7 +191,7 @@ Opens a TFile with the input filename. Returns TFile*
 
 ***************************************************************************************************************************************************************
 
-PredictThickness
+Predict Thickness
 ==
 
 void PredictThickness(std::vector<string> ObjectNames)
@@ -208,7 +208,7 @@ Example: mantis->PredictThickness({"IntObjIn","IntObjOut"},1.73354)
 
 ***************************************************************************************************************************************************************
 
-PrepareAnalysis
+Prepare Analysis
 ==
 
 void PrepareAnalysis(vector<string> filebases, bool weighted=false)
@@ -218,3 +218,93 @@ Prepares files from users filebases vector. If the files have weighted informati
 Example: mantis->PrepareAnalysis({"test9","test10"},true)
 Would run CheckDet, CheckEvent and CopyTrees on weighted spectra in files 
 test9On-merged.root, test9Off-merged.root, test10On-merged.root and test10Off-merged.root
+
+***************************************************************************************************************************************************************
+
+Prepare Input Spectrum
+==
+
+void PrepInputSpectrum(const char* bremInputFilename, double deltaE=5.0e-6, string outfilename="brem.root")
+
+DESCRIPTION: 
+Prepares input spectrum file for Mantis Simulation without importance sampling.
+deltaE is the bin width of the Histogram and if the user wishes a nondefault outfilename enter the third input.
+
+void Sampling(const char* bremInputFilename, string sample_element=U, double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5)
+
+DESCRIPTION: 
+Creates an importance sampling distribution and prepares mantis input file brems_distributions.root.
+If the user would like a different bin width for hBrems than the user can supply the bin width with input 3.
+Example: mantis->Sampling("brem.root","U", 5e-6,true,1.5)
+would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content
+the importance sampling distribution energies below 1.5 MeV would have importances 1/1000 of the NRF resonance energies.
+
+void SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false)
+
+DESCRIPTION: 
+Creates an importance sampling distribution and prepares mantis input file brems_distributions.root.
+If the User would like a different bin width for hBrems than the user can supply the bin width with input 2.
+Example: mantis->SimpleSampling("brem.root", 5e-6,1.5, 10000, true)
+would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content
+the importance sampling distribution energies below 1.5 MeV would have importances 1/10000 of all energies above 1.5 MeV.
+
+***************************************************************************************************************************************************************
+
+Rebin Histograms
+==
+
+void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName, std::vector<string> OutObjName, int nbins, double Emin, double Emax)
+  
+DESCRIPTION: 
+Rebins the TTree Objects from multiples files given histogram parameters.
+Example: mantis->RebinHisto({"file1.root","file2.root"},{"IntObjIn","IntObjOut"},{"Rebinned_IntObjIn","Rebinned_IntObjOut"},100,1.7334,1.7336)
+This would rebin the Incident and Emission Interrogation object spectra into TH1D objects Rebinned_IntObjIn and Rebinned_IntObjOut respectively.
+The rebinned histograms would have 100 bins between 1.7334 and 1.7336 MeV.
+
+void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,std::vector<string> OutObjName, int nbins, double Emin, double Emax, TCut cut1)
+  
+DESCRIPTION: 
+Rebins the TTree Objects from multiples files given histogram parameters.
+Example: mantis->RebinHisto({"file1.root","file2.root"},{"IntObjIn","IntObjOut"},{"Rebinned_IntObjIn","Rebinned_IntObjOut"},100,1.7334,1.7336, "CreatorProcess == \"Beam\"")
+This would rebin the Incident and Emission Interrogation object spectra into TH1D objects Rebinned_IntObjIn and Rebinned_IntObjOut respectively.
+The rebinned histograms would have 100 bins between 1.7334 and 1.7336 MeV and only contain particles created as primary particles in the beam.
+
+void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double)
+  
+DESCRIPTION: 
+See RebinHisto. This Function allows variable binning.
+
+***************************************************************************************************************************************************************
+
+Signal to Noise
+==
+
+void Sig2Noise(std::vector<string> Filenames, string DataName, bool Weighted=false, bool Corrected=false, bool cut=false, TCut cut1="NA")
+  
+Computes the Signal to Noise Ratio in the files inputed in the string vector.
+The signal to noise ratio can be computed for the Incident Interrogation Object spectrum
+, the detected spectrum, or both with the second input options: IncObj, Det, Both.
+IF the TTrees contain weights be sure to set the third input bool option to true.
+IF the TTrees are from a Corrected File be sure to set the fourth input bool option to true.
+IF the TTrees are to have a cut placed the fifth input should be set to true and 
+ the sixth input should contain the TCut in parenthesis.
+Example: mantis->Sig2Noise({"TestOn.root","TestOff.root"},"Both", true, true, true, "Energy<5e-6")
+
+***************************************************************************************************************************************************************
+
+ZScore Tests
+==
+
+void ZScore(const char* filename1, const char* filename2, std::vector<string> ObjectNames, bool weighted=false)
+
+DESCRIPTION:
+Computes weighted ZTest on input 1 filename and input 2 filename for the TTree object names in input 3 string vector.
+Example: mantis->ZScore("TestOn.root", "TestOff.root", {"IntObjIn","DetInfo"}, true)
+
+void ZScore(double c1, double c2)
+
+DESCRIPTION:
+Computes ZScore on values provided.
+
+ZScore = abs(c1 - c2)/(sqrt(pow(sqrt(c1),2) + pow(sqrt(c2),2)))
+  
