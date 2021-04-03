@@ -60,10 +60,23 @@ namespace
 void PrintUsage()
 {
   G4cerr << "Usage: " << G4endl;
-  G4cerr << "mantis [-h help] [-m macro=mantis.in] [-a chosen_energy=-1.] [-s seed=1] [-o output_name] [-t bremTest=false] " <<
-          "[-r resonance_test=false] [-p standalone=false] [-v NRF_Verbose=false] [-n addNRF=true] " <<
-          "[-i inFile] [-d debug] [-f printEvents] [-u SampleEnergyRange] [-w uniform_width]"
-         << G4endl;
+  G4cerr << "mantis [-h help] Prints this Usage Screen" << G4endl
+  << "[-a chosen_energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
+  << "[-d debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program"
+  << G4endl << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
+  << "[-i inFile] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
+  << "No importance sampling weighting will be done if the -i input is passed." << G4endl
+  << "The Default input file name is brems_distributions.root which should contain an importance sampling distribution " << G4endl
+  << "[-m macro=mantis.in] Macro File to be read for user input options -> Required!" << G4endl
+  << "[-n addNRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
+  << "[-o output_name] Data will be written to this file." << G4endl
+  << "[-p standalone=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
+  << "[-r resonance_test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
+  << "[-s seed=1] Simulation Seed." << G4endl
+  << "[-t bremTest=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
+  << "[-u SampleEnergyRange=false] Samples from a normal distribution centered on user's energy." << G4endl
+  << "[-w uniform_width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passes as true." << G4endl
+  <<  "[-v NRF_Verbose=false] Sets NRF Physics Verbosity" << G4endl << G4endl;
   exit(1);
 }
 }
