@@ -2664,22 +2664,33 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
     std::cout << "MantisROOT::CheckIntObj -> Cound Not Change into " << onFile << " directory." << std::endl;
     exit(1);
   }
-  TTree* inTree;
+  TTree *inTree, *inTree3;
   f->GetObject("IntObjIn", inTree);
+  f->GetObject("DetInfo", inTree3);
   double teMax = inTree->GetMaximum("Energy");
   std::cout << "MantisROOT::CheckIntObj -> " << onFile << " IntObjIn grabbed." << std::endl;
   double emin = Er - 100e-6;
   double emax = Er + 100e-6;
   TH1D *e1 = new TH1D("e1","Incident Interrogation Object 2eV Binning", 100, emin, emax);
   TH1D *e3 = new TH1D("e3","Incident Interrogation Object Full Spectrum", 500, 0., teMax);
+  TH1D *e5 = new TH1D("e5","Detected",100, 0., 5e-6);
   if(Weighted)
+  {
     inTree->Draw("Energy>>e1","Weight","goff");
+    inTree3->Draw("Energy>>e5","Weight","goff");
+  }
   else
+  {
     inTree->Draw("Energy>>e1","","goff");
+    inTree3->Draw("Energy>>e5","","goff");
+  }
 
   e1->SetStats(0);
+  e5->SetStats(0);
   e1->Sumw2();
+  e5->Sumw2();
   e1->Print();
+  e5->Print();
 
   if(Weighted)
     inTree->Draw("Energy>>e3","Weight","goff");
@@ -2704,22 +2715,33 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
     exit(1);
   }
 
-  TTree *inTree2;
+  TTree *inTree2, *inTree4;
   f2->GetObject("IntObjIn", inTree2);
+  f2->GetObject("DetInfo", inTree4);
   std::cout << "MantisROOT::CheckIntObj -> " << offFile << " IntObjIn grabbed." << std::endl;
 
   TH1D *e2 = new TH1D("e2","Incident Interrogation Object 2eV Binning", 100, emin, emax);
   TH1D *e4 = new TH1D("e4", "Incident Interrogation Object Full Spectrum", 500, 0., teMax);
-
+  TH1D *e6 = new TH1D("e6", "Detected",100,0.,5e-6);
   if(Weighted)
+  {
     inTree2->Draw("Energy>>e2","Weight","goff");
+    inTree4->Draw("Energy>>e6","Weight","goff");
+  }
   else
+  {
     inTree2->Draw("Energy>>e2","","goff");
+    inTree4->Draw("Energy>>e6","","goff");
+  }
 
   e2->SetStats(0);
+  e6->SetStats(0);
   e2->Sumw2();
+  e6->Sumw2();
   e2->SetLineColor(kRed);
+  e6->SetLineColor(kRed);
   e2->Print();
+  e6->Print();
 
   if(Weighted)
     inTree2->Draw("Energy>>e4","Weight","goff");
@@ -2763,7 +2785,25 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
   legend2->AddEntry(e4, "Chopper Off");
   legend2->Draw();
 
+  TCanvas* c3 = new TCanvas("c3","Detected",600,400);
+  c3->cd();
+  f->cd();
+  e5->Draw("h");
+  f2->cd();
+  e6->Draw("h,SAME");
+
+  e5->GetXaxis()->SetTitle("Energy [MeV]");
+  e5->GetYaxis()->SetTitle("Counts");
+
+  auto legend3 = new TLegend();
+  legend3->SetHeader("Chopper State","C");
+  legend3->AddEntry(e5, "Chopper On");
+  legend3->AddEntry(e6, "Chopper Off");
+  legend3->Draw();
+
   ZScore(e3->Integral(), e4->Integral());
+  ZScore(e5->Integral(), e6->Integral());
+  
   std::cout << "MantisROOT::CheckIntObj -> Complete." << std::endl;
 
 } // end of CheckIntObj
