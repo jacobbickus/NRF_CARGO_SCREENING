@@ -123,7 +123,7 @@ Creates TGraph of either "GaAsP" or "Bialkali" Photocathode Quantum Efficiency
 Create Scintillation Distribution
 ==
 
-void CreateScintillationDistribution(vector<double> energies, vector<double> crossX)
+TGraph* CreateScintillationDistribution(vector<double> energies, vector<double> crossX)
   
 DESCRIPTION: 
 Creates a TGraph of the users scintillation distribution given vectors of energies and probabilies 
@@ -133,13 +133,18 @@ void CreateScintillationDistribution(string a, string b, string c, string d)
 DESCRIPTION: 
 Creates a TGraph of a scintillation distribution based on exponential distributions with parameters "a", "b", "c", and "d".
 
-Exponential Rise Equation-> a*exp(b*x)
+Exponential Rise Equation-> a\*exp(b*x)
 Exponential Decay Equation-> c*exp(d*x)
 
-void CreateScintillationDistribution()
+TGraph* CreateScintillationDistribution(double scale=1.)
 
 DESCRIPTION: 
-Creates a TGraph of the default scintillation distribution
+Creates a TGraph of the default scintillation distribution. If the user wants to scale to simulated spectrum the max counts value of the simulated spectra should be set as the input.
+
+void GetScintillationDistribution(const char* filename, bool Corrected=true)
+
+DESCRIPTION:
+Takes the simulated DetInfo (Corrected_DetInfo if Corrected=true) and Plots it against the default input scintillation distribution scaled appropriately. Useful for a comparison of simulated detected scintillation spectra vs inputed scintillation distribution.
 
 ***************************************************************************************************************************************************************
 
