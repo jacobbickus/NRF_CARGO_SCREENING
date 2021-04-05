@@ -102,12 +102,12 @@ G4MaterialPropertiesTable* MaterialProperties::SetWaterProperties()
 
   G4MaterialPropertiesTable* waterMPT = new G4MaterialPropertiesTable();
 
-  waterMPT->AddProperty("RINDEX", photonEnergyIOF, refractiveIndex1, nEntriesIOF)->SetSpline(true);
-  waterMPT->AddProperty("ABSLENGTH",photonEnergyAbs, absorption, nEntriesAbs)->SetSpline(true);
+  waterMPT->AddProperty("RINDEX", photonEnergyIOF, refractiveIndex1, nEntriesIOF);
+  waterMPT->AddProperty("ABSLENGTH",photonEnergyAbs, absorption, nEntriesAbs);
   // Data from Onken et al "Time response of water-based liquid scintillator from X-ray excitation"
   // Assumption made that fast and slow components follow same distribution
-  waterMPT->AddProperty("FASTCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint)->SetSpline(true); // Energy Distribution for prompt scintillation
-  waterMPT->AddProperty("SLOWCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint)->SetSpline(true); // Energy distribution for decay scintillation
+  waterMPT->AddProperty("FASTCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint); // Energy Distribution for prompt scintillation
+  waterMPT->AddProperty("SLOWCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint); // Energy distribution for decay scintillation
 
   // Data from Caravaca et al. "Characterization of water-based liquid scintillator for Cherenkov and scintillation separation"
   waterMPT->AddConstProperty("SCINTILLATIONYIELD",234.0/MeV); // Light Yield Constant Number of photons/MeV
@@ -163,7 +163,7 @@ G4MaterialPropertiesTable* MaterialProperties::SetWaterProperties()
 
   G4double mie_water_const[3]={0.99,0.99,0.8};
 
-  waterMPT->AddProperty("MIEHG",energy_water,mie_water,numentries_water)->SetSpline(true);
+  waterMPT->AddProperty("MIEHG",energy_water,mie_water,numentries_water);
   waterMPT->AddConstProperty("MIEHG_FORWARD",mie_water_const[0]);
   waterMPT->AddConstProperty("MIEHG_BACKWARD",mie_water_const[1]);
   waterMPT->AddConstProperty("MIEHG_FORWARD_RATIO",mie_water_const[2]);
@@ -265,7 +265,7 @@ G4MaterialPropertiesTable* MaterialProperties::SetPMTProperties()
   G4double abslength[] = {1000*m,1000*m,1000*m,1000*m,1000*m,1000*m,1000*m,
                           1000*m,1000*m, 1000*m}; // treating glass as transparent
   assert(sizeof(abslength) == sizeof(ephotonPMT));
-  pmtMPT->AddProperty("RINDEX", ephotonPMT, pmt_iof, num)->SetSpline(true);
+  pmtMPT->AddProperty("RINDEX", ephotonPMT, pmt_iof, num);
   pmtMPT->AddProperty("ABSLENGTH", ephotonPMT, abslength, num);
 
   return pmtMPT;
@@ -293,10 +293,10 @@ G4MaterialPropertiesTable* MaterialProperties::SetPMTOpticalProperties()
   G4double efficiency[] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   assert(sizeof(efficiency) == sizeof(ephotonPMT));
 
-  pmtOPMPT->AddProperty("REFLECTIVITY", ephotonPMT, reflectivity, num)->SetSpline(true);
+  pmtOPMPT->AddProperty("REFLECTIVITY", ephotonPMT, reflectivity, num);
   pmtOPMPT->AddProperty("TRANSMITTANCE", ephotonPMT2, transmittance, num2);
   pmtOPMPT->AddProperty("EFFICIENCY", ephotonPMT, efficiency, num);
-  pmtOPMPT->AddProperty("RINDEX", ephotonPMT, pmt_iof, num)->SetSpline(true);
+  pmtOPMPT->AddProperty("RINDEX", ephotonPMT, pmt_iof, num);
 
   return pmtOPMPT;
 }
@@ -334,15 +334,15 @@ G4MaterialPropertiesTable* MaterialProperties::SetPCProperties(G4String pc_mat)
 
   if(pc_mat == "GaAsP")
   {
-    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,Ga_As_photocath_EFF, num2)->SetSpline(true);
-    pc_MPT->AddProperty("REALRINDEX", ephotonPMT,Ga_As_photocath_ReR,num)->SetSpline(true);
-    pc_MPT->AddProperty("IMAGINARYRINDEX", ephotonPMT, Ga_As_photocath_ImR, num)->SetSpline(true);
+    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,Ga_As_photocath_EFF, num2);
+    pc_MPT->AddProperty("REALRINDEX", ephotonPMT,Ga_As_photocath_ReR,num);
+    pc_MPT->AddProperty("IMAGINARYRINDEX", ephotonPMT, Ga_As_photocath_ImR, num);
   }
   else if(pc_mat == "Bialkali")
   {
-    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,bialkali_photocath_EFF, num)->SetSpline(true);
-    pc_MPT->AddProperty("REALRINDEX", ephotonPMT3,bialkali_photocath_ReR,num3)->SetSpline(true);
-    pc_MPT->AddProperty("IMAGINARYRINDEX", ephotonPMT3, bialkali_photocath_ImR, num3)->SetSpline(true);
+    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,bialkali_photocath_EFF, num);
+    pc_MPT->AddProperty("REALRINDEX", ephotonPMT3,bialkali_photocath_ReR,num3);
+    pc_MPT->AddProperty("IMAGINARYRINDEX", ephotonPMT3, bialkali_photocath_ImR, num3);
   }
 
   return pc_MPT;

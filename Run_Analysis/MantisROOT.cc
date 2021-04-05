@@ -55,9 +55,9 @@ public:
     void CheckAngles(const char*, int estimate=-1);
     TGraph* CreateTKDE(const char*, int nentries=10000);
     void CheckDet(const char*, bool weighted=false, int estimate=-1);
-    void CreateScintillationDistribution(std::vector<double>, std::vector<double>);
+    TGraph* CreateScintillationDistribution(std::vector<double>, std::vector<double>);
     void CreateScintillationDistribution(string, string, string, string);
-    void CreateScintillationDistribution();
+    TGraph* CreateScintillationDistribution(double scale=1.);
     void CreateDetEfficiencyCurve(std::vector<double>, std::vector<double>, string);
     void CreateDetEfficiencyCurve(string);
     double Energy2Wave(double, string unit="eV");
@@ -65,6 +65,7 @@ public:
     void PrepareAnalysis(std::vector<string>, bool weighted=false, int estimate=-1);
     void PrepInputSpectrum(const char*, double deltaE=5.0e-6, string outfile="brem.root");
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
+    void GetScintillationDistribution(const char*, bool Corrected=true);
 
 private:
 
@@ -253,6 +254,8 @@ private:
     void Show_PrepInputSpectrum_Description();
     void Show_ChopperWeightandCost();
     void Show_ChopperWeightandCost_Description();
+    void Show_GetScintillationDistribution();
+    void Show_GetScintillationDistribution_Description();
 
     double hc = 6.62607004e-34*299792458;
 
@@ -345,6 +348,10 @@ void MantisROOT::Help()
   std::cout << std::endl;
 
   Show_GetInstance();
+  std::cout << std::endl;
+
+  Show_GetScintillationDistribution();
+  Show_GetScintillationDistribution_Description();
   std::cout << std::endl;
 
   Show_Help();
@@ -1077,6 +1084,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CreateScintillationDistribution();
     Show_CreateTKDE();
     Show_Energy2Wave();
+    Show_GetScintillationDistribution();
     Show_Help();
     Show_Integral();
     Show_OpenFile();
@@ -1157,6 +1165,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_Energy2Wave();
     if(description)
       Show_Energy2Wave_Description();
+  }
+  else if(!name.compare("GetScintillationDistribution"))
+  {
+    Show_GetScintillationDistribution();
+    if(description)
+      Show_GetScintillationDistribution_Description();
   }
   else if(!name.compare("Wave2Energy"))
   {
@@ -3299,7 +3313,48 @@ void MantisROOT::CheckDet(const char* filename, bool weighted=false, int estimat
 
 } // end of CheckDet Function
 
-void MantisROOT::CreateScintillationDistribution(std::vector<double> x, std::vector<double> y)
+void MantisROOT::GetScintillationDistribution(const char* filename, bool Corrected=true)
+{
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
+  TTree* tdet;
+
+  if(Corrected)
+    f->GetObject("Corrected_DetInfo", tdet);
+  else
+    f->GetObject("DetInfo", tdet);
+
+  double xmin = tdet->GetMinimum("Energy");
+  TH1D* h1 = new TH1D("h1","h1",100,2.,4.);
+  tdet->Draw("Energy*1e6>>h1","CreatorProcess == \"Scintillation\"","goff");
+  h1->SetLineColor(kBlue);
+  h1->Sumw2();
+  TGraph* t1 = new TGraph(h1);
+  t1->SetLineColor(kBlue);
+
+  double ymax_scale = h1->GetMaximum();
+  TGraph* gScint = CreateScintillationDistribution(ymax_scale);
+  gScint->SetLineColor(kRed);
+  TCanvas* get1 = new TCanvas("get1","Simulated Distribution",600,400);
+  get1->cd();
+  h1->Draw("h");
+  TCanvas* get2 = new TCanvas("get2","Combined Distributions",600,400);
+  get2->cd();
+  t1->Draw("AC");
+  gScint->Draw("C,SAME");
+
+  auto legend = new TLegend();
+  legend->SetHeader("Distributions","C");
+  legend->AddEntry(h1, "Detector Scintillation Response");
+  legend->AddEntry(gScint, "Simulation Input Scintillation Distribution");
+  legend->Draw();
+
+  std::cout << "MantisROOT::GetScintillationDistribution -> Complete." << std::endl;
+
+}
+
+TGraph* MantisROOT::CreateScintillationDistribution(std::vector<double> x, std::vector<double> y)
 {
   std::vector<double> energies, crossX, wavelengths;
   int n = x.size();
@@ -3341,6 +3396,7 @@ void MantisROOT::CreateScintillationDistribution(std::vector<double> x, std::vec
   gScint->Draw("AC");
   axis1->Draw("same");
   std::cout << "MantisROOT::CreateScintillationDistribution -> Scintillation Distribution Drawn." << std::endl;
+  return gScint;
 }
 
 void MantisROOT::CreateScintillationDistribution(string a, string b, string c, string d)
@@ -3396,7 +3452,7 @@ void MantisROOT::CreateScintillationDistribution(string a, string b, string c, s
   << std::endl;
 }
 
-void MantisROOT::CreateScintillationDistribution()
+TGraph* MantisROOT::CreateScintillationDistribution(double scale=1.)
 {
   std::cout << "MantisROOT::CreateScintillationDistribution -> Using Default values..." << std::endl;
   std::vector<double> energies = {1.90744, 1.9837, 2.0664, 2.156, 2.25425, 2.3615,
@@ -3407,7 +3463,11 @@ void MantisROOT::CreateScintillationDistribution()
                                 0.280459, 0.331664, 0.399644, 0.492194, 0.622117, 0.811069,
                                 0.941421, 0.23927, 0.0561113, 0.00538955, 6.45194e-05, 6.49917e-10};
 
-  CreateScintillationDistribution(energies, crossX);
+  for(int i=0;i<crossX.size();++i)
+    crossX[i] = crossX[i]*scale*(1./0.941421);
+
+  TGraph* gScint = CreateScintillationDistribution(energies, crossX);
+  return gScint;
 } // end of CreateScintillationDistribution Function
 
 /*
@@ -3935,9 +3995,9 @@ void MantisROOT::Show_CreateTKDE_Description()
 
 void MantisROOT::Show_CreateScintillationDistribution()
 {
-  std::cout << "void CreateScintillationDistribution(vector<double> energies, vector<double> crossX)"
-  << std::endl << "void CreateScintillationDistribution(string a, string b)"
-  << std::endl << "void CreateScintillationDistribution()" << std::endl;
+  std::cout << "TGraph* CreateScintillationDistribution(vector<double> energies, vector<double> crossX)"
+  << std::endl << "void CreateScintillationDistribution(string a, string b, string c, string d)"
+  << std::endl << "TGraph* CreateScintillationDistribution()" << std::endl;
 }
 
 void MantisROOT::Show_CreateScintillationDistribution_Description()
@@ -3946,6 +4006,17 @@ void MantisROOT::Show_CreateScintillationDistribution_Description()
   << std::endl << "IF function called void of inputs the default values are plotted."
   << std::endl << "IF function called with string a, string b creates scintillation distribution based on exponential distribution."
   << std::endl;
+}
+
+void MantisROOT::Show_GetScintillationDistribution()
+{
+  std::cout << "void GetScintillationDistribution(const char*, bool Corrected=true)" << std::endl;
+}
+
+void MantisROOT::Show_GetScintillationDistribution_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Get Scintillation Distribution from filename and plots the Default scintillation distribution for comparision."
+  << std::endl << "If plotting corrected det info add true as the second input." << std::endl;
 }
 
 void MantisROOT::Show_CreateDetEfficiencyCurve()
