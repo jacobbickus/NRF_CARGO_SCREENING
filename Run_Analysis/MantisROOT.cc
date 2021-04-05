@@ -52,6 +52,7 @@ public:
     void Sampling(const char*, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5);
     void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
+    std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
     void CheckAngles(const char*, int estimate=-1);
     TGraph* CreateTKDE(const char*, int nentries=10000);
     void CheckDet(const char*, bool weighted=false, int estimate=-1);
@@ -2673,6 +2674,56 @@ void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="
 
 }// End of sampling
 
+std::vector<TH1D*> MantisROOT::CheckIntObj(std::vector<string> filenames, double Er=1.733546, bool Weighted=false)
+{
+  for(int i=0;i<filenames.size();++i)
+    CheckFile(filenames[i].c_str());
+
+  std::vector<TFile*> tfilesv;
+  std::vector<TH1D*> histov;
+  double emin = Er - 100e-6;
+  double emax = Er + 100e-6;
+
+  for(int i=0;i<filenames.size();++i)
+  {
+    TFile *f = new TFile(filenames[i].c_str());
+    tfilesv.push_back(f);
+    string histoname = "e" + std::to_string(i);
+    TH1D *h = new TH1D(histoname.c_str(),"Incident Interrogation Object 2eV Binning", 100, emin, emax);
+    histov.push_back(h);
+  }
+
+  for(int i=0;i<tfilesv.size();++i)
+  {
+    TFile *fWork = tfilesv[i];
+    fWork->cd();
+    TTree* tIntObj=0;
+    fWork->GetObject("IntObjIn", tIntObj);
+    string histoname = "e" + std::to_string(i);
+    string cmd = "Energy>>" + histoname;
+
+    if(Weighted)
+      tIntObj->Draw(cmd.c_str(), "Weight","goff");
+    else
+      tIntObj->Draw(cmd.c_str(),"","goff");
+  }
+  int xleft  = histov[0]->GetXaxis()->FindBin(Er - 5e-6);
+  int xright = histov[0]->GetXaxis()->FindBin(Er + 5e-6);
+  int xend = histov[0]->GetNbinsX() - 1;
+
+  for(int i=0;i<histov.size();++i)
+  {
+    double nrf_int = histov[i]->Integral(xleft,xright);
+    double total_int = histov[i]->Integral(0,xleft) + histov[i]->Integral(xright,xend);
+    double snr = nrf_int/sqrt(total_int);
+    std::cout << "MantisROOT::CheckIntObj -> SNR Histo " + std::to_string(i) + ": " << snr << std::endl;
+    histov[i]->SetStats(0);
+    histov[i]->Sumw2();
+    histov[i]->GetXaxis()->SetTitle("Energy [MeV]");
+  }
+  return histov;
+}
+
 void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=1.73354, bool Weighted=false)
 {
   CheckFile(onFile);
@@ -3963,6 +4014,7 @@ void MantisROOT::Show_SimpleSampling_Description()
 void MantisROOT::Show_CheckIntObj()
 {
   std::cout << "void CheckIntObj(const char* onFile, const char* offFile, double Er=1.73354, bool Weighted=false)" << std::endl;
+  std::cout << "std::vector<TH1D*> CheckIntObj(vector<string> filenames, double Er=1.73354, bool Weighted=false)" << std::endl;
 }
 
 void MantisROOT::Show_CheckIntObj_Description()
