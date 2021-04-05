@@ -70,6 +70,16 @@ If the spectra contain weights be sure to add the boolean true to the fourth inp
 
 ***************************************************************************************************************************************************************
 
+Chopper Weight and Cost 
+==
+
+void ChopperWeightandCost(string material_name, double chopper_thickness, double chopper_radius=7.5cm)
+
+DESCRIPTION: 
+Determines Chopper Weight and Cost for a given chopper material and thickness. Default chopper radius set to 7.5cm.
+
+***************************************************************************************************************************************************************
+
 Combine Files
 ==
 
