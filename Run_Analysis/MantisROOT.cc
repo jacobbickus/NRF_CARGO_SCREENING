@@ -316,6 +316,10 @@ void MantisROOT::Help()
   Show_CheckIntObj_Description();
   std::cout << std::endl;
 
+  Show_ChopperWeightandCost();
+  Show_ChopperWeightandCost_Description();
+  std::cout << std::endl;
+
   Show_CombineFiles();
   Show_CombineFiles_Description();
   std::cout << std::endl;
@@ -1066,6 +1070,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CheckDet();
     Show_CheckEvents();
     Show_CheckIntObj();
+    Show_ChopperWeightandCost();
     Show_CombineFiles();
     Show_CopyTrees();
     Show_CreateDetEfficiencyCurve();
@@ -1116,6 +1121,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CopyTrees();
     if(description)
       Show_CopyTrees_Description();
+  }
+  else if(!name.compare("ChopperWeightandCost"))
+  {
+    Show_ChopperWeightandCost();
+    if(description)
+      Show_ChopperWeightandCost_Description();
   }
   else if(!name.compare("CombineFiles"))
   {
