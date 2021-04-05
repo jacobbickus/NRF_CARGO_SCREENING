@@ -2178,7 +2178,6 @@ void MantisROOT::Rescale(const char* inObj, double Er)
   }
 
   std::cout << "All Histograms drawn." << std::endl;
-  c0->SaveAs("Rescaled_Output.png");
   // Save to file
   TFile *fout = new TFile("thick_rescale.root","recreate");
   fout->cd();
@@ -2403,7 +2402,6 @@ void MantisROOT::Rescale(const char* inObj)
   }
 
   std::cout << "All Histograms drawn." << std::endl;
-  c0->SaveAs("Rescaled_Output.png");
   // Save to file
   TFile *fout = new TFile("thick_rescale.root","recreate");
   fout->cd();
