@@ -43,8 +43,8 @@ public:
     void Integral(TTree*);
     void Integral(std::vector<TTree*>);
     void Integral(std::vector<TTree*>,TCut);
-    void PredictThickness(std::vector<string>);
-    void PredictThickness(std::vector<string>, double);
+    void PredictThickness(std::vector<string>, bool write2file=false);
+    std::vector<TH1D*> PredictThickness(std::vector<string>, double, bool write2file=false);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
@@ -1974,7 +1974,7 @@ void MantisROOT::ZTest(const char* file1, const char* file2, const char* inObj, 
 
 } // end of ZTest functions
 
-void MantisROOT::Rescale(const char* inObj, double Er)
+std::vector<TH1D*> MantisROOT::Rescale(const char* inObj, double Er, bool write2file=false)
 {
   std::cout << "Input the Scale Base Filename:" << std::endl;
   string filename;
@@ -2178,17 +2178,22 @@ void MantisROOT::Rescale(const char* inObj, double Er)
   }
 
   std::cout << "All Histograms drawn." << std::endl;
-  // Save to file
-  TFile *fout = new TFile("thick_rescale.root","recreate");
-  fout->cd();
 
-  for(int i=0;i<hOut.size();++i)
+  if(write2file)
   {
-    ogOut[i]->Write();
-    hOut[i]->Write();
-  }
+    // Save to file
+    TFile *fout = new TFile("thick_rescale.root","recreate");
+    fout->cd();
 
-  std::cout << "Histograms saved." << std::endl;
+    for(int i=0;i<hOut.size();++i)
+    {
+      ogOut[i]->Write();
+      hOut[i]->Write();
+    }
+
+    std::cout << "Histograms saved." << std::endl;
+  }
+  return hOut;
 
 } // end of function
 
@@ -2197,7 +2202,7 @@ void MantisROOT::Rescale(const char* inObj, double Er)
 // *************************************************************************** //
 // *************************************************************************** //
 
-void MantisROOT::Rescale(const char* inObj)
+void MantisROOT::Rescale(const char* inObj, bool write2file=false)
 {
   std::cout << "Input the Scale Base Filename:" << std::endl;
   string filename;
@@ -2403,15 +2408,20 @@ void MantisROOT::Rescale(const char* inObj)
 
   std::cout << "All Histograms drawn." << std::endl;
   // Save to file
-  TFile *fout = new TFile("thick_rescale.root","recreate");
-  fout->cd();
+  if(write2file)
+  {
+    TFile *fout = new TFile("thick_rescale.root","recreate");
+    fout->cd();
 
-  for(int i=0;i<hOut.size();++i)
-    hOut[i]->Write();
+    for(int i=0;i<hOut.size();++i)
+      hOut[i]->Write();
 
-  std::cout << "Histograms saved." << std::endl;
+    std::cout << "Histograms saved." << std::endl;
+  }
 
-}// end of function
+}// end of function and end of Rescales
+
+
 TH1D* MantisROOT::BuildBrem(const char* bremInputFilename, double deltaE, bool checkZero)
 {
   std::cout << "MantisROOT::BuildBrem -> Building Brem Distribution..." << std::endl;
@@ -3917,15 +3927,19 @@ void MantisROOT::Show_Integral_Description()
 
 void MantisROOT::Show_PredictThickness()
 {
-  std::cout << "void PredictThickness(std::vector<string> ObjectNames)" << std::endl
-  << "void PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy)" << std::endl;
+  std::cout << "void PredictThickness(std::vector<string> ObjectNames, bool write2file=false)" << std::endl
+  << "vector<TH1D*> PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy, bool write2file=false)" << std::endl;
 }
 
 void MantisROOT::Show_PredictThickness_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "Predicts the results of changing the thickness on the objects passed in the string vector."
   << std::endl << "If the second input is passed the thickness calculations will focus on the given resonance energy."
-  << std::endl << "Example: mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354)" << std::endl;
+  << std::endl << "If the third input is set to true the scaled histograms will be written to a file."
+  << std::endl << "If a Resonance Energy is provided a vector of the scaled histograms is also returned at function call."
+  << std::endl << "Example: std::vector<TH1D*> histov = mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354, true)"
+  << std::endl << "This would predict thickness effects of IntObjIn and IntObjOut for the 1.73354 resonance energy and write the results to a file."
+  << std::endl; 
 }
 
 void MantisROOT::Show_RebinHisto()
