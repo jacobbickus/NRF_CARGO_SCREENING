@@ -75,7 +75,7 @@ void PrintUsage()
   << "[-s seed=1] Simulation Seed." << G4endl
   << "[-t bremTest=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
   << "[-u SampleEnergyRange=false] Samples from a normal distribution centered on user's energy." << G4endl
-  << "[-w uniform_width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passes as true." << G4endl
+  << "[-w uniform_width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true." << G4endl
   <<  "[-v NRF_Verbose=false] Sets NRF Physics Verbosity" << G4endl << G4endl;
   exit(1);
 }
