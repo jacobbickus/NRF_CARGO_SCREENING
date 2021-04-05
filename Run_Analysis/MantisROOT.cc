@@ -44,7 +44,7 @@ public:
     void Integral(std::vector<TTree*>);
     void Integral(std::vector<TTree*>,TCut);
     void PredictThickness(std::vector<string>, bool write2file=false);
-    std::vector<TH1D*> PredictThickness(std::vector<string>, double, bool write2file=false);
+    std::vector<std::vector<TH1D*>> PredictThickness(std::vector<string>, double, bool write2file=false);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
@@ -194,7 +194,7 @@ private:
     void ZTest(const char*, const char*, const char*, bool weighted=false);
     void Rebin(bool,const char*,const char*,const char*,int,double Emin=0.0,double Emax=2.1,TCut cut1="NA",bool VarArray=false,double nrf_bin_width=-1.,double non_nrf_bin_width=-1.);
     void Rebin(const char*, const char*, const char*);
-    void Rescale(const char*, double, bool write2file=false);
+    std::vector<TH1D*> Rescale(const char*, double, bool write2file=false);
     void Rescale(const char*, bool write2file=false);
 
     double ReturnBremMax(const char*);
@@ -1000,12 +1000,19 @@ void MantisROOT::PredictThickness(std::vector<string> obj, bool write2file=false
   std::cout << "Thickness Prediction Analysis Complete." << std::endl;
 }
 
-void MantisROOT::PredictThickness(std::vector<string> obj, double Er, bool write2file=false)
+std::vector<std::vector<TH1D*>> MantisROOT::PredictThickness(std::vector<string> obj, double Er, bool write2file=false)
 {
+  std::vector<TH1D*> histov;
+  std::vector<std::vector<TH1D*>> histov_final;
+
   for(int i=0;i<obj.size();++i)
-    Rescale(obj[i].c_str(),Er, write2file);
+  {
+    histov = Rescale(obj[i].c_str(),Er, write2file);
+    histov_final.push_back(histov);
+  }
 
   std::cout << "Thickness Prediction Analysis Complete." << std::endl;
+  return histov_final;
 }
 
 void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,
@@ -3928,7 +3935,7 @@ void MantisROOT::Show_Integral_Description()
 void MantisROOT::Show_PredictThickness()
 {
   std::cout << "void PredictThickness(std::vector<string> ObjectNames, bool write2file=false)" << std::endl
-  << "vector<TH1D*> PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy, bool write2file=false)" << std::endl;
+  << "vector<vector<TH1D*>> PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy, bool write2file=false)" << std::endl;
 }
 
 void MantisROOT::Show_PredictThickness_Description()
@@ -3937,7 +3944,7 @@ void MantisROOT::Show_PredictThickness_Description()
   << std::endl << "If the second input is passed the thickness calculations will focus on the given resonance energy."
   << std::endl << "If the third input is set to true the scaled histograms will be written to a file."
   << std::endl << "If a Resonance Energy is provided a vector of the scaled histograms is also returned at function call."
-  << std::endl << "Example: std::vector<TH1D*> histov = mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354, true)"
+  << std::endl << "Example: std::vector<std::vector<TH1D*>> histov = mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354, true)"
   << std::endl << "This would predict thickness effects of IntObjIn and IntObjOut for the 1.73354 resonance energy and write the results to a file."
   << std::endl;
 }
