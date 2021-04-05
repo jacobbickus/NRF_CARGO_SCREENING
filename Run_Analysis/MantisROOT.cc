@@ -64,7 +64,7 @@ public:
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, int estimate=-1);
     void PrepInputSpectrum(const char*, double deltaE=5.0e-6, string outfile="brem.root");
-    //void CreateBremFit(const char*, double bin_width=5e-6);
+    void ChopperWeightandCost(string, double, double chopper_radius=7.5);
 
 private:
 
@@ -251,6 +251,8 @@ private:
     void Show_PrepareAnalysis_Description();
     void Show_PrepInputSpectrum();
     void Show_PrepInputSpectrum_Description();
+    void Show_ChopperWeightandCost();
+    void Show_ChopperWeightandCost_Description();
 
     double hc = 6.62607004e-34*299792458;
 
@@ -2803,7 +2805,7 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
 
   ZScore(e3->Integral(), e4->Integral());
   ZScore(e5->Integral(), e6->Integral());
-  
+
   std::cout << "MantisROOT::CheckIntObj -> Complete." << std::endl;
 
 } // end of CheckIntObj
@@ -3642,6 +3644,52 @@ void MantisROOT::PrepareAnalysis(std::vector<string> filebases, bool weighted=fa
   std::cout << "MantisROOT::PrepareAnalysis -> Complete." << std::endl;
 } // end PrepareAnalysis
 
+void MantisROOT::ChopperWeightandCost(string material, double chopper_thickness, double chopper_radius=7.5)
+{
+  double u_price = 29.75; // dollars per pound
+  double t_price = 25.00;
+  double l_price = 1.10;
+  double u_density = 19.1; // g/cm^3
+  double t_density = 19.3;
+  double l_density = 11.34;
+
+  double chop_price = 0.;
+  double chop_density = 0.;
+
+  if(!material.compare("U"))
+  {
+    chop_price = u_price;
+    chop_density = u_density;
+  }
+  else if(!material.compare("W"))
+  {
+    chop_price = t_price;
+    chop_density = t_density;
+  }
+  else if(!material.compare("Pb"))
+  {
+    chop_price = l_price;
+    chop_density = l_density;
+  }
+  else
+  {
+    std::cout << "MantisROOT::ChopperWeightandCost -> Material not found."
+    << std::endl << "Material Options:"
+    << std::endl << "U" << std::endl << "W" << std::endl << "Pb" << std::endl;
+    return;
+  }
+  double chop_volume = 3.14*pow(chopper_radius,2)*chopper_thickness;
+  chop_volume = chop_volume/2.;
+  double chop_weight = chop_volume*chop_density;
+  double g_lbs_conversion = 1./454.;
+  chop_weight = chop_weight*g_lbs_conversion;
+  std::cout << "MantisROOT::ChopperWeightandCost -> Weight: " << chop_weight
+              << " lbs." << std::endl;
+  double chop_cost = chop_weight*chop_price;
+  std::cout << "MantisROOT::ChopperWeightandCost -> Cost: $" << chop_cost << std::endl;
+
+  std::cout << "MantisROOT::ChopperWeightandCost -> Complete." << std::endl;
+}
 //******************************************************************************//
 //******************************************************************************//
 //******************************************************************************//
@@ -3949,6 +3997,17 @@ void MantisROOT::Show_PrepInputSpectrum_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "Prepares input spectrum file for Mantis Simulation without importance sampling."
   << std::endl << "deltaE is the bin width of the Histogram and if the user wishes a nondefault outfilename enter the third input."
+  << std::endl;
+}
+
+void MantisROOT::Show_ChopperWeightandCost()
+{
+  std::cout << "void ChopperWeightandCost(string material_name, double chopper_thickness, double chopper_radius=7.5cm)" << std::endl;
+}
+
+void MantisROOT::Show_ChopperWeightandCost_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Determines Chopper Weight and Cost for a given material and chopper thickness."
   << std::endl;
 }
 
