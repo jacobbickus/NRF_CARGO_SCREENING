@@ -28,7 +28,7 @@ Cargo::Cargo()
 :
 RemoveContainer(false),
 IntObj_rad(4.5*cm), intObjDensity(19.1*g/cm3), IntObj_Selection("Uranium"),
-intObj_radio_abundance(0), cargo_spheres(0), cargo_boxes(0),
+intObj_radio_abundance(0), cargo_spheres(0), cargo_boxes(0), checkOverlaps(true),
 cargoM(NULL)
 {
   cargoM = new CargoMessenger(this);
@@ -39,8 +39,9 @@ Cargo::~Cargo()
   delete cargoM;
 }
 
-void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
+void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
 {
+  checkOverlaps = checkO;
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double container_edge_position = detInfo->GetContainerEdgePosition();
   G4double container_z_pos = detInfo->GetContainerZPosition();
