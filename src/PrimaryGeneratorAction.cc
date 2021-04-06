@@ -50,16 +50,18 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
     beamStart = 129.9;
-    G4cout << "Particle Type set to Electron!" << G4endl;
+    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
   }
   else
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
     beamStart = 139.9;
-    G4cout << "Particle Type set to Gamma!" << G4endl;
+    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 
+  G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Beam Size set to: " << beam_size/(mm) << " mm" << G4endl;
+  
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);
   // Default Kinematics
