@@ -39,7 +39,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 {
   fParticleGun = new G4ParticleGun(1);
   if(!bremTest)
-    beam_size = 44.0*mm; // optimized beam size for a 4.5cm radius interrogation object
+    beam_size = 10.0*mm; // optimized beam size for a 4.5cm radius interrogation object
   else
     beam_size = 1.3*mm;
 
