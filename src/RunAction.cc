@@ -64,7 +64,9 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   G4int fStatusKilledPhiAngle = rInfo->GetTotalKilledPhi();
   G4double fCerenkovEnergy = rInfo->GetTotalCerenkovEnergy();
   G4double fScintEnergy = rInfo->GetTotalScintEnergy();
-  G4double fBremBackingCount = rInfo->GetTotalBremBackingHit();
+  G4int fBremBackingCount = rInfo->GetTotalBremBackingHit();
+  G4int fStatusKilledProcess = rInfo->GetTotalKilledProcess();
+
 
   G4int TotNbofEvents = aRun->GetNumberOfEvent();
   std::ios::fmtflags mode = G4cout.flags();
@@ -86,6 +88,8 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
     << fCerenkovCount + fScintCount << G4endl;
   G4cout << "Total number of Tracks Cut Based on Position:                "
     << fStatusKilledPosition << G4endl;
+  G4cout << "Total number of Tracks Cut Based on Process:                 "
+    << fStatusKilledProcess << G4endl;
   G4cout << "Total number of Tracks Cut Based on Time:                    "
     << fStatusKilledTime << G4endl;
   G4cout << "Total number of Tracks Cut Based on Theta Emission Angle:    "
@@ -95,19 +99,19 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
   if (fCerenkovCount > 0)
   {
-    G4cout << " Average Cherenkov Photon energy emitted:            "
+    G4cout << "Average Cherenkov Photon energy emitted:            "
            << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
   }
 
   if (fScintCount > 0)
   {
-    G4cout << " Average Scintillation Photon energy emitted:        "
+    G4cout << "Average Scintillation Photon energy emitted:        "
            << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
   }
 
   if(fBremBackingCount > 0)
   {
-    G4cout << "Total Number of Brem Backing Hits: " << fBremBackingCount << G4endl;
+    G4cout << "Total Number of Brem Backing Hits:                         " << fBremBackingCount << G4endl;
   }
 
   G4cout << "----------------------------------------------------------------------" << G4endl;

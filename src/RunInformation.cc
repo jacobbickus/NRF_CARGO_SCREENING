@@ -29,7 +29,7 @@ RunInformation *RunInformation::instance = 0;
 RunInformation::RunInformation()
 : fCerenkovEnergy(0.), fScintEnergy(0.), fTotalSurface(0), fCerenkovCount(0), fScintCount(0),
   fNRF(0), fStatusKilledPosition(0), fStatusKilledTime(0), fStatusKilledThetaAngle(0),
-  fStatusKilledPhiAngle(0), fBremBackingCount(0)
+  fStatusKilledPhiAngle(0), fBremBackingCount(0), fStatusKilledProcess(0)
 
 {
 }

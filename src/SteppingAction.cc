@@ -162,7 +162,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(CPName != "eBrem")
         {
           theTrack->SetTrackStatus(fStopAndKill);
-          krun->AddStatusKilledPosition();
+          krun->AddStatusKilledProcess();
         }
         else
         {
