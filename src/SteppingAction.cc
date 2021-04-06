@@ -96,12 +96,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       krun->AddStatusKilledPosition();
       return;
     }
-    else if(nextStep_VolumeName.compare(0, 3, "Col") == 0)
+
+    if(!bremTest)
     {
-      // kill photons in collimator
-      theTrack->SetTrackStatus(fStopAndKill);
-      krun->AddStatusKilledPosition();
-      return;
+      if(nextStep_VolumeName.compare(0, 3, "Col") == 0)
+      {
+        // kill photons in collimator
+        theTrack->SetTrackStatus(fStopAndKill);
+        krun->AddStatusKilledPosition();
+        return;
+      }
     }
 
     // Run Time Cut
@@ -150,8 +154,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     if(bremTest)
     {
-      if(nextStep_VolumeName.compare(0,11,"BremBacking") != 0
-          && previousStep_VolumeName.compare(0,11,"BremBacking") == 0
+      if(nextStep_VolumeName.compare("BremBacking") != 0
+          && previousStep_VolumeName.compare("BremBacking") == 0
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
         if(CPName != "eBrem")
