@@ -74,7 +74,7 @@ public:
   void setDistanceToChop(G4double d){distance_to_chop = d;}
   G4double GetDistanceToChop()const{return distance_to_chop;}
 
-  G4double bremStartPos, linac_size, container_z_pos, water_size_y;
+  G4double bremStartPos, linac_size, container_z_pos, water_size_y, container_edge_position;
   G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_radius, distance_to_chop;
   ~DetectorInformation();
 };

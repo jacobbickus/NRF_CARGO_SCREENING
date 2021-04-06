@@ -91,6 +91,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
           << chopper_end_edge_position/(cm) << " cm" << G4endl;
   detInfo->setEndChop(chopper_end_edge_position);
   G4double container_edge_position = detInfo->GetContainerEdgePosition();
+  G4double bremStartPos = detInfo->GetBremStartPosition();
+  G4double linac_size = detInfo->GetLinacSize();
 
   if(chopper_end_edge_position > container_edge_position)
   {
@@ -189,9 +191,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
     chopper_z = 10*cm;
 
   detInfo->setDistanceToChop(chopper_z);
-  G4double bremStartPos = detInfo->GetBremStartPosition();
-  G4double linac_size = detInfo->GetLinacSize();
-  
+
   G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, bremStartPos + chopper_z + linac_size),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
