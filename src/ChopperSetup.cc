@@ -75,13 +75,16 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
 
 
   // *********************************************************** Set up Chopper Wheel ****************************************************************** //
-
+  DetectorInformation* detInfo = DetectorInformation::Instance();
+  G4double bremStartPos = detInfo->GetBremStartPosition();
+  G4double linac_size = detInfo->GetLinacSize();
+  G4double container_edge_position = detInfo->GetContainerEdgePosition();
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
   G4double chopper_beginning_edge_position = (bremStartPos+ chopper_z + linac_size) - chopper_thick/2.;
   G4double chopper_end_edge_position = (bremStartPos + chopper_z + linac_size) + chopper_thick/2.;
   G4double chopper_center_position = (chopper_beginning_edge_position + chopper_end_edge_position)/2.;
-  DetectorInformation* detInfo = DetectorInformation::Instance();
+
   detInfo->setBeginChopper(chopper_beginning_edge_position);
   G4cout << "ChopperSetup::Construct -> Beginning Edge: "
           << chopper_beginning_edge_position/(cm) << " cm" << G4endl;
@@ -90,9 +93,6 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4cout << "ChopperSetup::Construct -> End Edge: "
           << chopper_end_edge_position/(cm) << " cm" << G4endl;
   detInfo->setEndChop(chopper_end_edge_position);
-  G4double container_edge_position = detInfo->GetContainerEdgePosition();
-  G4double bremStartPos = detInfo->GetBremStartPosition();
-  G4double linac_size = detInfo->GetLinacSize();
 
   if(chopper_end_edge_position > container_edge_position)
   {
