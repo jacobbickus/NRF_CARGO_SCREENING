@@ -163,7 +163,6 @@ private:
   std::vector<G4double> cargo_sphere_radii;
   std::vector<G4ThreeVector> cargo_sphere_position, cargo_box_size, cargo_box_position;
   std::vector<G4String> cargo_sphere_material, cargo_box_material;
-  G4bool checkOverlaps;
   CargoMessenger* cargoM;
 
 };

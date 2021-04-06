@@ -39,9 +39,12 @@ Cargo::~Cargo()
   delete cargoM;
 }
 
-void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
+void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 {
-  checkOverlaps = checkO;
+  DetectorInformation* detInfo = DetectorInformation::Instance();
+  G4double container_edge_position = detInfo->GetContainerEdgePosition();
+  G4double container_z_pos = detInfo->GetContainerZPosition();
+  G4double chopper_end_edge_position = detInfo->getEndChop();
   G4NistManager* nist = G4NistManager::Instance();
   G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
   G4Material *steel = nist->FindOrBuildMaterial("G4_STAINLESS-STEEL");
@@ -152,7 +155,6 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
 
     G4LogicalVolume* logicIntObj = new G4LogicalVolume(solidIntObj, intObjMat,"IntObj");
     G4cout << "Cargo::Construct -> Begin of Interrogation Object: " << container_z_pos/(cm) + 0/(cm) -  IntObj_rad/(cm) << " cm" << G4endl;
-    DetectorInformation* detInfo = DetectorInformation::Instance();
     detInfo->setEndIntObj(container_z_pos, 1.2192*m);
 
     if(!RemoveContainer)
