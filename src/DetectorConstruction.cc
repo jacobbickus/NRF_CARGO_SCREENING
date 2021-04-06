@@ -110,10 +110,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   // ********************************************************** World and Materials Complete ************************************************************//
   // Parameters used later
-  G4double bremStartPos = 130*cm;
-  G4double container_z_pos = 1.2192*m + 1.5*m;
-  G4double container_edge_position = container_z_pos - 1.2192*m;
   DetectorInformation* detInfo = DetectorInformation::Instance();
+  G4double bremStartPos = 130*cm;
+  detInfo->setBremStartPosition(bremStartPos);
+  G4double container_z_pos = 1.2192*m + 1.5*m;
+  detInfo->setContainerZPosition(container_z_pos);
+  G4double container_edge_position = container_z_pos - 1.2192*m;
+  detInfo->setContainerEdgePosition(container_edge_position);
+  detInfo->setLinac_Size(linac_size);
+  detInfo->setWaterSizeY(water_size_y);
+  
   chop->Construct(logicWorld, checkOverlaps);
   // Set up Linac configuration if Brem Test
 

@@ -40,7 +40,8 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double linac_radius = detInfo->GetLinacRadius();
   G4double container_z_pos = detInfo->GetContainerZPosition();
   G4double water_size_y = detInfo->GetWaterSizeY();
-  
+  G4double distance_to_chop = detInfo->GetDistanceToChop();
+
   G4Material *lead = nist->FindOrBuildMaterial("G4_Pb");
   G4double colimator_size = 50*cm;
   G4double col_position = 1.0*cm + container_z_pos - 1.2192*m - colimator_size; // should go 1cm past the container

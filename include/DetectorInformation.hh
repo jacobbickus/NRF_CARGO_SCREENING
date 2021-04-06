@@ -52,9 +52,11 @@ public:
   G4double GetLinacSize()const{return linac_size;}
   void setContainerZPosition(G4double pos){container_z_pos = pos;}
   G4double GetContainerZPosition()const{return container_z_pos;}
+  void setContainerEdgePosition(G4double pos){container_edge_position = pos;}
+  G4double GetContainerEdgePosition()const{return container_edge_position;}
   void setWaterSizeY(G4double y){water_size_y = y;}
   G4double GetWaterSizeY()const{return water_size_y;}
-  
+
   void setBeginChopper(G4double pos){BeginChop = pos;}
   G4double getBeginChopper()const{return BeginChop;}
   void setEndChop(G4double z_pos){EndChop = z_pos;}
