@@ -51,7 +51,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, dou
   G4LogicalVolume *logicCollimatorRear =
                         new G4LogicalVolume(solidCollimatorRear, lead, "Collimator");
 
-  G4double brem_collimator_length = 5*cm;
+  G4double brem_collimator_length = 4.5*cm;
   G4Cons *solidBremCollimator =
                         new G4Cons("BremCollimator", 7*cm, 10*cm,
                                   5.0*mm, 25.0*mm, brem_collimator_length,
