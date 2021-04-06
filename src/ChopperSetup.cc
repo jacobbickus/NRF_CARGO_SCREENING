@@ -187,7 +187,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
   if(bremTest)
     chopper_z = 10*cm;
 
-  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -1*cm,bremStartPos + chopper_z + linac_size),
+  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm,bremStartPos + chopper_z + linac_size),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
 
