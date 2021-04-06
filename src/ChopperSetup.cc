@@ -24,6 +24,8 @@
 
 #include "ChopperSetup.hh"
 
+extern G4bool bremTest;
+
 ChopperSetup::ChopperSetup()
 :chopperDensity(19.1*g/cm3), chopper_thick(30*mm), chopper_z(2*cm),
 chopperOn(false), chopper_radio_abundance(0), chopperM(NULL)
@@ -181,6 +183,9 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
           << center_from_source << " cm" << G4endl;
 
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
+
+  if(bremTest)
+    chopper_z = 10*cm;
 
   G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -1*cm,bremStartPos + chopper_z + linac_size),
                   logicChopper, "Chop", logicWorld, false,
