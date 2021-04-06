@@ -57,7 +57,7 @@ void HistoManager::Book()
   manager->CreateNtupleDColumn("Energy");
   manager->CreateNtupleDColumn("Theta");
   manager->CreateNtupleDColumn("Phi");
-  manager->CreateNtupleSColumn("CreatorProcess");
+  //manager->CreateNtupleSColumn("CreatorProcess");
   manager->FinishNtuple();
 
   // Create ID 1 Ntuple for Incident Chopper Data

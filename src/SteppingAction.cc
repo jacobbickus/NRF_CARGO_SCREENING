@@ -158,12 +158,21 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
         krun->AddBremBackingHit();
-        manager->FillNtupleIColumn(0,0, eventID);
-        manager->FillNtupleDColumn(0,1, energy);
-        manager->FillNtupleDColumn(0,2, theta);
-        manager->FillNtupleDColumn(0,3, phi);
-        manager->FillNtupleSColumn(0,4, CPName);
-        manager->AddNtupleRow(0);
+        if(CPName.compare("eBrem") !=0)
+        {
+          krun->AddStatusKilledProcess();
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
+        else
+        {
+          manager->FillNtupleIColumn(0,0, eventID);
+          manager->FillNtupleDColumn(0,1, energy);
+          manager->FillNtupleDColumn(0,2, theta);
+          manager->FillNtupleDColumn(0,3, phi);
+          //manager->FillNtupleSColumn(0,4, CPName);
+          manager->AddNtupleRow(0);
+        }
       }
     }
 
