@@ -86,20 +86,12 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleSColumn("Material");
     manager->CreateNtupleDColumn("ZPos");
+    manager->CreateNtupleDColumn("Theta");
+    manager->CreateNtupleDColumn("Phi");
+    manager->CreateNtupleIColumn("Seed");
     if(!inFile.compare(0,24,"brems_distributions.root"))
       manager->CreateNtupleDColumn("Weight");
     manager->FinishNtuple();
-
-    // Create Testing TTree ID 4 for Incident Air just prior to Interrogation Object
-    //manager->CreateNtuple("AirIn","Incident Air Pocket Just Prior to Int Obj");
-    //manager->CreateNtupleDColumn("Energy");
-    //manager->CreateNtupleSColumn("CreatorProcess");
-    //manager->CreateNtupleDColumn("Angle");
-    //manager->CreateNtupleDColumn("Time");
-    //manager->CreateNtupleIColumn("EventID");
-    //if(!inFile.compare(0,24,"brems_distributions.root"))
-    //  manager->CreateNtupleDColumn("Weight");
-    //manager->FinishNtuple();
 
     // Create ID 4 NTuple for Incident Interrogation Object Information
     manager->CreateNtuple("IntObjIn","Incident Interrogation Object Data");
@@ -110,6 +102,7 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
     manager->CreateNtupleDColumn("Time");
+    manager->CreateNtupleIColumn("Seed");
     if(!inFile.compare(0,24,"brems_distributions.root"))
       manager->CreateNtupleDColumn("Weight");
     manager->FinishNtuple();
@@ -123,6 +116,7 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
     manager->CreateNtupleDColumn("Time");
+    manager->CreateNtupleIColumn("Seed");
     if(!inFile.compare(0,24,"brems_distributions.root"))
       manager->CreateNtupleDColumn("Weight");
     manager->FinishNtuple();
@@ -156,6 +150,7 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Y");
     manager->CreateNtupleSColumn("CreatorProcess");
     manager->CreateNtupleDColumn("Time");
+    manager->CreateNtupleIColumn("Seed");
     if(!inFile.compare(0,24,"brems_distributions.root"))
       manager->CreateNtupleDColumn("Weight");
     manager->FinishNtuple();
@@ -165,6 +160,7 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleSColumn("DetProcess");
+    manager->CreateNtupleIColumn("Seed");
     if(!inFile.compare(0,24,"brems_distributions.root"))
       manager->CreateNtupleDColumn("Weight");
     manager->FinishNtuple();

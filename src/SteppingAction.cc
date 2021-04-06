@@ -27,6 +27,7 @@ extern G4bool bremTest;
 extern G4bool debug;
 extern G4String inFile;
 extern G4bool addNRF;
+extern G4long seed;
 
 SteppingAction::SteppingAction(EventAction* event)
         : G4UserSteppingAction(), kevent(event),
@@ -70,7 +71,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     RunInformation* krun = RunInformation::Instance();
     DetectorInformation* kdet = DetectorInformation::Instance();
-    
+
     G4String nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
     G4String previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
     // kill photons past IntObj
@@ -180,8 +181,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->FillNtupleDColumn(3,1,energy);
           manager->FillNtupleSColumn(3,2,endPoint->GetPhysicalVolume()->GetName());
           manager->FillNtupleDColumn(3,3, loc.z()/(cm));
+          manager->FillNtupleDColumn(3,4, theta);
+          manager->FillNtupleDColumn(3,5, phi);
+          manager->FillNtupleIColumn(3,6,seed);
           if(!inFile.compare(0,24,"brems_distributions.root"))
-            manager->FillNtupleDColumn(3,4,weight);
+            manager->FillNtupleDColumn(3,7,weight);
           manager->AddNtupleRow(3);
         }
       }
@@ -255,8 +259,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 manager->FillNtupleDColumn(4,4,theta);
                 manager->FillNtupleDColumn(4,5,phi);
                 manager->FillNtupleDColumn(4,6,theTrack->GetGlobalTime());
+                manager->FillNtupleIColumn(4,7,seed);
+
                 if(!inFile.compare(0,24,"brems_distributions.root"))
-                  manager->FillNtupleDColumn(4,7, weight);
+                  manager->FillNtupleDColumn(4,8, weight);
                 manager->AddNtupleRow(4);
             }
           }
@@ -281,9 +287,10 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 manager->FillNtupleDColumn(5,4, theta);
                 manager->FillNtupleDColumn(5,5, phi);
                 manager->FillNtupleDColumn(5,6, theTrack->GetGlobalTime());
+                manager->FillNtupleIColumn(5,7,seed);
 
                 if(!inFile.compare(0,24,"brems_distributions.root"))
-                  manager->FillNtupleDColumn(5,7, weight);
+                  manager->FillNtupleDColumn(5,8, weight);
 
                 manager->AddNtupleRow(5);
               }// end if drawIntObjOutDataFlag
@@ -435,8 +442,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
                     manager->FillNtupleSColumn(8,4, creatorProcess);
                     manager->FillNtupleDColumn(8,5, theTrack->GetGlobalTime()); // time units is nanoseconds
+                    manager->FillNtupleIColumn(8,6, seed);
                     if(!inFile.compare(0,24,"brems_distributions.root"))
-                      manager->FillNtupleDColumn(8,6, weight);
+                      manager->FillNtupleDColumn(8,7, weight);
                     manager->AddNtupleRow(8);
                 }
                 else if (theStatus == NotAtBoundary)
@@ -465,8 +473,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                   manager->FillNtupleIColumn(9,0,eventID);
                   manager->FillNtupleDColumn(9,1, theParticle->GetKineticEnergy()/(MeV));
                   manager->FillNtupleSColumn(9,2, procCount);
+                  manager->FillNtupleIColumn(9,3,seed);
                   if(!inFile.compare(0,24,"brems_distributions.root"))
-                    manager->FillNtupleDColumn(9,3, weight);
+                    manager->FillNtupleDColumn(9,4, weight);
                   manager->AddNtupleRow(9);
                 } // for if keeping track of detector process data
 
