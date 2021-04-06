@@ -153,7 +153,7 @@ Linac* linac;
 Collimator* collimator;
 Cargo* cargo;
 // Brem Properties
-G4double linac_size = 9*cm;
+G4double linac_size = 4.5*cm;
 
 // Material, Logical and Physical Volumes
 G4Material* PC_mat;
