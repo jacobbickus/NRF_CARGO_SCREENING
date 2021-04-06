@@ -53,7 +53,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, dou
 
   G4Cons *solidBremCollimator =
                         new G4Cons("BremCollimator", 7*cm, 10*cm,
-                                  5.0*mm, 25.0*mm, 5*cm,
+                                  5.0*mm, 25.0*mm, 3*cm,
                                   0.0*deg, 360.0*deg);
 
   G4LogicalVolume* logicBremCollimator =
@@ -77,7 +77,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, dou
 
   if(bremTest)
   {
-    new G4PVPlacement(0, G4ThreeVector(0,0,bremStartPos+linac_size*2.),
+    new G4PVPlacement(0, G4ThreeVector(0,0,bremStartPos+linac_size),
                       logicBremCollimator, "BremCollimator",logicWorld,
                       false, 0, checkOverlaps);
   }
