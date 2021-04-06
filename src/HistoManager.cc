@@ -53,16 +53,18 @@ void HistoManager::Book()
 
   // Create ID 0 Ntuple for Brem Beam Emission
   manager->CreateNtuple("Brem","Bremsstrahlung Beam");
+  manager->CreateNtupleIColumn("EventID");
   manager->CreateNtupleDColumn("Energy");
   manager->CreateNtupleDColumn("Theta");
   manager->CreateNtupleDColumn("Phi");
-  //manager->CreateNtupleSColumn("CProcess");
   manager->FinishNtuple();
 
   // Create ID 1 Ntuple for Incident Chopper Data
   manager->CreateNtuple("ChopIn", "Chopper Wheel Incident Data");
   manager->CreateNtupleIColumn("EventID");
   manager->CreateNtupleDColumn("Energy");
+  manager->CreateNtupleDColumn("X");
+  manager->CreateNtupleDColumn("Y");
   if(!inFile.compare(0,24,"brems_distributions.root"))
     manager->CreateNtupleDColumn("Weight");
   manager->FinishNtuple();

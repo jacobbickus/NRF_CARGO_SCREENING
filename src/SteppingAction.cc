@@ -50,7 +50,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     G4StepPoint* endPoint   = aStep->GetPostStepPoint();
     G4StepPoint* startPoint = aStep->GetPreStepPoint();
-    G4Track* theTrack = aStep->GetTrack();
+    G4Track* theTrack       = aStep->GetTrack();
 
     // Run Logical Checks
     if(endPoint == NULL)
@@ -121,15 +121,19 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
 
     G4String CPName = "beam";
+
     // Check if Track is created by NRF
-    if(theTrack->GetCreatorProcess() !=0)
+    if(!bremTest)
     {
-      CPName = theTrack->GetCreatorProcess()->GetProcessName();
-      if(addNRF)
+      if(theTrack->GetCreatorProcess() !=0)
       {
-        if(CPName == "NRF")
+        CPName = theTrack->GetCreatorProcess()->GetProcessName();
+        if(addNRF)
         {
-          isNRF = 1;
+          if(CPName == "NRF")
+          {
+            isNRF = 1;
+          }
         }
       }
     }
@@ -150,16 +154,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && previousStep_VolumeName.compare(0,11,"BremBacking") == 0
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
-        if(std::cos(theta) < 0.94 || CPName != "eBrem")
+        if(CPName != "eBrem")
         {
           theTrack->SetTrackStatus(fStopAndKill);
           krun->AddStatusKilledPosition();
         }
         else
         {
-          manager->FillNtupleDColumn(0,0,energy);
-          manager->FillNtupleDColumn(0,1, theta);
-          manager->FillNtupleDColumn(0,2, phi);
+          manager->FillNtupleIColumn(0,0, eventID);
+          manager->FillNtupleDColumn(0,1, energy);
+          manager->FillNtupleDColumn(0,2, theta);
+          manager->FillNtupleDColumn(0,3, phi);
           manager->AddNtupleRow(0);
         }
       }
@@ -201,10 +206,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
          && previousStep_VolumeName.compare(0, 4, "Chop") != 0
          && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
-        manager->FillNtupleIColumn(1,0,eventID);
+        manager->FillNtupleIColumn(1,0, eventID);
         manager->FillNtupleDColumn(1,1, energy);
+        manager->FillNtupleDColumn(1,2, loc.x());
+        manager->FillNtupleDColumn(1,3, loc.y());
         if(!inFile.compare(0,24,"brems_distributions.root"))
-          manager->FillNtupleDColumn(1,2, weight);
+          manager->FillNtupleDColumn(1,4, weight);
         manager->AddNtupleRow(1);
       }
     }
