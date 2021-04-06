@@ -41,7 +41,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double container_z_pos = detInfo->GetContainerZPosition();
   G4double water_size_y = detInfo->GetWaterSizeY();
   G4double distance_to_chop = detInfo->GetDistanceToChop();
-  G4double beginChop = detInfo->getBeginChop();
+  G4double beginChop = detInfo->getBeginChopper();
   G4double endLinac = detInfo->GetEndLinac();
 
   G4Material *lead = nist->FindOrBuildMaterial("G4_Pb");
