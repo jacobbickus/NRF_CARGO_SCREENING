@@ -28,6 +28,7 @@
 #include "G4ios.hh"
 #include "G4Types.hh"
 #include "globals.hh"
+#include "G4SystemOfUnits.hh"
 
 class SourceInformation
 {
