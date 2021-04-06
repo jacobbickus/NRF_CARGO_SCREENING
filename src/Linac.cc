@@ -15,7 +15,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double l
   G4Material *myVacuum = new G4Material("Vacuum", 1.e-5*g/cm3, 1, kStateGas, 273.15, 2.e-2*bar);
   myVacuum->AddMaterial(air,1);
 
-  G4double bremBacking_thickness = 100.0*mm;
+  G4double bremBacking_thickness = 10.0*mm;
 
   // Linac
   G4Tubs *solidLinac = new G4Tubs("Linac",0, 7*cm, linac_size, 0*deg, 360*deg);
