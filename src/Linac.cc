@@ -26,7 +26,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4Tubs *solidLinac = new G4Tubs("Linac",0, linac_radius, linac_size, 0*deg, 360*deg);
   G4LogicalVolume* logicalLinac = new G4LogicalVolume(solidLinac, tungsten, "Linac");
   new G4PVPlacement(0, G4ThreeVector(0,0, bremStartPos), logicalLinac, "Linac", logicWorld, false, 0, checkOverlaps);
-  detInfo->setEndLinac(bremStartPos+linac_size);
+  detInfo->setEndLinac(bremStartPos+linac_size/2.);
 
   // Vacuum
   G4Tubs *solidVacuum = new G4Tubs("Vacuum", 0, linac_radius - 1*cm, linac_size, 0*deg, 360*deg);
