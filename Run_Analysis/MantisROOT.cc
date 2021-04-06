@@ -3387,6 +3387,7 @@ void MantisROOT::GetScintillationDistribution(const char* filename, bool Correct
   TH1D* h1 = new TH1D("h1","Detected Scintillation Distribution",25,2.,4.);
   tdet->Draw("Energy*1e6>>h1","CreatorProcess == \"Scintillation\"","goff");
   h1->SetLineColor(kBlue);
+  h1->GetXaxis()->SetTitle("Energy [eV]");
   h1->Sumw2();
   //h1->Smooth(2);
   TGraph* t1 = new TGraph(h1);
