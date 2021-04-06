@@ -46,8 +46,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4Tubs *solidBremTarget = new G4Tubs("Brem", 0.*mm, 5.0*mm, bremTarget_thickness/2.0,0.*degree,360.*degree);
   G4LogicalVolume* logicBremTarget = new G4LogicalVolume(solidBremTarget, gold, "Brem");
   new G4PVPlacement(0, G4ThreeVector(0, 0, brem_target_position),logicBremTarget,"Brem", logicBremTargetBacking, false, 0, checkOverlaps);
-
   G4double brem_target_edge_position = bremStartPos + brem_target_position + bremTarget_thickness/2.0;
   G4cout << "Linac::Construct -> Brem Target Beginning Edge Position: " << brem_target_edge_position/(cm) << " cm" << G4endl << G4endl;
-
+  detInfo->setBremTargetBeginPosition(brem_target_edge_position);
 }

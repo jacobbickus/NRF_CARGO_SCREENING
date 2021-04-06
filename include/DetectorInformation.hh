@@ -64,6 +64,9 @@ public:
   void setEndLinac(G4double z){end_linac = z;}
   G4double GetEndLinac()const{return end_linac;}
 
+  void setBremTargetBeginPosition(G4double pos){brem_target_edge_position = pos;}
+  G4double GetBremTargetBeginPosition()const{return brem_target_edge_position;}
+
   void setEndIntObj(G4double z_pos_con, G4double con_z_size)
   {
     EndIntObj = z_pos_con + con_z_size/2;
@@ -79,7 +82,7 @@ public:
 
   G4double bremStartPos, linac_size, container_z_pos, water_size_y, container_edge_position;
   G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_radius, distance_to_chop;
-  G4double end_linac;
+  G4double end_linac, brem_target_edge_position;
   ~DetectorInformation();
 };
 
