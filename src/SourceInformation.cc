@@ -28,11 +28,12 @@ SourceInformation *SourceInformation::instance =0;
 
 SourceInformation::SourceInformation()
 {}
-  
+
 SourceInformation::~SourceInformation()
 {}
 
 void SourceInformation::SetSourceZPosition(G4double z)
 {
   z_pos = z;
+  G4cout << "SourceInformation::SetSourceZPosition -> " << z_pos/(cm) << " cm" << G4endl;
 }
