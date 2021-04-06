@@ -37,6 +37,7 @@
 #include "G4LogicalVolumeStore.hh"
 #include "G4PhysicalVolumeStore.hh"
 #include "G4Box.hh"
+#include "G4Cons.hh"
 #include "G4NistManager.hh"
 #include "G4Isotope.hh"
 #include "G4Material.hh"
