@@ -99,7 +99,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
     exit(100);
   }
 
-  G4Tubs *solidChopper = new G4Tubs("Chop", 0*cm, 15*cm, chopper_thick/2, 0.*deg, 180.*deg);
+  G4Tubs *solidChopper = new G4Tubs("Chop", 0*cm, 7.5*cm, chopper_thick/2, 0.*deg, 180.*deg);
   G4Material *chopperMat = new G4Material("chopperMaterial", chopperDensity, 1);
   G4cout << "ChopperSetup::Construct -> State: " << chopperOn << G4endl;
 
