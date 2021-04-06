@@ -127,20 +127,19 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     G4String CPName = "beam";
 
     // Check if Track is created by NRF
-    if(!bremTest)
+
+    if(theTrack->GetCreatorProcess() !=0)
     {
-      if(theTrack->GetCreatorProcess() !=0)
+      CPName = theTrack->GetCreatorProcess()->GetProcessName();
+      if(addNRF)
       {
-        CPName = theTrack->GetCreatorProcess()->GetProcessName();
-        if(addNRF)
+        if(CPName == "NRF")
         {
-          if(CPName == "NRF")
-          {
-            isNRF = 1;
-          }
+          isNRF = 1;
         }
       }
     }
+
 
     G4ThreeVector p = aStep->GetPreStepPoint()->GetMomentum();
     // sin(theta) = (vector magnitude in XY plane)/(total vector magnitude)
@@ -159,19 +158,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
         krun->AddBremBackingHit();
-        if(CPName != "eBrem")
-        {
-          theTrack->SetTrackStatus(fStopAndKill);
-          krun->AddStatusKilledProcess();
-        }
-        else
-        {
-          manager->FillNtupleIColumn(0,0, eventID);
-          manager->FillNtupleDColumn(0,1, energy);
-          manager->FillNtupleDColumn(0,2, theta);
-          manager->FillNtupleDColumn(0,3, phi);
-          manager->AddNtupleRow(0);
-        }
+        manager->FillNtupleIColumn(0,0, eventID);
+        manager->FillNtupleDColumn(0,1, energy);
+        manager->FillNtupleDColumn(0,2, theta);
+        manager->FillNtupleDColumn(0,3, phi);
+        manager->FillNtupleSColumn(0,4, CPName);
+        manager->AddNtupleRow(0);
       }
     }
 
