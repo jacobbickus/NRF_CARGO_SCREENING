@@ -72,6 +72,9 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, dou
   new G4PVPlacement(0, G4ThreeVector(0.3048*m + 1*cm, 0, col_position),
                     logicCollimator, "ColRi-Pb", logicWorld,
                     false, 0, checkOverlaps);
+  if(bremTest)
+    rearCol_Z_pos = rearCol_Z_pos + 30.*cm;
+    
   new G4PVPlacement(0, G4ThreeVector(0,0,rearCol_Z_pos),
                     logicCollimatorRear, "ColRe-Pb", logicWorld,
                     false, 0, checkOverlaps);
