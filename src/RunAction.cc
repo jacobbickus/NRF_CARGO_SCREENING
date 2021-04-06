@@ -64,6 +64,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   G4int fStatusKilledPhiAngle = rInfo->GetTotalKilledPhi();
   G4double fCerenkovEnergy = rInfo->GetTotalCerenkovEnergy();
   G4double fScintEnergy = rInfo->GetTotalScintEnergy();
+  G4double fBremBackingCount = rInfo->GetTotalBremBackingHit();
 
   G4int TotNbofEvents = aRun->GetNumberOfEvent();
   std::ios::fmtflags mode = G4cout.flags();
@@ -102,6 +103,11 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   {
     G4cout << " Average Scintillation Photon energy emitted:        "
            << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
+  }
+
+  if(fBremBackingCount > 0)
+  {
+    G4cout << "Total Number of Brem Backing Hits: " << fBremBackingCount << G4endl;
   }
 
   G4cout << "----------------------------------------------------------------------" << G4endl;

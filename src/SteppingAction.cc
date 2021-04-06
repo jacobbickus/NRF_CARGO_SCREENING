@@ -158,6 +158,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && previousStep_VolumeName.compare("BremBacking") == 0
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
+        krun->AddBremBackingHit();
         if(CPName != "eBrem")
         {
           theTrack->SetTrackStatus(fStopAndKill);

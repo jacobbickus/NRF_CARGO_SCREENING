@@ -66,9 +66,12 @@ public:
   G4int GetTotalKilledTheta()const {return fStatusKilledThetaAngle;}
   void AddStatusKilledPhiAngle(void){fStatusKilledPhiAngle++;}
   G4int GetTotalKilledPhi()const {return fStatusKilledPhiAngle;}
+  void AddBremBackingHit(){fBremBackingCount++;}
+  G4int GetTotalBremBackingHit()const{return fBremBackingCount;}
 
   G4double fCerenkovEnergy, fScintEnergy;
-  G4int fTotalSurface, fCerenkovCount, fScintCount, fNRF, fStatusKilledPosition, fStatusKilledTime, fStatusKilledThetaAngle, fStatusKilledPhiAngle;
+  G4int fTotalSurface, fCerenkovCount, fScintCount, fNRF, fStatusKilledPosition;
+  G4int fStatusKilledTime, fStatusKilledThetaAngle, fStatusKilledPhiAngle, fBremBackingCount;
   ~RunInformation();
 };
 
