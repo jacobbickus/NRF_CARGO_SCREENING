@@ -38,7 +38,7 @@ ChopperSetup::~ChopperSetup()
   delete chopperM;
 }
 
-G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double linac_size, double container_edge_position, bool checkOverlaps)
+G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 {
   // Setting up Chopper Isotopes
   G4Isotope* Lead204 = new G4Isotope("Lead204", 82, 204, 203.973043*g/mole);
@@ -187,7 +187,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
   if(bremTest)
     chopper_z = 10*cm;
 
-  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm,bremStartPos + chopper_z + linac_size),
+  detInfo->setDistanceToChop(chopper_z);
+  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, bremStartPos + chopper_z + linac_size),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
 

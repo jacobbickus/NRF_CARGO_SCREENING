@@ -46,6 +46,15 @@ public:
   }
 
   // Set Data Functions here
+  void setBremStartPosition(G4double pos){bremStartPos = pos;}
+  G4double GetBremStartPosition()const{return bremStartPos;}
+  void setLinac_Size(G4double theSize){linac_size = theSize;}
+  G4double GetLinacSize()const{return linac_size;}
+  void setContainerZPosition(G4double pos){container_z_pos = pos;}
+  G4double GetContainerZPosition()const{return container_z_pos;}
+  void setWaterSizeY(G4double y){water_size_y = y;}
+  G4double GetWaterSizeY()const{return water_size_y;}
+  
   void setBeginChopper(G4double pos){BeginChop = pos;}
   G4double getBeginChopper()const{return BeginChop;}
   void setEndChop(G4double z_pos){EndChop = z_pos;}
@@ -58,8 +67,13 @@ public:
   G4double getEndIntObj()const{return EndIntObj;}
   void setRearCollimatorPosition(G4double val){RearColPos = val;}
   G4double getRearCollimatorPosition(void){return RearColPos;}
+  void setLinac_Radius(G4double r){linac_radius = r;}
+  G4double GetLinacRadius()const{return linac_radius;}
+  void setDistanceToChop(G4double d){distance_to_chop = d;}
+  G4double GetDistanceToChop()const{return distance_to_chop;}
 
-  G4double BeginChop, EndChop, EndIntObj, RearColPos;
+  G4double bremStartPos, linac_size, container_z_pos, water_size_y;
+  G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_radius, distance_to_chop;
   ~DetectorInformation();
 };
 

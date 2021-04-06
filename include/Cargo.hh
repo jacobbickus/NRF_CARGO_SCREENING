@@ -56,7 +56,7 @@ public:
 Cargo();
 ~Cargo();
 
-void Construct(G4LogicalVolume*, double, double, double, bool);
+void Construct(G4LogicalVolume*, bool);
 void CheckCargoSphereSize();
 
 void AddCargoSphere(){cargo_spheres++;};

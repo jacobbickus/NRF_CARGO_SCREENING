@@ -39,7 +39,7 @@ Cargo::~Cargo()
   delete cargoM;
 }
 
-void Cargo::Construct(G4LogicalVolume* logicWorld, double container_z_pos, double container_edge_position, double chopper_end_edge_position, bool checkO)
+void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
 {
   checkOverlaps = checkO;
   G4NistManager* nist = G4NistManager::Instance();

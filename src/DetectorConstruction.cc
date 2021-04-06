@@ -114,18 +114,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double container_z_pos = 1.2192*m + 1.5*m;
   G4double container_edge_position = container_z_pos - 1.2192*m;
   DetectorInformation* detInfo = DetectorInformation::Instance();
-  chop->Construct(logicWorld, bremStartPos, linac_size, container_edge_position, checkOverlaps);
+  chop->Construct(logicWorld, checkOverlaps);
   // Set up Linac configuration if Brem Test
 
   if(bremTest)
   {
-    linac->Construct(logicWorld, bremStartPos, linac_size, checkOverlaps);
+    linac->Construct(logicWorld, checkOverlaps);
   }
 
   // ***************************************** End of Brem Test Materials ***************************************** //
 
-  collimator->Construct(logicWorld, bremStartPos, linac_size, container_z_pos, water_size_y, checkOverlaps);
-  cargo->Construct(logicWorld, container_z_pos, container_edge_position, detInfo->getEndChop(), checkOverlaps);
+  collimator->Construct(logicWorld, checkOverlaps);
+  cargo->Construct(logicWorld, checkOverlaps);
   cargo->CheckCargoSphereSize();
 
 // ******************************************************** Begin Detector Construction *************************************************************** //

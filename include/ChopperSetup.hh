@@ -54,7 +54,7 @@ public:
 ChopperSetup();
 ~ChopperSetup();
 
-G4VPhysicalVolume* Construct(G4LogicalVolume*, double, double, double, bool);
+G4VPhysicalVolume* Construct(G4LogicalVolume*, bool);
 void SetChopperAbundance(G4double val){chopper_radio_abundance = val;}
 
 void SetChopperMaterial(G4String val)

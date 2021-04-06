@@ -51,7 +51,7 @@ class Collimator
 public:
   Collimator();
   ~Collimator();
-  void Construct(G4LogicalVolume*, double, double, double, double, bool);
+  void Construct(G4LogicalVolume*, bool);
 };
 
 #endif

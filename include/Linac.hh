@@ -42,6 +42,7 @@
 #include "G4NistManager.hh"
 #include "G4Isotope.hh"
 #include "G4Material.hh"
+#include "DetectorInformation.hh"
 
 
 class G4VPhysicalVolume;
@@ -52,7 +53,7 @@ class Linac
 public:
 Linac();
 ~Linac();
-void Construct(G4LogicalVolume*, double, double, bool);
+void Construct(G4LogicalVolume*, bool);
 
 };
 

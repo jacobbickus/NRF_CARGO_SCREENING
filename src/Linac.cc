@@ -5,7 +5,7 @@ Linac::Linac()
 Linac::~Linac()
 {}
 
-void Linac::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double linac_size, bool checkOverlaps)
+void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 {
   G4NistManager* nist = G4NistManager::Instance();
   G4Material *tungsten = nist->FindOrBuildMaterial("G4_W");
@@ -14,11 +14,12 @@ void Linac::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double l
   G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
   G4Material *myVacuum = new G4Material("Vacuum", 1.e-5*g/cm3, 1, kStateGas, 273.15, 2.e-2*bar);
   myVacuum->AddMaterial(air,1);
-
+  DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double bremBacking_thickness = 10.0*mm;
 
   // Linac
   G4double linac_radius = 3.5*cm;
+  detInfo->setLinac_Radius(linac_radius);
   G4Tubs *solidLinac = new G4Tubs("Linac",0, linac_radius, linac_size, 0*deg, 360*deg);
   G4LogicalVolume* logicalLinac = new G4LogicalVolume(solidLinac, tungsten, "Linac");
   new G4PVPlacement(0, G4ThreeVector(0,0, bremStartPos), logicalLinac, "Linac", logicWorld, false, 0, checkOverlaps);

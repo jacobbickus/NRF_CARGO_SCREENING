@@ -31,15 +31,21 @@ Collimator::Collimator()
 Collimator::~Collimator()
 {;}
 
-void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double linac_size, double container_z_pos, double water_size_y, bool checkOverlaps)
+void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 {
   G4NistManager* nist = G4NistManager::Instance();
+  DetectorInformation* detInfo = DetectorInformation::Instance();
+  G4double bremStartPos = detInfo->GetBremStartPosition();
+  G4double linac_size = detInfo->GetLinacSize();
+  G4double linac_radius = detInfo->GetLinacRadius();
+  G4double container_z_pos = detInfo->GetContainerZPosition();
+  G4double water_size_y = detInfo->GetWaterSizeY();
+  
   G4Material *lead = nist->FindOrBuildMaterial("G4_Pb");
   G4double colimator_size = 50*cm;
   G4double col_position = 1.0*cm + container_z_pos - 1.2192*m - colimator_size; // should go 1cm past the container
   G4double col_edge_position = col_position + colimator_size;
   G4double rearCol_Z_pos = bremStartPos - linac_size - 50.0*cm;
-  DetectorInformation* detInfo = DetectorInformation::Instance();
   detInfo->setRearCollimatorPosition(rearCol_Z_pos);
 
   G4Box *solidCollimator =
@@ -52,9 +58,9 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, double bremStartPos, dou
   G4LogicalVolume *logicCollimatorRear =
                         new G4LogicalVolume(solidCollimatorRear, lead, "Collimator");
 
-  G4double brem_collimator_length = 4.5*cm;
+  G4double brem_collimator_length = distance_to_chop/2.;
   G4Cons *solidBremCollimator =
-                        new G4Cons("BremCollimator", 7*cm, 10*cm,
+                        new G4Cons("BremCollimator", linac_radius, linac_radius+2*cm,
                                   5.0*mm, 25.0*mm, brem_collimator_length,
                                   0.0*deg, 360.0*deg);
 
