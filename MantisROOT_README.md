@@ -214,13 +214,13 @@ void PredictThickness(std::vector<string> ObjectNames, bool write2file=false)
 DESCRIPTION:
 Predicts the results of changing the thickness on the objects passed in the string vector.
 
-std::vector<TH1D*> PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy, bool write2file=false)
+void PredictThickness(std::vector<string> ObjectNames, double ResonanceEnergy, bool write2file=false)
 
 DESCRIPTION:
 Predicts the results of changing the thickness on the objects passed in the string vector.
 If the second input is passed the thickness calculations will focus on the given resonance energy. If the third input is set to true the scaled histograms will be written to a file. If a Resonance Energy is provided a vector of the scaled histograms is also returned at function call.
 Example:
-std::vector<TH1D*> histov = mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354, true)"
+mantis->PredictThickness({\"IntObjIn\",\"IntObjOut\"},1.73354, true)"
 
 This would predict thickness effects of IntObjIn and IntObjOut for the 1.73354 resonance energy and write the results to a file.
 
