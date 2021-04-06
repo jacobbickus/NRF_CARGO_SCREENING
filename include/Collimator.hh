@@ -42,6 +42,7 @@
 #include "G4Isotope.hh"
 #include "G4Material.hh"
 #include "DetectorInformation.hh"
+#include "SourceInformation.hh"
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;

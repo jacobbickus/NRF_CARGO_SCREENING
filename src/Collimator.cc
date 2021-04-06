@@ -94,5 +94,13 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
     new G4PVPlacement(0, G4ThreeVector(0,0,bremStartPos+linac_size+brem_collimator_length),
                       logicBremCollimator, "BremCollimator",logicWorld,
                       false, 0, checkOverlaps);
+    SourceInformation* sInfo = SourceInformation::Instance();
+    if((rearCol_Z_pos + rear_col_z_size/2.)/(cm) > sInfo->GetSourceZPosition())
+    {
+      G4cerr << "Collimator::Construct -> Rear Collimator Edge Position: " << (rearCol_Z_pos + rear_col_z_size/2.)/(cm) << " cm" << G4endl;
+      G4cerr << "Collimator::Construct -> Source Position: " << sInfo->GetSourceZPosition() << " cm" << G4endl;
+      G4cerr << "Collimator::Construct -> FATAL ERROR Source Behind Rear Collimator! Exiting!" << G4endl;
+      exit(1);
+    }
   }
 }
