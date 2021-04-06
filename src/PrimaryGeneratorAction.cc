@@ -50,7 +50,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
     DetectorInformation* detInfo = DetectorInformation::Instance();
-    beamStart = detInfo->GetBremTargetBeginPosition() - 1*cm; // start brem beam 1 cm behind brem radiator 
+    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Brem Radiator Position: " << detInfo->GetBremTargetBeginPosition()/(cm) << " cm." << G4endl;
+    beamStart = detInfo->GetBremTargetBeginPosition()/(cm) - 1*cm; // start brem beam 1 cm behind brem radiator 
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
   }
