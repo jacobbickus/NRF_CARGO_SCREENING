@@ -17,12 +17,16 @@ void Linac::Construct(G4LogicalVolume* logicWorld, double bremStartPos, double l
 
   G4double bremBacking_thickness = 100.0*mm;
 
+  // Linac
   G4Tubs *solidLinac = new G4Tubs("Linac",0, 7*cm, linac_size, 0*deg, 360*deg);
   G4LogicalVolume* logicalLinac = new G4LogicalVolume(solidLinac, tungsten, "Linac");
   new G4PVPlacement(0, G4ThreeVector(0,0, bremStartPos), logicalLinac, "Linac", logicWorld, false, 0, checkOverlaps);
+
+  // Vacuum
   G4Tubs *solidVacuum = new G4Tubs("Vacuum", 0, 6*cm, linac_size, 0*deg, 360*deg);
   G4LogicalVolume* logicalVacuum = new G4LogicalVolume(solidVacuum, myVacuum, "Vacuum");
   new G4PVPlacement(0, G4ThreeVector(0,0,0), logicalVacuum, "Vac", logicalLinac, false,0,checkOverlaps);
+
 // Make Brem target
 
 // Brem Backing

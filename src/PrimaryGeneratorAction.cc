@@ -49,7 +49,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   if(bremTest)
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
-    beamStart = 129.9;
+    beamStart = 124.9;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
   }

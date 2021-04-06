@@ -110,7 +110,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   // ********************************************************** World and Materials Complete ************************************************************//
   // Parameters used later
-  G4double bremStartPos = 135*cm;
+  G4double bremStartPos = 130*cm;
   G4double container_z_pos = 1.2192*m + 1.5*m;
   G4double container_edge_position = container_z_pos - 1.2192*m;
   DetectorInformation* detInfo = DetectorInformation::Instance();
