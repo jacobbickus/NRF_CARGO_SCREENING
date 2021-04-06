@@ -60,8 +60,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 
-  G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Beam Size set to: " << beam_size/(mm) << " mm" << G4endl;
-  
+  //G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Beam Size set to: " << beam_size/(mm) << " mm" << G4endl;
+
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);
   // Default Kinematics
