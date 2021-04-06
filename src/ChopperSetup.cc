@@ -99,7 +99,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
     exit(100);
   }
 
-  G4Tubs *solidChopper = new G4Tubs("Chop", 0*cm, 7.5*cm, chopper_thick/2, 0.*deg, 180.*deg);
+  G4Tubs *solidChopper = new G4Tubs("Chop", 0*cm, 4.5*cm, chopper_thick/2, 0.*deg, 180.*deg);
   G4Material *chopperMat = new G4Material("chopperMaterial", chopperDensity, 1);
   G4cout << "ChopperSetup::Construct -> State: " << chopperOn << G4endl;
 
@@ -182,7 +182,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, double b
 
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
 
-  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -7*cm,bremStartPos + chopper_z + linac_size),
+  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -4*cm,bremStartPos + chopper_z + linac_size),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
 
