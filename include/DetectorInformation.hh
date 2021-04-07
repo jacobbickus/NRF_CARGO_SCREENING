@@ -75,13 +75,15 @@ public:
   G4double getEndIntObj()const{return EndIntObj;}
   void setRearCollimatorPosition(G4double val){RearColPos = val;}
   G4double getRearCollimatorPosition(void){return RearColPos;}
-  void setLinac_Radius(G4double r){linac_radius = r;}
-  G4double GetLinacRadius()const{return linac_radius;}
+  void setLinac_MinRadius(G4double r){linac_min_radius = r;}
+  G4double GetLinacMinRadius()const{return linac_min_radius;}
+  void setLinac_MaxRadius(G4double r){linac_max_radius = r;}
+  G4double GetLinacMaxRadius()const{return linac_max_radius;}
   void setDistanceToChop(G4double d){distance_to_chop = d;}
   G4double GetDistanceToChop()const{return distance_to_chop;}
 
   G4double bremStartPos, linac_size, container_z_pos, water_size_y, container_edge_position;
-  G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_radius, distance_to_chop;
+  G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_min_radius, linac_max_radius, distance_to_chop;
   G4double end_linac, brem_target_edge_position;
   ~DetectorInformation();
 };

@@ -19,7 +19,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 
   // Linac
   G4double linac_radius = 3.5*cm;
-  detInfo->setLinac_Radius(linac_radius);
+  detInfo->setLinac_MaxRadius(linac_radius);
   G4double linac_size = detInfo->GetLinacSize();
   G4double bremStartPos = detInfo->GetBremStartPosition();
 
@@ -27,7 +27,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4LogicalVolume* logicalLinac = new G4LogicalVolume(solidLinac, tungsten, "Linac");
   new G4PVPlacement(0, G4ThreeVector(0,0, bremStartPos), logicalLinac, "Linac", logicWorld, false, 0, checkOverlaps);
   detInfo->setEndLinac(bremStartPos+linac_size/2.);
-
+  detInfo->setLinac_MinRadius(linac_radius - 1*cm);
   // Vacuum
   G4Tubs *solidVacuum = new G4Tubs("Vacuum", 0, linac_radius - 1*cm, linac_size, 0*deg, 360*deg);
   G4LogicalVolume* logicalVacuum = new G4LogicalVolume(solidVacuum, myVacuum, "Vacuum");

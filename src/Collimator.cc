@@ -37,7 +37,8 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double bremStartPos = detInfo->GetBremStartPosition();
   G4double linac_size = detInfo->GetLinacSize();
-  G4double linac_radius = detInfo->GetLinacRadius();
+  G4double linac_max_radius = detInfo->GetLinacMaxRadius();
+  G4double linac_min_radius = detInfo->GetLinacMinRadius();
   G4double container_z_pos = detInfo->GetContainerZPosition();
   G4double water_size_y = detInfo->GetWaterSizeY();
   G4double distance_to_chop = detInfo->GetDistanceToChop();
@@ -63,7 +64,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 
   G4double brem_collimator_length = beginChop - endLinac;
   G4Cons *solidBremCollimator =
-                        new G4Cons("BremCollimator", linac_radius, linac_radius+2*cm,
+                        new G4Cons("BremCollimator", linac_min_radius, linac_min_radius+2*cm,
                                   5.0*mm, 25.0*mm, brem_collimator_length/(cm),
                                   0.0*deg, 360.0*deg);
 
