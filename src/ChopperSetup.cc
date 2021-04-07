@@ -190,6 +190,15 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4cout << "ChopperSetup::Construct -> Beginning of Chopper from the source distance: "
           << begin_from_source << " cm" << G4endl;
 
+  if(begin_from_source < 0)
+  {
+    G4cerr << "ChopperSetup::Construct -> FATAL ERROR Source starting in front of Chopper!"
+            << G4endl << "Source Position: " << source_z_pos << " cm" << G4endl
+            << "Chopper Beginning Edge Position: " << chopper_beginning_edge_position/(cm)
+            << " cm" << G4endl;
+    exit(1);
+  }
+  
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
 
   if(bremTest)
