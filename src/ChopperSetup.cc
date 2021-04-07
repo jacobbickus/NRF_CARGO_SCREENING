@@ -81,7 +81,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4double container_edge_position = detInfo->GetContainerEdgePosition();
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
-  G4double chopper_beginning_edge_position = (bremStartPos+ chopper_z + linac_size) - chopper_thick/2.;
+  G4double chopper_beginning_edge_position = (bremStartPos + chopper_z + linac_size) - chopper_thick/2.;
   G4double chopper_end_edge_position = (bremStartPos + chopper_z + linac_size) + chopper_thick/2.;
   G4double chopper_center_position = (chopper_beginning_edge_position + chopper_end_edge_position)/2.;
 
@@ -138,8 +138,9 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   {
     if(chopper_radio_abundance <= 0.0)
     {
-            G4cerr << "Fatal Error: User Must input chopper isotope abundance as percentage > 0" << G4endl;
-            exit(100);
+      G4cerr << "Fatal Error: User Must input chopper isotope abundance as percentage > 0"
+              << G4endl;
+      exit(100);
     }
 
     if(chopperOn)
@@ -172,7 +173,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   }
   else{G4cerr << "ERROR Chopper Density not found!" << G4endl; exit(100);}
 
-  G4cout << "ChopperSetup::Construct -> Material density: " << chopperDensity/(g/cm3) << " g/cm3" << G4endl;
+  G4cout << "ChopperSetup::Construct -> Material density: " << chopperDensity/(g/cm3)
+            << " g/cm3" << G4endl;
 
 
   G4cout << "ChopperSetup::Construct -> Thickness: " << chopper_thick/(mm)

@@ -117,9 +117,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
+  G4double linac_size = 4.5*cm;
   detInfo->setLinac_Size(linac_size);
   detInfo->setWaterSizeY(water_size_y);
-  
+
   chop->Construct(logicWorld, checkOverlaps);
   // Set up Linac configuration if Brem Test
 
