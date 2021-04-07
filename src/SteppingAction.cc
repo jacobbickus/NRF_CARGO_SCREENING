@@ -28,6 +28,7 @@ extern G4bool debug;
 extern G4String inFile;
 extern G4bool addNRF;
 extern G4long seed;
+extern G4bool output;
 
 SteppingAction::SteppingAction(EventAction* event)
         : G4UserSteppingAction(), kevent(event),
@@ -47,6 +48,8 @@ SteppingAction::~SteppingAction()
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
+  if(!output)
+    return;
 
     G4StepPoint* endPoint   = aStep->GetPostStepPoint();
     G4StepPoint* startPoint = aStep->GetPreStepPoint();
