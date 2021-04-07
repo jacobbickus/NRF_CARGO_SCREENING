@@ -85,7 +85,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
   G4double chopper_beginning_edge_position = (source_z_pos*cm + chopper_z) + chopper_thick/2.;
-  G4double chopper_end_edge_position = (source_z_pos/(cm) + chopper_z) + chopper_thick*2.;
+  G4double chopper_end_edge_position = (source_z_pos*cm + chopper_z) + chopper_thick*2.;
   G4double chopper_center_position = (chopper_beginning_edge_position + chopper_end_edge_position)/2.;
 
   detInfo->setBeginChopper(chopper_beginning_edge_position);
