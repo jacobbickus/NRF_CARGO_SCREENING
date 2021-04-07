@@ -194,13 +194,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        else if(cos(phi) < 0.8)
+        else if(cos(phi) < 0.)
         {
           krun->AddStatusKilledPhiAngle();
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        else if(cos(theta) < 0.8)
+        else if(cos(theta) < 0.)
         {
           krun->AddStatusKilledThetaAngle();
           theTrack->SetTrackStatus(fStopAndKill);
