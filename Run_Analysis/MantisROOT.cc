@@ -53,7 +53,7 @@ public:
     void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
-    void CheckAngles(const char*, int estimate=-1);
+    void CheckAngles(const char*, const char*, const char*, int estimate=-1);
     TGraph* CreateTKDE(const char*, int nentries=10000);
     void CheckDet(const char*, bool weighted=false, int estimate=-1);
     TGraph* CreateScintillationDistribution(std::vector<double>, std::vector<double>);
@@ -2893,7 +2893,7 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
 
 } // end of CheckIntObj
 
-void MantisROOT::CheckAngles(const char* filename, int estimate=-1)
+void MantisROOT::CheckAngles(const char* filename, const char* obj1, const char* obj2, int estimate=-1)
 {
   if(debug)
     std::cout << "MantisROOT::CheckAngles -> Checking Angles..." << std::endl;
@@ -2910,11 +2910,11 @@ void MantisROOT::CheckAngles(const char* filename, int estimate=-1)
     std::cout << "MantisROOT::CheckAngles -> File opened." << std::endl;
 
   TTree *t1, *t2;
-  f->GetObject("IntObjOut",t1);
-  f->GetObject("DetInfo",t2);
+  f->GetObject(obj1,t1);
+  f->GetObject(obj2,t2);
   t1->SetEstimate(estimate);
   t2->SetEstimate(estimate);
-  std::cout << "MantisROOT::CheckAngles -> Grabbing IntObjOut Angles and Events." << std::endl;
+  //std::cout << "MantisROOT::CheckAngles -> Grabbing IntObjOut Angles and Events." << std::endl;
   int entries = t1->Draw("Theta:Phi:EventID","","goff");
 
   if(debug)
@@ -2947,8 +2947,8 @@ void MantisROOT::CheckAngles(const char* filename, int estimate=-1)
     }
   }
 
-  std::cout << "MantisROOT::CheckAngles -> IntObjOut Angles and Events Grabbed." << std::endl;
-  std::cout << "MantisROOT::CheckAngles -> Grabbing Detinfo Events..." << std::endl;
+  //std::cout << "MantisROOT::CheckAngles -> IntObjOut Angles and Events Grabbed." << std::endl;
+  //std::cout << "MantisROOT::CheckAngles -> Grabbing Detinfo Events..." << std::endl;
 
   int entries2 = t2->Draw("EventID","","goff");
 
@@ -2969,9 +2969,9 @@ void MantisROOT::CheckAngles(const char* filename, int estimate=-1)
       events2v.push_back((int)eventID2[i]);
   }
 
-  std::cout << "MantisROOT::CheckAngles -> DetInfo Events Grabbed." << std::endl;
+  //std::cout << "MantisROOT::CheckAngles -> DetInfo Events Grabbed." << std::endl;
 
-  std::cout << "MantisROOT::CheckAngles -> Removing Duplicates and Sorting DetInfo..." << std::endl;
+  std::cout << "MantisROOT::CheckAngles -> Removing Duplicates and Sorting..." << std::endl;
   std::sort(events2v.begin(),events2v.end());
   events2v.erase(unique(events2v.begin(),events2v.end()),events2v.end());
   if(debug)
@@ -3030,7 +3030,8 @@ void MantisROOT::CheckAngles(const char* filename, int estimate=-1)
   string outfile = "Check_Angles_" + filenamebase + ".root";
   TFile *fout = new TFile(outfile.c_str(),"RECREATE");
   fout->cd();
-  TTree *tAngle = new TTree("tAngle","IntObjOut Emission Angles Leading to Detection");
+  string ttree_name = string(obj1) + " Emission Angles for Events found in " + string(obj2);
+  TTree *tAngle = new TTree("tAngle",ttree_name.c_str());
   int theEvent;
   double theTheta, thePhi;
 
@@ -4038,12 +4039,12 @@ void MantisROOT::Show_CheckIntObj_Description()
 
 void MantisROOT::Show_CheckAngles()
 {
-  std::cout << "void CheckAngles(const char* filename, int estimate)" << std::endl;
+  std::cout << "void CheckAngles(const char* filename, const char* object1, const char* object2, int estimate)" << std::endl;
 }
 
 void MantisROOT::Show_CheckAngles_Description()
 {
-  std::cout << "DESCRIPTION: " << std::endl << "Determines which Angles emitted from IntObjOut are Detected."
+  std::cout << "DESCRIPTION: " << std::endl << "Determines which Angles emitted from  object1 are found in object2."
   << std::endl << "Estimate sets the limit on how many events to check. "
   << std::endl << "Usefull for determining emission angle cuts to place." << std::endl;
 }

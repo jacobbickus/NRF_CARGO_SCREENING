@@ -20,11 +20,11 @@ MEMBER FUNCTIONS
 Check Emission Angles
 ==
 
-void CheckAngles(const char* filename, int estimate=-1)
+void CheckAngles(const char* filename, const char* object1, const char* object2, int estimate=-1)
 
 DESCRIPTION:
 
-Determines which Angles emitted from IntObjOut are Detected.
+Determines which Angles emitted from object1 are found in object2.
 Estimate sets the limit on how many events to check. Set estimate to -1 for all events.
 Usefull for determining emission angle cuts to place for developing efficient simulations
 
