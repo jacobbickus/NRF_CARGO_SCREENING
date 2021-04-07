@@ -202,7 +202,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
 
   if(bremTest)
-    chopper_z = 10*cm;
+    chopper_z = 2*cm;
 
   detInfo->setDistanceToChop(chopper_z);
 
