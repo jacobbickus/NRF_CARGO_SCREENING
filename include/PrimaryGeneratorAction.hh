@@ -84,7 +84,7 @@ void SetEnergyCut(G4double x)
 void CloseInputFile(){if(fFileOpen) fin->Close();}
 
 private:
-  void CreateInputSpectrum(TH1D*);
+  void CreateInputSpectrum(TGraph*);
   void CheckFile(const char*);
   G4double SampleUResonances();
   G4double SampleEnergyRange(double,double);
@@ -101,6 +101,7 @@ private:
   TRandom2 Random;
   TGraph *tBrems;
   TGraph *gSample;
+  TH1D* hSample;
   TFile *fin;
 };
 
