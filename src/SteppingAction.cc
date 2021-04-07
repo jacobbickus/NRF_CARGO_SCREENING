@@ -163,6 +163,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && previousStep_VolumeName.compare("Brem") == 0)
 
       {
+        /*
         if(cos(phi) < 0.)
         {
           krun->AddStatusKilledPhiAngle();
@@ -175,6 +176,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
+        */
         manager->FillNtupleIColumn(1,0, eventID);
         manager->FillNtupleDColumn(1,1, energy);
         manager->FillNtupleDColumn(1,2, theta);
