@@ -15,7 +15,7 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4Material *myVacuum = new G4Material("Vacuum", 1.e-5*g/cm3, 1, kStateGas, 273.15, 2.e-2*bar);
   myVacuum->AddMaterial(air,1);
   DetectorInformation* detInfo = DetectorInformation::Instance();
-  G4double bremBacking_thickness = 10.0*mm;
+  G4double bremBacking_thickness = 5.0*mm;
 
   // Linac
   G4double linac_radius = 3.5*cm;
