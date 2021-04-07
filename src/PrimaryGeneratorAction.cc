@@ -41,7 +41,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   if(!bremTest)
     beam_size = 10.0*mm; // optimized beam size for a 4.5cm radius interrogation object
   else
-    beam_size = 1.3*mm;
+    beam_size = 1.0*mm;
 
   // Call messenger after default beams are set that way user can change default
   pgaM = new PGAMessenger(this);
