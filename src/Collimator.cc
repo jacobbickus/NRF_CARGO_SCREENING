@@ -64,7 +64,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double brem_collimator_length = beginChop - endLinac;
   G4Cons *solidBremCollimator =
                         new G4Cons("BremCollimator", linac_radius, linac_radius+2*cm,
-                                  5.0*mm, 25.0*mm, brem_collimator_length,
+                                  5.0*mm, 25.0*mm, brem_collimator_length/(cm),
                                   0.0*deg, 360.0*deg);
 
   G4LogicalVolume* logicBremCollimator =
