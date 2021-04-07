@@ -184,6 +184,9 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4double center_from_source = chopper_center_position/(cm) - source_z_pos;
   G4cout << "ChopperSetup::Construct -> Center distance from the source: "
           << center_from_source << " cm" << G4endl;
+  G4double begin_from_source = chopper_beginning_edge_position/(cm) - source_z_pos;
+  G4cout << "ChopperSetup::Construct -> Beginning of Chopper from the source distance: "
+          << begin_from_source << " cm" << G4endl;
 
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
 
