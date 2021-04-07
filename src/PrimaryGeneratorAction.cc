@@ -92,7 +92,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     {
         file_check = false;
         gSample = (TGraph*) fin->Get("Graph_from_hSample");
-        hSample = (TGraph*) fin->Get("hSample");
+        hSample = (TH1D*) fin->Get("hSample");
 
         if(!gSample || !hSample)
         {
@@ -146,7 +146,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         // two points close to x is computed. If x is outside the graph
         // range, a linear extrapolation is computed. Eval here returns the
         // probability per 5 eV for each respective distribution
-        G4double dNdE = gBrems->Eval(energy);
+        G4double dNdE = tBrems->Eval(energy);
         G4double importanceSampling = 0.;
         // This hopes to quicken simulation by avoiding TGraph::Eval()
         if(cutE > 0.1)
@@ -250,7 +250,7 @@ void PrimaryGeneratorAction::CreateInputSpectrum(TGraph* tBrems_in)
   }
 
   // Evaluate Closest Energies in tgraph
-  for(int i=0;i<energies.size();++i)
+  for(unsigned int i=0;i<energies.size();++i)
   {
     dNdEv.push_back(tBrems_in->Eval(energies[i]));
   }
