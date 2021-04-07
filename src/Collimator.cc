@@ -91,7 +91,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 
   if(bremTest)
   {
-    new G4PVPlacement(0, G4ThreeVector(0,0,bremStartPos+linac_size+brem_collimator_length),
+    new G4PVPlacement(0, G4ThreeVector(0,0,bremStartPos+linac_size+brem_collimator_length/(cm)),
                       logicBremCollimator, "BremCollimator",logicWorld,
                       false, 0, checkOverlaps);
     SourceInformation* sInfo = SourceInformation::Instance();
