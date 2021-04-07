@@ -77,10 +77,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fin = TFile::Open(inFile.c_str());
     fFileOpen = true;
     fin->cd();
-    hBrems  = (TH1D*) fin->Get("hBrems");
+    tBrems  = (TGraph*) fin->Get("tBrems");
 
     if(debug)
-      hBrems->Print();
+      tBrems->Print();
 
     if(!hBrems)
     {
@@ -91,14 +91,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     if(!inFile.compare("brems_distributions.root"))
     {
         file_check = false;
-        gBrems = (TGraph*) fin->Get("Graph_from_hBrems");
-        hSample = (TH1D*) fin->Get("hSample");
         gSample = (TGraph*) fin->Get("Graph_from_hSample");
 
-        if(debug)
-          hSample->Print();
-
-        if(!hSample || !gSample || !gBrems)
+        if(!gSample)
         {
           G4cerr << "PrimaryGeneratorAction::PrimaryGeneratorAction() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
           exit(1);
@@ -112,7 +107,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       if(debug)
         std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Calling CreateInputSpectrum..." << std::endl;
 
-      CreateInputSpectrum(hBrems);
+      CreateInputSpectrum(tBrems);
       G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
     }
 
@@ -234,30 +229,31 @@ G4double PrimaryGeneratorAction::SampleEnergyRange(double center_energy, double 
   return Random.Uniform(center_energy-width, center_energy+width);
 }
 
-void PrimaryGeneratorAction::CreateInputSpectrum(TH1D* hBrems_in)
+void PrimaryGeneratorAction::CreateInputSpectrum(TGraph* tBrems_in)
 {
   if(debug)
     std::cout << "PrimaryGeneratorAction::CreateInputSpectrum -> Creating Input Spectrum..." << std::endl;
 
   std::vector<double> dNdEv;
 
-  if(debug)
+  // create energies vector with 5eV spacing
+  // find max
+  double dx = 5.0e-6;
+  G4double maxE = TMath::MaxElement(tBrems_in->GetN(), tBrems_in->GetX());
+  G4int nbins = maxE/dx; // 5eV Spacing
+  G4double counter = 0;
+  for(int i=0;i<nbins;++i)
   {
-    std::cout << "PrimaryGeneratorAction::CreateInputSpectrum -> Bin Center 0: " << hBrems_in->GetXaxis()->GetBinCenter(0)
-     << std::endl << "Bin Center 1: " << hBrems_in->GetXaxis()->GetBinCenter(1)
-     << std::endl << "Bin Content 0: " << hBrems_in->GetBinContent(0)
-     << std::endl << "Bin Content 1: " << hBrems_in->GetBinContent(1) << std::endl;
+    counter+= dx;
+    energies.push_back(counter);
   }
 
-  for(int i=1;i<hBrems_in->GetNbinsX();++i)
+  // Evaluate Closest Energies in tgraph
+  for(int i=0;i<energies.size();++i)
   {
-    // set energies
-    energies.push_back(hBrems_in->GetXaxis()->GetBinCenter(i));
-    // set dNdE
-    dNdEv.push_back(hBrems_in->GetBinContent(i));
+    dNdEv.push_back(tBrems_in->Eval(energies[i]));
   }
 
-  double dx = energies[1] - energies[0];
   N.push_back(0);
 
   if(debug)

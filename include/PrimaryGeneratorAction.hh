@@ -46,6 +46,7 @@
 #include "TGraph.h"
 #include "TRandom2.h"
 #include "TSystem.h"
+#include "TMath.h"
 
 class G4Event;
 class HistoManager;
@@ -98,10 +99,8 @@ private:
   std::vector<double> energies, N;
   // ROOT
   TRandom2 Random;
-  TGraph *gBrems;
+  TGraph *tBrems;
   TGraph *gSample;
-  TH1D *hBrems;
-  TH1D *hSample;
   TFile *fin;
 };
 

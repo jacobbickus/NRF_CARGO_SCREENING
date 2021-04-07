@@ -64,7 +64,7 @@ public:
     double Energy2Wave(double, string unit="eV");
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, int estimate=-1);
-    void PrepInputSpectrum(const char*, double deltaE=5.0e-6, string outfile="brem.root");
+    void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=5.0e-6, string outfile="brem.root");
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
 
@@ -2545,13 +2545,13 @@ void MantisROOT::WriteSampling(TH1D* hBrems, TH1D* hSample, TGraph* gBrems, TGra
   fout->Close();
 }
 
-void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE=5.0e-6, string outfile="brem.root")
+void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* obj="ChopIn", double deltaE=1.0e-3, string outfile="brem.root")
 {
   CheckFile(bremInputFilename);
   TFile *f = new TFile(bremInputFilename);
   f->cd();
   TTree* tBrem;
-  f->GetObject("ChopIn", tBrem);
+  f->GetObject(obj, tBrem);
   double maxE = tBrem->GetMaximum("Energy");
   double minE = tBrem->GetMinimum("Energy");
 
@@ -2564,10 +2564,12 @@ void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE=
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
   hBrems->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* gBrems = new TGraph(hBrems);
   TFile *fout = new TFile(outfile.c_str(),"RECREATE");
   fout->cd();
   hBrems->Write();
-  std::cout << "MantisROOT::PrepInputSpectrum -> hBrems written to " << outfile << std::endl;
+  gBrems->Write();
+  std::cout << "MantisROOT::PrepInputSpectrum -> Bremsstrahlung Spectra written to " << outfile << std::endl;
   fout->Close();
   f->cd();
   f->Close();
@@ -4138,12 +4140,13 @@ void MantisROOT::Show_PrepareAnalysis_Description()
 
 void MantisROOT::Show_PrepInputSpectrum()
 {
-  std::cout << "void PrepInputSpectrum(const char* bremInputFilename, double deltaE=5.0e-6, string outfilename=\"brem.root\")" << std::endl;
+  std::cout << "void PrepInputSpectrum(const char* bremInputFilename, const char* object, double deltaE=5.0e-6, string outfilename=\"brem.root\")" << std::endl;
 }
 
 void MantisROOT::Show_PrepInputSpectrum_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "Prepares input spectrum file for Mantis Simulation without importance sampling."
+  << std::endl << "Object name options are Radiator, Backing, or ChopIn."
   << std::endl << "deltaE is the bin width of the Histogram and if the user wishes a nondefault outfilename enter the third input."
   << std::endl;
 }
