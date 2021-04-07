@@ -36,14 +36,15 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 // Make Brem target
 
 // Brem Backing
-  G4Box *solidBremTargetBacking = new G4Box("BremBacking", 20.1*mm/2.0, bremBacking_thickness/2.0, bremBacking_thickness/2.0);
+  G4double bremBacking_xy = 1.5*mm;
+  G4Box *solidBremTargetBacking = new G4Box("BremBacking", bremBacking_xy, bremBacking_xy, bremBacking_thickness/2.0);
   G4LogicalVolume* logicBremTargetBacking = new G4LogicalVolume(solidBremTargetBacking, copper, "BremBacking");
   new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicBremTargetBacking, "BremBacking", logicalVacuum, false, 0, checkOverlaps);
 
 // Brem Radiator
   G4double bremTarget_thickness = 0.102*mm;
   G4double brem_target_position = -(bremBacking_thickness/2.0) + bremTarget_thickness/2.0;
-  G4Tubs *solidBremTarget = new G4Tubs("Brem", 0.*mm, 5.0*mm, bremTarget_thickness/2.0,0.*degree,360.*degree);
+  G4Tubs *solidBremTarget = new G4Tubs("Brem", 0.*mm, 1.0*mm, bremTarget_thickness/2.0,0.*degree,360.*degree);
   G4LogicalVolume* logicBremTarget = new G4LogicalVolume(solidBremTarget, gold, "Brem");
   new G4PVPlacement(0, G4ThreeVector(0, 0, brem_target_position),logicBremTarget,"Brem", logicBremTargetBacking, false, 0, checkOverlaps);
   G4double brem_target_edge_position = bremStartPos + brem_target_position + bremTarget_thickness/2.0;
