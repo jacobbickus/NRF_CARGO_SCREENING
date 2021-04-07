@@ -163,7 +163,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && previousStep_VolumeName.compare("Brem") == 0)
 
       {
-        /*
         if(cos(phi) < 0.)
         {
           krun->AddStatusKilledPhiAngle();
@@ -176,7 +175,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        */
+
         manager->FillNtupleIColumn(1,0, eventID);
         manager->FillNtupleDColumn(1,1, energy);
         manager->FillNtupleDColumn(1,2, theta);
@@ -192,6 +191,18 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(CPName.compare("eBrem") !=0)
         {
           krun->AddStatusKilledProcess();
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
+        else if(cos(phi) < 0.8)
+        {
+          krun->AddStatusKilledPhiAngle();
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
+        else if(cos(theta) < 0.8)
+        {
+          krun->AddStatusKilledThetaAngle();
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
