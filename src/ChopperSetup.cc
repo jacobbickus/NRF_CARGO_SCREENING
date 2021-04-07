@@ -79,10 +79,13 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4double bremStartPos = detInfo->GetBremStartPosition();
   G4double linac_size = detInfo->GetLinacSize();
   G4double container_edge_position = detInfo->GetContainerEdgePosition();
+  SourceInformation* sInfo = SourceInformation::Instance();
+  G4double source_z_pos = sInfo->GetSourceZPosition();
+
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
-  G4double chopper_beginning_edge_position = (bremStartPos + chopper_z + linac_size) - chopper_thick/2.;
-  G4double chopper_end_edge_position = (bremStartPos + chopper_z + linac_size) + chopper_thick/2.;
+  G4double chopper_beginning_edge_position = (source_z_pos + chopper_z) + chopper_thick/2.;
+  G4double chopper_end_edge_position = (source_z_pos + chopper_z) + chopper_thick*2.;
   G4double chopper_center_position = (chopper_beginning_edge_position + chopper_end_edge_position)/2.;
 
   detInfo->setBeginChopper(chopper_beginning_edge_position);
@@ -180,9 +183,6 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4cout << "ChopperSetup::Construct -> Thickness: " << chopper_thick/(mm)
           << " mm" << G4endl;
 
-  SourceInformation* sInfo = SourceInformation::Instance();
-  G4double source_z_pos = sInfo->GetSourceZPosition();
-
   G4double center_from_source = chopper_center_position/(cm) - source_z_pos;
   G4cout << "ChopperSetup::Construct -> Center distance from the source: "
           << center_from_source << " cm" << G4endl;
@@ -198,7 +198,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
             << " cm" << G4endl;
     exit(1);
   }
-  
+
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
 
   if(bremTest)
@@ -206,7 +206,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
 
   detInfo->setDistanceToChop(chopper_z);
 
-  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, bremStartPos + chopper_z + linac_size),
+  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, chopper_center_position/(cm)),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
 
