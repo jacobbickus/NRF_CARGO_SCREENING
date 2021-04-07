@@ -156,6 +156,25 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     if(bremTest)
     {
+      // exiting Brem Radiator cuts 
+      if(nextStep_VolumeName.compare("Brem") != 0
+          && previousStep_VolumeName.compare("Brem") == 0)
+
+      {
+        if(cos(phi) < 0.85)
+        {
+          krun->AddStatusKilledPhiAngle();
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
+        if(cos(theta) < 0.85)
+        {
+          krun->AddStatusKilledThetaAngle();
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
+      }
+      // exiting BremBacking
       if(nextStep_VolumeName.compare("BremBacking") != 0
           && previousStep_VolumeName.compare("BremBacking") == 0
           && theTrack->GetParticleDefinition() == G4Gamma::Definition())
@@ -224,7 +243,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             return;
           }
         }
-        
+
         manager->FillNtupleIColumn(1,0, eventID);
         manager->FillNtupleDColumn(1,1, energy);
         manager->FillNtupleDColumn(1,2, loc.x());
