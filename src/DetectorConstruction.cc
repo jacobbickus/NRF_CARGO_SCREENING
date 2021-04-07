@@ -417,9 +417,12 @@ void DetectorConstruction::DefDetPositionConstraintLeft(double water_x, double w
   }
   else
   {
-    G4cout << "DetectorConstruction::DefDetPositionConstraintLeft -> Left Boundary Constraint Test Passed."
-    << G4endl << "Water Size set to: " << water_x << G4endl << "Water Position set to: " << water_x_pos
-    << G4endl << "Position: " << left_pos << " Less than Boundary: " << left_boundary << G4endl;
+    if(checkOverlaps)
+    {
+      G4cout << "DetectorConstruction::DefDetPositionConstraintLeft -> Left Boundary Constraint Test Passed."
+      << G4endl << "Water Size set to: " << water_x << G4endl << "Water Position set to: " << water_x_pos
+      << G4endl << "Position: " << left_pos << " Less than Boundary: " << left_boundary << G4endl;
+    }
   }
 }
 
@@ -438,8 +441,11 @@ void DetectorConstruction::DefDetPositionConstraintRight(double water_x, double 
   }
   else
   {
-    G4cout << "DetectorConstruction::DefDetPositionConstraintRight -> Right Boundary Constraint Test Passed."
-    << G4endl << "Position: " << right_pos << " Greater than Boundary: " << right_boundary << G4endl;
+    if(checkOverlaps)
+    {
+      G4cout << "DetectorConstruction::DefDetPositionConstraintRight -> Right Boundary Constraint Test Passed."
+      << G4endl << "Position: " << right_pos << " Greater than Boundary: " << right_boundary << G4endl;
+    }
   }
 
 }
