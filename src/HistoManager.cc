@@ -29,9 +29,11 @@ extern G4bool bremTest;
 extern G4bool debug;
 extern G4String inFile;
 
-HistoManager::HistoManager() : fFactoryOn(false)
+HistoManager::HistoManager() : fFactoryOn(false), WEIGHTED(false)
 {
   start_time = time(0);
+  if(!inFile.compare("brems_distributions.root"))
+    WEIGHTED = true;
 }
 
 HistoManager::~HistoManager()
@@ -57,8 +59,10 @@ void HistoManager::Book()
   manager->CreateNtupleDColumn("Energy");
   manager->CreateNtupleDColumn("X");
   manager->CreateNtupleDColumn("Y");
-  if(!inFile.compare(0,24,"brems_distributions.root"))
+
+  if(WEIGHTED)
     manager->CreateNtupleDColumn("Weight");
+
   manager->FinishNtuple();
 
   if(bremTest)
@@ -90,10 +94,12 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("isNRF");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
-    
+
     // Create ID 2 Ntuple for NRF Materials
     manager->CreateNtuple("NRF","NRF Data");
     manager->CreateNtupleIColumn("EventID");
@@ -103,8 +109,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
     manager->CreateNtupleIColumn("Seed");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 3 NTuple for Incident Interrogation Object Information
@@ -117,8 +125,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Phi");
     manager->CreateNtupleDColumn("Time");
     manager->CreateNtupleIColumn("Seed");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 4 Ntuple for IntObj Emission Data
@@ -131,8 +141,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Phi");
     manager->CreateNtupleDColumn("Time");
     manager->CreateNtupleIColumn("Seed");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 5 Ntuple for Incident Water Tank Data
@@ -142,8 +154,10 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("TrackID");
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleSColumn("CreatorProcess");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 6 Ntuple for cherenkov in water
@@ -152,8 +166,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleIColumn("NumSecondaries");
     manager->CreateNtupleDColumn("Time");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 7 Ntuple for Detected Information
@@ -165,8 +181,10 @@ void HistoManager::Book()
     manager->CreateNtupleSColumn("CreatorProcess");
     manager->CreateNtupleDColumn("Time");
     manager->CreateNtupleIColumn("Seed");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+
     manager->FinishNtuple();
 
     // Create ID 8 Ntuple for Detector Process Information
@@ -175,8 +193,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleSColumn("DetProcess");
     manager->CreateNtupleIColumn("Seed");
-    if(!inFile.compare(0,24,"brems_distributions.root"))
+
+    if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
+      
     manager->FinishNtuple();
 
   }

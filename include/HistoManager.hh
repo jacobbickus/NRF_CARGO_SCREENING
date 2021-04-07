@@ -42,7 +42,7 @@ void finish();     // close root file
 void Book();
 
 private:
-G4bool fFactoryOn;
+G4bool fFactoryOn, WEIGHTED;
 G4int start_time, stop_time;
 };
 
