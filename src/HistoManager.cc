@@ -85,7 +85,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
   }
 
-  if(!bremTest)
+  else
   {
     // Create ID 1 Ntuple for Exiting Chopper Data
     manager->CreateNtuple("ChopOut", "Chopper Wheel Exiting Radiation Data");
@@ -196,7 +196,7 @@ void HistoManager::Book()
 
     if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
-      
+
     manager->FinishNtuple();
 
   }
