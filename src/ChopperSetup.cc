@@ -81,6 +81,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4double container_edge_position = detInfo->GetContainerEdgePosition();
   SourceInformation* sInfo = SourceInformation::Instance();
   G4double source_z_pos = sInfo->GetSourceZPosition();
+  if(bremTest)
+    chopper_z = 2*cm;
 
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
@@ -200,9 +202,6 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   }
 
   G4LogicalVolume* logicChopper = new G4LogicalVolume(solidChopper, chopperMat, "Chop");
-
-  if(bremTest)
-    chopper_z = 2*cm;
 
   detInfo->setDistanceToChop(chopper_z);
 
