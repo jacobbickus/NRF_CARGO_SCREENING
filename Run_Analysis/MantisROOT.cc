@@ -64,7 +64,7 @@ public:
     double Energy2Wave(double, string unit="eV");
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, int estimate=-1);
-    void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=5.0e-6, string outfile="brem.root");
+    void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=1.0e-3, string outfile="brem.root");
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
 
