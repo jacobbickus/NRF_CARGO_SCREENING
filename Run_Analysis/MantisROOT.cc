@@ -2551,7 +2551,7 @@ void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE=
   TFile *f = new TFile(bremInputFilename);
   f->cd();
   TTree* tBrem;
-  f->GetObject("Brem", tBrem);
+  f->GetObject("ChopIn", tBrem);
   double maxE = tBrem->GetMaximum("Energy");
   double minE = tBrem->GetMinimum("Energy");
 
