@@ -206,7 +206,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
 
   detInfo->setDistanceToChop(chopper_z);
 
-  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, chopper_center_position/(cm)),
+  G4VPhysicalVolume* chopper = new G4PVPlacement(0, G4ThreeVector(0, -2*cm, chopper_center_position*cm),
                   logicChopper, "Chop", logicWorld, false,
                   0, checkOverlaps);
 
