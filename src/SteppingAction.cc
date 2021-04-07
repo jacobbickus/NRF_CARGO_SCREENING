@@ -215,6 +215,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
          && previousStep_VolumeName.compare(0, 4, "Chop") != 0
          && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
+        if(bremTest)
+        {
+          if(CPName.compare("eBrem") !=0)
+          {
+            krun->AddStatusKilledProcess();
+            theTrack->SetTrackStatus(fStopAndKill);
+            return;
+          }
+        }
+        
         manager->FillNtupleIColumn(1,0, eventID);
         manager->FillNtupleDColumn(1,1, energy);
         manager->FillNtupleDColumn(1,2, loc.x());
