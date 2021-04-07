@@ -82,7 +82,7 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   SourceInformation* sInfo = SourceInformation::Instance();
   G4double source_z_pos = sInfo->GetSourceZPosition();
   if(bremTest)
-    chopper_z = (linac_size + 5)*cm;
+    chopper_z = (linac_size + 5*cm);
 
   G4cout << G4endl << "ChopperSetup::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
