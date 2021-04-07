@@ -156,7 +156,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     if(bremTest)
     {
-      // exiting Brem Radiator cuts 
+      // exiting Brem Radiator cuts
       if(nextStep_VolumeName.compare("Brem") != 0
           && previousStep_VolumeName.compare("Brem") == 0)
 
@@ -251,6 +251,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(!inFile.compare(0,24,"brems_distributions.root"))
           manager->FillNtupleDColumn(1,4, weight);
         manager->AddNtupleRow(1);
+        // Once Incident Chopper record data and kill for brem test 
+        if(bremTest)
+        {
+          theTrack->SetTrackStatus(fStopAndKill);
+          return;
+        }
       }
     }
 
