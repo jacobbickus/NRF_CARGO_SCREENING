@@ -79,6 +79,7 @@ G4double calcAvg()
 }
 G4int eventInfoFreq, runID;
 G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
+G4bool WEIGHTED;
 EventMessenger* eventM;
 G4int c_secondaries;
 G4double sum;

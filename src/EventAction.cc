@@ -31,9 +31,11 @@ extern G4String inFile;
 
 EventAction::EventAction()
 :eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
-totalEventsToRun(0.), timeToFinish(0.), eventM(NULL)
+totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
 {
   eventM = new EventMessenger(this);
+  if(!inFile.compare("brems_distributions.root"))
+    WEIGHTED = true;
 }
 
 EventAction::~EventAction()
@@ -126,13 +128,15 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
               c_time = 0;
       // Fill the TTree
       G4AnalysisManager* manager = G4AnalysisManager::Instance();
-      manager->FillNtupleIColumn(7,0,anEvent->GetEventID());
-      manager->FillNtupleDColumn(7,1,maxE);
-      manager->FillNtupleIColumn(7,2,c_secondaries);
-      manager->FillNtupleDColumn(7,3,c_time);
-      if(!inFile.compare(0,24,"brems_distributions.root"))
-        manager->FillNtupleDColumn(7,4, weight);
-      manager->AddNtupleRow(7);
+      manager->FillNtupleIColumn(6,0,anEvent->GetEventID());
+      manager->FillNtupleDColumn(6,1,maxE);
+      manager->FillNtupleIColumn(6,2,c_secondaries);
+      manager->FillNtupleDColumn(6,3,c_time);
+
+      if(WEIGHTED)
+        manager->FillNtupleDColumn(6,4, weight);
+
+      manager->AddNtupleRow(6);
     }
 
     if(debug)

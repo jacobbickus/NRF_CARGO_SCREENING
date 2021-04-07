@@ -83,6 +83,7 @@ EventAction* kevent;
 G4OpBoundaryProcessStatus fExpectedNextStatus;
 G4String procCount;
 G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag, drawIntObjInDataFlag, drawIntObjOutDataFlag, drawWaterIncDataFlag, drawCherenkovDataFlag, drawDetDataFlag;
+G4bool WEIGHTED;
 StepMessenger* stepM;
 };
 
