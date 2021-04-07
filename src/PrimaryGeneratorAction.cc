@@ -77,7 +77,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fin = TFile::Open(inFile.c_str());
     fFileOpen = true;
     fin->cd();
-    tBrems  = (TGraph*) fin->Get("tBrems");
+    tBrems  = (TGraph*) fin->Get("Graph_from_hBrems");
 
     if(debug)
       tBrems->Print();
