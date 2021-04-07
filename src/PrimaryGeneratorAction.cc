@@ -58,7 +58,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   else
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
-    beamStart = 130.9;
+    beamStart = 139.9;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 
