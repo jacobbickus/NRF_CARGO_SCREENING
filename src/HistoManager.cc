@@ -119,6 +119,7 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleIColumn("TrackID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleSColumn("CreatorProcess");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
@@ -135,6 +136,7 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleIColumn("TrackID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleSColumn("CreatorProcess");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
@@ -152,6 +154,7 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("Seed");
     manager->CreateNtupleIColumn("TrackID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleDColumn("Time");
     manager->CreateNtupleSColumn("CreatorProcess");
 
@@ -166,6 +169,7 @@ void HistoManager::Book()
     manager->CreateNtupleIColumn("Seed");
     manager->CreateNtupleIColumn("TrackID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleDColumn("Time");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
@@ -217,6 +221,7 @@ void HistoManager::Book()
     manager->CreateNtuple("DetInfo","Detected Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleDColumn("X");
     manager->CreateNtupleDColumn("Y");
     manager->CreateNtupleSColumn("CreatorProcess");
@@ -232,6 +237,7 @@ void HistoManager::Book()
     manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("BeamEnergy");
     manager->CreateNtupleSColumn("DetProcess");
     manager->CreateNtupleIColumn("Seed");
 

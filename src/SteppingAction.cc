@@ -70,11 +70,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     }
 
     // Grab Relevant event information including the particle weight
+    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    G4double beamEnergy = info->GetBeamEnergy()/(MeV);
+
     if(WEIGHTED)
-    {
-      eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
       weight = info->GetWeight();
-    }
 
     RunInformation* krun = RunInformation::Instance();
     DetectorInformation* kdet = DetectorInformation::Instance();
@@ -313,14 +313,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->FillNtupleIColumn(3,0,eventID);
           manager->FillNtupleIColumn(3,1,trackID);
           manager->FillNtupleDColumn(3,2, energy);
-          manager->FillNtupleSColumn(3,3, CPName);
-          manager->FillNtupleDColumn(3,4,theta);
-          manager->FillNtupleDColumn(3,5,phi);
-          manager->FillNtupleDColumn(3,6,theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(3,7,seed);
+          manager->FillNtupleDColumn(3,3, beamEnergy);
+          manager->FillNtupleSColumn(3,4, CPName);
+          manager->FillNtupleDColumn(3,5,theta);
+          manager->FillNtupleDColumn(3,6,phi);
+          manager->FillNtupleDColumn(3,7,theTrack->GetGlobalTime());
+          manager->FillNtupleIColumn(3,8,seed);
 
           if(WEIGHTED)
-            manager->FillNtupleDColumn(3,8, weight);
+            manager->FillNtupleDColumn(3,9, weight);
 
           manager->AddNtupleRow(3);
           return;
@@ -344,14 +345,15 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->FillNtupleIColumn(4,0, eventID);
           manager->FillNtupleIColumn(4,1, trackID);
           manager->FillNtupleDColumn(4,2, energy);
-          manager->FillNtupleSColumn(4,3, CPName);
-          manager->FillNtupleDColumn(4,4, theta);
-          manager->FillNtupleDColumn(4,5, phi);
-          manager->FillNtupleDColumn(4,6, theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(4,7,seed);
+          manager->FillNtupleDColumn(4,3, beamEnergy);
+          manager->FillNtupleSColumn(4,4, CPName);
+          manager->FillNtupleDColumn(4,5, theta);
+          manager->FillNtupleDColumn(4,6, phi);
+          manager->FillNtupleDColumn(4,7, theTrack->GetGlobalTime());
+          manager->FillNtupleIColumn(4,8,seed);
 
           if(WEIGHTED)
-            manager->FillNtupleDColumn(4,8, weight);
+            manager->FillNtupleDColumn(4,9, weight);
 
           manager->AddNtupleRow(4);
           return;
@@ -371,10 +373,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         manager->FillNtupleIColumn(5,1, seed);
         manager->FillNtupleIColumn(5,2, trackID);
         manager->FillNtupleDColumn(5,3, energy);
-        manager->FillNtupleDColumn(5,4, theTrack->GetGlobalTime());
-        manager->FillNtupleSColumn(5,5, CPName);
+        manager->FillNtupleDColumn(5,4, beamEnergy);
+        manager->FillNtupleDColumn(5,5, theTrack->GetGlobalTime());
+        manager->FillNtupleSColumn(5,6, CPName);
         if(WEIGHTED)
-          manager->FillNtupleDColumn(5,6, weight);
+          manager->FillNtupleDColumn(5,7, weight);
 
         manager->AddNtupleRow(5);
         return;
@@ -392,12 +395,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         manager->FillNtupleIColumn(6,1, seed);
         manager->FillNtupleIColumn(6,2, trackID);
         manager->FillNtupleDColumn(6,3, energy);
-        manager->FillNtupleDColumn(6,4, theTrack->GetGlobalTime());
-        manager->FillNtupleDColumn(6,5, theta);
-        manager->FillNtupleDColumn(6,6, phi);
-        manager->FillNtupleSColumn(6,7, CPName);
+        manager->FillNtupleDColumn(6,4, beamEnergy);
+        manager->FillNtupleDColumn(6,5, theTrack->GetGlobalTime());
+        manager->FillNtupleDColumn(6,6, theta);
+        manager->FillNtupleDColumn(6,7, phi);
+        manager->FillNtupleSColumn(6,8, CPName);
         if(WEIGHTED)
-          manager->FillNtupleDColumn(6,8, weight);
+          manager->FillNtupleDColumn(6,9, weight);
 
         manager->AddNtupleRow(6);
         return;
@@ -544,8 +548,9 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 procCount = "Det";
                 manager->FillNtupleIColumn(10,0,eventID);
                 manager->FillNtupleDColumn(10,1, theParticle->GetKineticEnergy()/(MeV));
-                manager->FillNtupleDColumn(10,2, loc.x()/(cm));
-                manager->FillNtupleDColumn(10,3, loc.y()/(cm));
+                manager->FillNtupleDColumn(10,2, beamEnergy);
+                manager->FillNtupleDColumn(10,3, loc.x()/(cm));
+                manager->FillNtupleDColumn(10,4, loc.y()/(cm));
                 G4String creatorProcess;
 
                 if(theTrack->GetCreatorProcess() !=0)
@@ -553,11 +558,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 else
                     creatorProcess = "Brem";
 
-                manager->FillNtupleSColumn(10,4, creatorProcess);
-                manager->FillNtupleDColumn(10,5, theTrack->GetGlobalTime()); // time units is nanoseconds
-                manager->FillNtupleIColumn(10,6, seed);
+                manager->FillNtupleSColumn(10,5, creatorProcess);
+                manager->FillNtupleDColumn(10,6, theTrack->GetGlobalTime()); // time units is nanoseconds
+                manager->FillNtupleIColumn(10,7, seed);
                 if(WEIGHTED)
-                  manager->FillNtupleDColumn(10,7, weight);
+                  manager->FillNtupleDColumn(10,8, weight);
                 manager->AddNtupleRow(10);
             }
             else if (theStatus == NotAtBoundary)
@@ -585,11 +590,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             {
               manager->FillNtupleIColumn(11,0,eventID);
               manager->FillNtupleDColumn(11,1, theParticle->GetKineticEnergy()/(MeV));
-              manager->FillNtupleSColumn(11,2, procCount);
-              manager->FillNtupleIColumn(11,3,seed);
+              manager->FillNtupleDColumn(11,2, beamEnergy);
+              manager->FillNtupleSColumn(11,3, procCount);
+              manager->FillNtupleIColumn(11,4,seed);
 
               if(WEIGHTED)
-                manager->FillNtupleDColumn(11,4, weight);
+                manager->FillNtupleDColumn(11,5, weight);
 
               manager->AddNtupleRow(11);
             } // for if keeping track of detector process data
