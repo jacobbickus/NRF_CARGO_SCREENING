@@ -307,24 +307,46 @@ G4MaterialPropertiesTable* MaterialProperties::SetPCProperties(G4String pc_mat)
   G4double ephotonPMT[] = {0.4959388*eV, 0.6199*eV, 0.8265*eV, 1.239*eV, 1.653*eV, 2.480*eV,
                            2.755*eV, 3.10*eV, 3.54*eV, 4.133*eV};
   const G4int num = sizeof(ephotonPMT)/sizeof(G4double);
-  G4double ephotonPMT2[] = {1.7711*eV, 1.9074*eV, 2.0663*eV, 2.2542*eV, 2.4796*eV,
-                            2.7551*eV, 3.0995*eV, 3.5423*eV, 4.133*eV, 4.428*eV, 4.959*eV, 6.199*eV};
+  G4double ephotonPMT2[] = {1.5400*eV, 1.6500*eV, 1.7711*eV, 1.9074*eV,
+                            2.0663*eV, 2.2959*eV, 2.4796*eV, 2.6000*eV,
+                            2.7551*eV, 2.8500*eV, 3.0995*eV, 3.1500*eV,
+                            3.3300*eV, 3.5000*eV, 3.6000*eV, 3.7500*eV,
+                            3.9000*eV, 4.1330*eV, 4.2750*eV, 4.3500*eV,
+                            4.7686*eV, 4.9590*eV, 5.2500*eV, 5.5000*eV,
+                            5.7500*eV, 5.900*eV, 6.1990*eV, 6.300*eV,
+                            6.5200*eV, 6.8800*eV, 8.2500*eV};
   const G4int num2 = sizeof(ephotonPMT2)/sizeof(G4double);
   G4double ephotonPMT3[] = {1.823*eV, 1.8644316*eV, 1.907457*eV, 1.952515*eV,
                             2.0*eV, 2.049*eV, 2.101*eV, 2.156*eV, 2.2140125*eV, 2.2749*eV, 2.339*eV,
                             2.407*eV, 2.480*eV,2.56*eV,2.6379*eV, 2.725*eV, 2.817*eV, 2.917*eV,
                             3.024017*eV, 3.138853*eV, 3.262755*eV};
   const G4int num3 = sizeof(ephotonPMT3)/sizeof(G4double);
-  G4double Ga_As_photocath_EFF[]={0.25*perCent,36.246*perCent,39.8*perCent,40.0*perCent,36.0*perCent,30.0*perCent,
-                                  24.0*perCent, 15.0*perCent,4.8*perCent, 0.6*perCent, 0.25*perCent, 0.10*perCent}; //Enables 'detection' of photons
+
+  G4double Ga_As_photocath_EFF[]={0.00010*perCent, 0.00100*perCent, 0.25000*perCent, 38.2460*perCent,
+                                  39.8000*perCent, 40.4000*perCent, 38.9110*perCent, 37.9000*perCent,
+                                  36.4918*perCent, 34.3912*perCent, 26.8072*perCent, 25.0000*perCent,
+                                  23.0000*perCent, 20.6876*perCent, 18.1882*perCent, 12.1406*perCent,
+                                  9.00000*perCent, 4.93730*perCent, 3.00000*perCent, 1.50000*perCent,
+                                  0.75000*perCent, 0.25000*perCent, 0.20000*perCent, 0.15000*perCent,
+                                  0.12000*perCent, 0.10000*perCent, 0.0800*perCent, 0.0500*perCent,
+                                  0.01000*perCent, 0.0010*perCent, 0.00010*perCent}; //Enables 'detection' of photons
   assert(sizeof(Ga_As_photocath_EFF) == sizeof(ephotonPMT2));
+
   G4double Ga_As_photocath_ReR[]={3.346,3.3588,3.3877,3.4857,3.6209,4.0919,4.6678,4.6102,3.8200, 3.7322};
   assert(sizeof(Ga_As_photocath_ReR) == sizeof(ephotonPMT));
   G4double Ga_As_photocath_ImR[]={0.0056,0.0071,0.0096,0.01523, 0.106, 0.41247, 1.0094, 2.0488, 2.0051, 1.9908};
   assert(sizeof(Ga_As_photocath_ImR) == sizeof(ephotonPMT));
-  G4double bialkali_photocath_EFF[] = {0.015*perCent, 0.2*perCent, 3.0*perCent, 7.0*perCent, 18.5*perCent, 25.0*perCent,
-                                       28.0*perCent, 26.0*perCent, 6.0*perCent, 0.19*perCent, 0.1*perCent, 0.01*perCent};
+
+  G4double bialkali_photocath_EFF[] = {0.00010*perCent, 0.001*perCent, 0.6000*perCent, 1.5000*perCent,
+                                   5.00000*perCent, 11.0000*perCent, 16.000*perCent, 20.000*perCent,
+                                   25.0000*perCent, 26.5000*perCent, 26.900*perCent, 27.100*perCent,
+                                   27.4637*perCent, 28.1950*perCent, 28.430*perCent, 29.102*perCent,
+                                   29.1418*perCent, 29.3400*perCent, 29.450*perCent, 29.590*perCent,
+                                   30.4000*perCent, 29.7000*perCent, 28.900*perCent, 28.150*perCent,
+                                   27.5000*perCent, 27.2500*perCent, 26.900*perCent, 25.900*perCent,
+                                   10.0000*perCent, 2.50000*perCent, 0.2500*perCent};
   assert(sizeof(bialkali_photocath_EFF) == sizeof(ephotonPMT2));
+
   G4double bialkali_photocath_ReR[] = {2.96,2.95,2.95,2.95,2.96, 2.98, 3.01, 3.06,
                                        3.12, 3.20, 3.26, 3.09, 3.0,3.0,3.0,2.87,2.7,2.61,2.38,2.18,1.92};
   assert(sizeof(bialkali_photocath_ReR) == sizeof(ephotonPMT3));
@@ -340,7 +362,7 @@ G4MaterialPropertiesTable* MaterialProperties::SetPCProperties(G4String pc_mat)
   }
   else if(pc_mat == "Bialkali")
   {
-    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,bialkali_photocath_EFF, num);
+    pc_MPT->AddProperty("EFFICIENCY", ephotonPMT2,bialkali_photocath_EFF, num2);
     pc_MPT->AddProperty("REALRINDEX", ephotonPMT3,bialkali_photocath_ReR,num3);
     pc_MPT->AddProperty("IMAGINARYRINDEX", ephotonPMT3, bialkali_photocath_ImR, num3);
   }

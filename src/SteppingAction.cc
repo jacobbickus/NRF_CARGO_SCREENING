@@ -386,10 +386,23 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 // *********************************************** Track Plexiglass Interactions **************************************************** //
 
-    if(drawPlexiIncDataFlag && !bremTest)
+
+    if(nextStep_VolumeName.compare(0,4,"Plex") == 0
+        && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
     {
-      if(nextStep_VolumeName.compare(0,4,"Plex") == 0
-          && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
+      if(cos(phi) < 0.6)
+      {
+        krun->AddStatusKilledPhiAngle();
+        theTrack->SetTrackStatus(fStopAndKill);
+        return;
+      }
+      if(cos(theta) < 0.2)
+      {
+        krun->AddStatusKilledThetaAngle();
+        theTrack->SetTrackStatus(fStopAndKill);
+        return;
+      }
+      if(drawPlexiIncDataFlag && !bremTest)
       {
         manager->FillNtupleIColumn(6,0, eventID);
         manager->FillNtupleIColumn(6,1, seed);
@@ -465,10 +478,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                     manager->FillNtupleIColumn(9,0, eventID);
                     manager->FillNtupleDColumn(9,1,secondaries->at(i)->GetKineticEnergy()/(MeV));
                     G4ThreeVector p_cher = secondaries->at(i)->GetMomentum();
-                    G4double theta_cher = std::asin(std::sqrt(std::pow(p_cher.x(),2)+std::pow(p_cher.y(),2))/p_cher.mag());
                     G4double phi_cher = std::asin(p_cher.y()/p_cher.mag());
-                    manager->FillNtupleDColumn(9,3,theta_cher);
-                    manager->FillNtupleDColumn(9,3,phi_cher);
+                    manager->FillNtupleDColumn(9,2,phi_cher);
+
+                    if(WEIGHTED)
+                      manager->FillNtupleDColumn(9,3, weight);
+
                     manager->AddNtupleRow(9);
                   }
                   krun->AddCerenkovEnergy(secondaries->at(i)->GetKineticEnergy());

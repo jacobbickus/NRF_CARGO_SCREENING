@@ -209,7 +209,6 @@ void HistoManager::Book()
     manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
 
     if(WEIGHTED)
