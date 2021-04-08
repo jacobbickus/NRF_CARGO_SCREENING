@@ -190,7 +190,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
 
     // Create ID 8 Ntuple for cherenkov in water tracking Creation Event
-    manager->CreateNtuple("Cherenkov","Cherenkov in Water Incident Data");
+    manager->CreateNtuple("Cherenkov","Optical Photons Scinitllation and Cherenkov in Water Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleIColumn("NumSecondaries");
