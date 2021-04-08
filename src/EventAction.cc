@@ -128,15 +128,15 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
               c_time = 0;
       // Fill the TTree
       G4AnalysisManager* manager = G4AnalysisManager::Instance();
-      manager->FillNtupleIColumn(6,0,anEvent->GetEventID());
-      manager->FillNtupleDColumn(6,1,maxE);
-      manager->FillNtupleIColumn(6,2,c_secondaries);
-      manager->FillNtupleDColumn(6,3,c_time);
+      manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
+      manager->FillNtupleDColumn(8,1,maxE);
+      manager->FillNtupleIColumn(8,2,c_secondaries);
+      manager->FillNtupleDColumn(8,3,c_time);
 
       if(WEIGHTED)
-        manager->FillNtupleDColumn(6,4, weight);
+        manager->FillNtupleDColumn(8,4, weight);
 
-      manager->AddNtupleRow(6);
+      manager->AddNtupleRow(8);
     }
 
     if(debug)

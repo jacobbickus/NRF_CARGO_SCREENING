@@ -91,7 +91,6 @@ void HistoManager::Book()
     manager->CreateNtuple("ChopOut", "Chopper Wheel Exiting Radiation Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleIColumn("isNRF");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
 
@@ -147,7 +146,37 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 5 Ntuple for Incident Water Tank Data
+    // Create ID 5 Ntuple for Incident Shielding Layer Data
+    manager->CreateNtuple("Shielding","Incident Outer Shielding Layer");
+    manager->CreateNtupleIColumn("EventID");
+    manager->CreateNtupleIColumn("Seed");
+    manager->CreateNtupleIColumn("TrackID");
+    manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("Time");
+    manager->CreateNtupleSColumn("CreatorProcess");
+
+    if(WEIGHTED)
+      manager->CreateNtupleDColumn("Weight");
+
+    manager->FinishNtuple();
+
+    // Create ID 6 Ntuple for Incident Plexiglass Layer (Prior to Water)
+    manager->CreateNtuple("Plexiglass", "Incident Plexiglass Layer");
+    manager->CreateNtupleIColumn("EventID");
+    manager->CreateNtupleIColumn("Seed");
+    manager->CreateNtupleIColumn("TrackID");
+    manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("Time");
+    manager->CreateNtupleDColumn("Theta");
+    manager->CreateNtupleDColumn("Phi");
+    manager->CreateNtupleSColumn("CreatorProcess");
+
+    if(WEIGHTED)
+      manager->CreateNtupleDColumn("Weight");
+
+    manager->FinishNtuple();
+
+    // Create ID 7 Ntuple for Incident Water Tank Data
     // Only Run with smaller runs this ntuple can get quite large
     manager->CreateNtuple("Water","Incident Water Tank Data");
     manager->CreateNtupleIColumn("EventID");
@@ -160,7 +189,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 6 Ntuple for cherenkov in water tracking Creation Event
+    // Create ID 8 Ntuple for cherenkov in water tracking Creation Event
     manager->CreateNtuple("Cherenkov","Cherenkov in Water Incident Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
@@ -172,7 +201,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 7 Ntuple for Cherenkov in water tracking optical photons
+    // Create ID 9 Ntuple for Cherenkov in water tracking optical photons
     manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
@@ -184,7 +213,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 8 Ntuple for Detected Information
+    // Create ID 10 Ntuple for Detected Information
     manager->CreateNtuple("DetInfo","Detected Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
@@ -199,7 +228,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 9 Ntuple for Detector Process Information
+    // Create ID 11 Ntuple for Detector Process Information
     manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");

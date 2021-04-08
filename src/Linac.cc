@@ -37,9 +37,9 @@ void Linac::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 
 // Brem Backing
   G4double bremBacking_xy = 1.5*mm;
-  G4Box *solidBremTargetBacking = new G4Box("BremBacking", bremBacking_xy, bremBacking_xy, bremBacking_thickness/2.0);
-  G4LogicalVolume* logicBremTargetBacking = new G4LogicalVolume(solidBremTargetBacking, copper, "BremBacking");
-  new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicBremTargetBacking, "BremBacking", logicalVacuum, false, 0, checkOverlaps);
+  G4Box *solidBremTargetBacking = new G4Box("CBack", bremBacking_xy, bremBacking_xy, bremBacking_thickness/2.0);
+  G4LogicalVolume* logicBremTargetBacking = new G4LogicalVolume(solidBremTargetBacking, copper, "CBack");
+  new G4PVPlacement(0, G4ThreeVector(0, 0, 0), logicBremTargetBacking, "CBack", logicalVacuum, false, 0, checkOverlaps);
 
 // Brem Radiator
   G4double bremTarget_thickness = 0.102*mm;
