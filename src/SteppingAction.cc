@@ -364,7 +364,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     // Track particles incident shielding from world
     if(drawShieldingIncDataFlag && !bremTest)
     {
-      if(nextStep_VolumeName.compare(0,4,"Atten") == 0
+      if(nextStep_VolumeName.compare(0,5,"Atten") == 0
           && previousStep_VolumeName.compare("World") == 0)
       {
         manager->FillNtupleIColumn(5,0, eventID);
@@ -385,8 +385,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
     if(drawPlexiIncDataFlag && !bremTest)
     {
-      if(nextStep_VolumeName.compare(0,3,"Plex") == 0
-          && previousStep_VolumeName.compare(0,3,"LowZ") == 0)
+      if(nextStep_VolumeName.compare(0,4,"Plex") == 0
+          && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
       {
         manager->FillNtupleIColumn(6,0, eventID);
         manager->FillNtupleIColumn(6,1, seed);
