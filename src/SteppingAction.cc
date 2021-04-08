@@ -219,12 +219,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         {
           krun->AddNRF();
           manager->FillNtupleIColumn(2,0, eventID);
-          manager->FillNtupleDColumn(2,1,energy);
-          manager->FillNtupleSColumn(2,2,endPoint->GetPhysicalVolume()->GetName());
+          manager->FillNtupleDColumn(2,1, energy);
+          manager->FillNtupleSColumn(2,2, nextStep_VolumeName);
           manager->FillNtupleDColumn(2,3, loc.z()/(cm));
           manager->FillNtupleDColumn(2,4, theta);
           manager->FillNtupleDColumn(2,5, phi);
-          manager->FillNtupleIColumn(2,6,seed);
+          manager->FillNtupleIColumn(2,6, seed);
 
           if(WEIGHTED)
             manager->FillNtupleDColumn(2,7,weight);
