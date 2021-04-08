@@ -75,6 +75,7 @@ void SetIntObjInDataFlag(G4int val){drawIntObjInDataFlag = val;}
 void SetIntObjOutDataFlag(G4int val){drawIntObjOutDataFlag = val;}
 void SetWaterIncDataFlag(G4int val){drawWaterIncDataFlag = val;}
 void SetCherenkovDataFlag(G4int val){drawCherenkovDataFlag = val;}
+void SetCherenkov2DataFlag(G4int val){drawCherenkov2DataFlag = val;}
 void SetDetDataFlag(G4int val){drawDetDataFlag = val;}
 
 private:
@@ -82,7 +83,9 @@ G4double weight;
 EventAction* kevent;
 G4OpBoundaryProcessStatus fExpectedNextStatus;
 G4String procCount;
-G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag, drawIntObjInDataFlag, drawIntObjOutDataFlag, drawWaterIncDataFlag, drawCherenkovDataFlag, drawDetDataFlag;
+G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag;
+G4int drawIntObjInDataFlag, drawIntObjOutDataFlag, drawWaterIncDataFlag;
+G4int drawCherenkovDataFlag, drawCherenkov2DataFlag, drawDetDataFlag;
 G4bool WEIGHTED;
 StepMessenger* stepM;
 };
