@@ -120,9 +120,11 @@
 #/output/myoutput NRFData
 #/output/myoutput IntObjInData
 #/output/myoutput IntObjOutData
+#/output/myoutput ShieldingData
+#/output/myoutput PlexiData
 #/output/myoutput WaterIncData
 #/output/myoutput CherenkovData
-#/output/myoutput CherenkovData2 
+#/output/myoutput CherenkovData2
 #/output/myoutput DetData
 
 #################################################################################################
