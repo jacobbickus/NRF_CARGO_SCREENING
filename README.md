@@ -4,80 +4,133 @@ This program allows the user to run calorimetric NRF Cherenkov Detector cargo sc
 Mantis Output
 ==
 
-Ten(10) ROOT ntuples(TTrees) are available upon user request:
+Bremsstrahlung Test Output
+If the bremTest Flag is passed the following TTree Ntuples are available to the User:
 
-1. Brem Emission Data -> Available only with the Option BremTest supplied by User
+1. Bremsstrahlung Radiator Emission
+  - EventID
+  - Energy
+  - Theta Angle
+  - Phi Angle
+
+2. Bremsstrahlung Copper Backing Emission
+  - EventID
+  - Energy
+  - Theta Angle
+  - Phi Angle
+
+3. Incident Chopper Wheel
+  - EventID
+  - Energy
+  - X Location
+  - Y Location
+
+NRF Cargo Screening Output
+if the bremTest Flag is not passed the following TTree NTuples are available to the User:
+
+1. Incident Chopper Wheel /output/myoutput ChopIncData must be uncommented!
+  - EventID
+  - Energy
+  - X Location
+  - Y Location
+
+2. Chopper Emission -> /output/myoutput ChopOutData must be uncommented!
+ - EventID
  - Energy
  - Theta Angle
  - Phi Angle
 
-2. Incident Chopper Data -> /output/myoutput ChopIncData must be uncommented!
- - Event IDs
- - Energy
- - Weight
-
-3. Emission Chopper Data -> /output/myoutput ChopOutData must be uncommented!
- - Event IDs
- - Energy
- - isNRF
- - Theta Angle
- - Phi Angle
- - Weight
-
-4. NRF Data -> /output/myoutput/ NRFData must be uncommented!
+3. NRF Data -> /output/myoutput/ NRFData must be uncommented!
  - Event IDs
  - Energy
  - Creation Material
  - Z position
  - Weight
 
-5. Incident Interrogation Object Data -> /output/myoutput IntObjInData must be uncommented!
+4. Incident Interrogation Object Data -> /output/myoutput IntObjInData must be uncommented!
  - Event IDs
  - Track IDs
  - Energy
+ - Beam Energy
  - CreatorProcess
  - Theta
  - Phi
  - Time
+ - Seed
  - Weight
 
-6. Interrogation Object Emission Data -> /output/myoutput IntObjOutData must be uncommented!
+5. Interrogation Object Emission Data -> /output/myoutput IntObjOutData must be uncommented!
  - Event IDs
  - Track IDs
  - Energy
+ - Beam Energy
  - CreatorProcess
  - Theta
  - Phi
  - Time
+ - Seed
  - Weight
 
-7. Water Data -> /output/myoutput WaterData must be uncommented!
+6. Incident Outer Shielding Layer Data -> /output/myoutput/ ShieldingData must be uncommented!
+ - EventID
+ - Seed
+ - TrackID
+ - Energy
+ - Beam Energy
+ - Time
+ - Creator Process
+ - Weight
+
+7. Incident Plexiglass Layer Data -> /output/myoutput/ PlexiData must be uncommented!
+  - EventID
+  - Seed
+  - TrackID
+  - Energy
+  - Beam Energy
+  - Time
+  - Theta Angle
+  - Phi Angle
+  - Creator Process
+  - Weight
+
+8. Water Data -> /output/myoutput WaterData must be uncommented!
  - Event IDs
  - Track IDs
  - Energy
  - CreatorProcess
  - Weight
 
-8. Cherenkov Data -> /output/myouput/ CherenkovData must be uncommented!
+9. Cherenkov Data -> /output/myouput/ CherenkovData must be uncommented!
  - Event IDs
  - Energy
  - NumSecondaries
  - Time
  - Weight
 
-9. Detected Photocathode Data -> Automatic
+10. Cherenkov2 Data -> /output/myoutput/ Cherenkov2Data must be uncommented
+  - EventID
+  - Energy
+  - Theta
+  - Phi
+  - Weight
+
+11. Detected Photocathode Data -> Automatic
  - Event IDs
  - Energy
+ - Beam Energy
  - X Position
  - Y Position
  - CreatorProcess
  - Time
+ - Seed
  - Weight
 
-10. Incident Photocathode Data -> /output/myoutput DetData must be uncommented!
+12. Incident Photocathode Data -> /output/myoutput DetData must be uncommented!
  - Event ID
  - Energy
+ - Beam Energy
  - DetProcess
+ - Seed 
  - Weight
 
 Mantis Output Post-Analysis
