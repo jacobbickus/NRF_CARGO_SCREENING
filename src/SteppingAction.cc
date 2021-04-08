@@ -376,7 +376,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(WEIGHTED)
           manager->FillNtupleDColumn(5,6, weight);
 
-        manger->AddNtupleRow(5);
+        manager->AddNtupleRow(5);
         return;
       }
     }
