@@ -35,7 +35,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile;
 // boolean global variables
-G4bool bremTest, resonanceTest, debug, addNRF, force_isotropic_in, printEvents, SampleEnergyRangebool;
+G4bool bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -99,7 +99,7 @@ int main(int argc,char **argv)
   G4bool use_xsec_tables = true;
   G4bool use_xsec_integration = true;
   G4bool force_isotropic = true;
-  force_isotropic_in = true;
+  G4String force_isotropic_in = "true";
   G4String standalone_in = "false";
   G4String verbose_in = "false";
   G4String addNRF_in = "true";
