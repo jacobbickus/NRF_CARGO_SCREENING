@@ -66,8 +66,10 @@ void PhysicsListNew::ConstructPhysics()
         // Add NRF to the PhysicsListNew
         if(addNRF)
         {
-                RegisterPhysics(new G4NRFPhysics("NRF", use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
-                G4cout << "\nAdded NRF to the physicsList.\n" << G4endl;
+          RegisterPhysics(new G4NRFPhysics("NRF", use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
+          G4cout << "\nAdded NRF to the physicsList.\n" << G4endl;
+          if(force_isotropic)
+            G4cout << "NRF Force Isotropic Emission Turned ON!" << G4endl;
         }
 
         // Add the rest of the usual suspects

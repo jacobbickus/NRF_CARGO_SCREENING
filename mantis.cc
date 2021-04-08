@@ -35,7 +35,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile;
 // boolean global variables
-G4bool bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool bremTest, resonanceTest, debug, addNRF, force_isotropic_in, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -71,6 +71,7 @@ void PrintUsage()
   << "[-n addNRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
   << "[-o output_name] Data will be written to this file." << G4endl
   << "[-p standalone=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
+  << "[-q force_isotropic=true] Forces nrf isotropic emission." << G4endl
   << "[-r resonance_test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
   << "[-s seed=1] Simulation Seed." << G4endl
   << "[-t bremTest=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
@@ -97,7 +98,8 @@ int main(int argc,char **argv)
   // Physics List Defaults
   G4bool use_xsec_tables = true;
   G4bool use_xsec_integration = true;
-  G4bool force_isotropic = false;
+  G4bool force_isotropic = true;
+  force_isotropic_in = true;
   G4String standalone_in = "false";
   G4String verbose_in = "false";
   G4String addNRF_in = "true";
@@ -144,6 +146,7 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-o") root_output_name = argv[i+1];
       else if (G4String(argv[i]) == "-t") bremTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-r") resonance_in = argv[i+1];
+      else if (G4String(argv[i]) == "-q") force_isotropic_in = argv[i+1];
       else if (G4String(argv[i]) == "-p") standalone_in = argv[i+1];
       else if (G4String(argv[i]) == "-v") verbose_in = argv[i+1];
       else if (G4String(argv[i]) == "-n") addNRF_in = argv[i+1];
@@ -199,6 +202,11 @@ int main(int argc,char **argv)
                 //std::cout << "NRF Physics turned OFF!" << std::endl;
                 G4cout << "NRF Physics turned OFF!" << G4endl;
                 addNRF = false;
+        }
+        if(force_isotropic_in == "False" || force_isotropic_in == "false")
+        {
+          G4cout << "NRF Force Isotropic turned OFF!" << G4endl;
+          force_isotropic = false;
         }
         if(printEvents_in == "True" || printEvents_in == "true")
         {

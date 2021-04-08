@@ -150,13 +150,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           && previousStep_VolumeName.compare("Brem") == 0)
 
       {
-        if(cos(phi) < 0.)
+        if(std::cos(phi) < 0.)
         {
           krun->AddStatusKilledPhiAngle();
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        if(cos(theta) < 0.)
+        if(std::cos(theta) < 0.)
         {
           krun->AddStatusKilledThetaAngle();
           theTrack->SetTrackStatus(fStopAndKill);
@@ -181,13 +181,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        else if(cos(phi) < 0.)
+        else if(std::cos(phi) < 0.)
         {
           krun->AddStatusKilledPhiAngle();
           theTrack->SetTrackStatus(fStopAndKill);
           return;
         }
-        else if(cos(theta) < 0.)
+        else if(std::cos(theta) < 0.)
         {
           krun->AddStatusKilledThetaAngle();
           theTrack->SetTrackStatus(fStopAndKill);
@@ -390,13 +390,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
         && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
     {
-      if(cos(phi) < 0.6)
+      if(std::cos(phi) < 0.6)
       {
         krun->AddStatusKilledPhiAngle();
         theTrack->SetTrackStatus(fStopAndKill);
         return;
       }
-      if(cos(theta) < 0.2)
+      if(std::cos(theta) < 0.2)
       {
         krun->AddStatusKilledThetaAngle();
         theTrack->SetTrackStatus(fStopAndKill);
