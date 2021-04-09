@@ -201,7 +201,7 @@ private:
     double ReturnBremMax(const char*);
     TH1D* BuildBremSampling(const std::vector<double>, double, double, double, double);
     TH1D* BuildSimpleSample(const char*, double, double, double);
-    void WriteSampling(TGraph*, TGraph*, TH1D*, double);
+    void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
     TGraph* PrepInputSpectrum(const char*, double);
 
     string EraseSubStr(string&, const string&);
@@ -2521,7 +2521,7 @@ TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE
   return hSample;
 }
 
-void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, double bin_width)
+void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, double bin_width, double short_bin_width)
 {
   std::cout << "MantisROOT::WriteSampling -> Writing to file..." << std::endl;
   hSample->SetTitle("NRF importance sampling distribution");
@@ -2530,7 +2530,7 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
   string titleProb = "probability per " + std::to_string(bin_width*1e6) + " eV";
   hSample->GetYaxis()->SetTitle(titleProb.c_str());
   gSample->GetXaxis()->SetTitle("Energy #it{E} [MeV]");
-  string titleProb2 = "probability per 1keV";
+  string titleProb2 = "probability per " + std::to_string(short_bin_width*1e3) + " keV";
   gSample->GetYaxis()->SetTitle(titleProb2.c_str());
 
   // save everything to file
@@ -2606,7 +2606,7 @@ void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0
   // same bin width then writes sampling histogram to sample energies
   // from with user bin_width
 
-  WriteSampling(gBrems_short, gSample_short, hSample_long, deltaE);
+  WriteSampling(gBrems_short, gSample_short, hSample_long, deltaE, 10.0e-3);
   std::cout << "MantisROOT::SimpleSampling -> Complete." << std::endl;
 
 }
@@ -2675,7 +2675,7 @@ void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="
                                           10.0e-3, Emax, weights);
   TGraph* gSample = new TGraph(hSample_short);
 
-	WriteSampling(gBrems_short, gSample, hSample, deltaE);
+	WriteSampling(gBrems_short, gSample, hSample, deltaE, 10.0e-3);
 
   std::cout << "MantisROOT::Sampling -> COMPLETE!" << std::endl;
 
