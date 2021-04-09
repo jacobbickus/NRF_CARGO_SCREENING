@@ -110,7 +110,6 @@ if the bremTest Flag is not passed the following TTree NTuples are available to 
 10. Cherenkov2 Data -> /output/myoutput/ Cherenkov2Data must be uncommented
   - EventID
   - Energy
-  - Theta
   - Phi
   - Weight
 
@@ -130,7 +129,7 @@ if the bremTest Flag is not passed the following TTree NTuples are available to 
  - Energy
  - Beam Energy
  - DetProcess
- - Seed 
+ - Seed
  - Weight
 
 Mantis Output Post-Analysis
@@ -175,6 +174,8 @@ The command line input options and flags include:
 `-o Output Filename` -> Data will be written to this file
 
 `-p print standalone.dat file` -> Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers
+
+`-q NRF Force Isotropic` -> Forces Isotropic NRF Emission 
 
 `-r Test Resonance` -> Tests Resonance energies as input
 

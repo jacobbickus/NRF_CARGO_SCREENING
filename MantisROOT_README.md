@@ -294,11 +294,23 @@ See RebinHisto. This Function allows variable binning.
 
 ***************************************************************************************************************************************************************
 
+Run Summary
+==
+
+void RunSummary(const char* onFilename, const char* offFilename)
+
+DESCRIPTION:
+Prints the run summary of Chopper On(onFilename) and Chopper Off(offFilename) including
+entries, means and zscores.
+
+***************************************************************************************************************************************************************
+
 Signal to Noise
 ==
 
 void Sig2Noise(std::vector<string> Filenames, string DataName, bool Weighted=false, bool Corrected=false, bool cut=false, TCut cut1="NA")
 
+DESCRIPTION:
 Computes the Signal to Noise Ratio in the files inputed in the string vector.
 The signal to noise ratio can be computed for the Incident Interrogation Object spectrum
 , the detected spectrum, or both with the second input options: IncObj, Det, Both.
