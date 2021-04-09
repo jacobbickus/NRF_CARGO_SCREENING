@@ -297,7 +297,7 @@ See RebinHisto. This Function allows variable binning.
 Run Summary
 ==
 
-void RunSummary(const char* onFilename, const char* offFilename, bool drawPlots=false)
+void RunSummary(const char* onFilename, const char* offFilename, bool zscores=true, bool drawPlots=false)
 
 DESCRIPTION:
 Prints the run summary of Chopper On(onFilename) and Chopper Off(offFilename) including
