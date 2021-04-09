@@ -3960,8 +3960,8 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscore
   hdet2_off->Sumw2();
   hdet2_off->SetStats(0);
   hdet2_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                        " << hdet_off->GetEntries() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:            " << hdet2_off->GetMean() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet_off->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:           " << hdet2_off->GetMean() << std::endl;
 
 
   // Z SCORE ANALYSIS
