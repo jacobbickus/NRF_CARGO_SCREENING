@@ -29,10 +29,6 @@
 # BEAM OPTIONS
 # Set the Size of the beam (mm)
 #/PGA/beamSize 2.0
-# Set the Low Importance Energy Cutoff (this is done in Sampling.cc)
-# This will speed up simulation by avoiding the call of TGraph::Eval every primary particle
-# Unit (MeV) must be greater than 0.1 MeV
-#/PGA/EnergyCut 1.5
 
 #################################################################################################
 # EVENT OPTIONS
