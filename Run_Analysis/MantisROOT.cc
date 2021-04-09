@@ -3839,6 +3839,8 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   TH1D* hin2 = new TH1D("hin2","Beam Energy of Photons Incident Interrogation Object",100,0.,objIn->GetMaximum("BeamEnergy"));
   objIn->Draw("Energy>>hin","","goff");
   objIn->Draw("BeamEnergy>>hin2","","goff");
+  hin->Sumw2();
+  hin->SetStats(0);
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:          " << hin->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:             " << hin->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean: " << hin2->GetMean() << std::endl;
@@ -3863,6 +3865,8 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   TH1D* hplexi2 = new TH1D("hplexi2","Beam Energy of Incident Plexiglass",100,0,plexi->GetMaximum("BeamEnergy"));
   plexi->Draw("Energy>>hplexi","","goff");
   plexi->Draw("BeamEnergy>>hplexi2","","goff");
+  hplexi->Sumw2();
+  hplexi->SetStats(0);
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                  " << hplexi->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                     " << hplexi->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean: " << hplexi2->GetMean() << std::endl;
@@ -3873,8 +3877,10 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   detInfo->SetEstimate(-1);
   TH1D* hdet = new TH1D("hdet","Detected",50,0.,8.0e-6);
   TH1D* hdet2 = new TH1D("hdet2","Beam Energy of Detected",50,0,8.0e-6);
-  detInfo->Draw("Energy>>hdeti","","goff");
+  detInfo->Draw("Energy>>hdet","","goff");
   detInfo->Draw("BeamEnergy>>hdet2","","goff");
+  hdet->Sumw2();
+  hdet->SetStats(0);
   std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:             " << hdet->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean: " << hdet2->GetMean() << std::endl;
 
@@ -3899,6 +3905,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   TH1D* hin2_off = new TH1D("hin2_off","Beam Energy of Photons Incident Interrogation Object",100,0.,objIn_off->GetMaximum("BeamEnergy"));
   objIn_off->Draw("Energy>>hin_off","","goff");
   objIn_off->Draw("BeamEnergy>>hin2_off","","goff");
+  hin_off->Sumw2();
+  hin_off->SetStats(0);
+  hin_off->SetLineColor(kRed);
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:          " << hin_off->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:             " << hin_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean: " << hin2_off->GetMean() << std::endl;
@@ -3923,6 +3932,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   TH1D* hplexi2_off = new TH1D("hplexi2_off","Beam Energy of Incident Plexiglass",100,0,plexi_off->GetMaximum("BeamEnergy"));
   plexi_off->Draw("Energy>>hplexi_off","","goff");
   plexi_off->Draw("BeamEnergy>>hplexi2_off","","goff");
+  hplexi_off->Sumw2();
+  hplexi_off->SetStats(0);
+  hplexi_off->SetLineColor(kRed);
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                  " << hplexi_off->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                     " << hplexi_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean: " << hplexi2_off->GetMean() << std::endl;
@@ -3933,8 +3945,11 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   detInfo_off->SetEstimate(-1);
   TH1D* hdet_off = new TH1D("hdet_off","Detected",50,0.,8.0e-6);
   TH1D* hdet2_off = new TH1D("hdet2_off","Beam Energy of Detected",50,0,8.0e-6);
-  detInfo_off->Draw("Energy>>hdeti_off","","goff");
+  detInfo_off->Draw("Energy>>hdet_off","","goff");
   detInfo_off->Draw("BeamEnergy>>hdet2_off","","goff");
+  hdet_off->Sumw2();
+  hdet_off->SetStats(0);
+  hdet_off->SetLineColor(kRed);
   std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:             " << hdet_off->GetEntries() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean: " << hdet2_off->GetMean() << std::endl;
 
@@ -3962,6 +3977,36 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   std::cout << "MantisROOT::RunSummary -> Detected ZScore(Energy Sum Method) " << std::endl;
   ZScore(onFile, offFile, {"DetInfo"});
 
+  TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
+  c1->cd();
+  hin->Draw("h");
+  hin_off->Draw("h,SAME");
+  auto legend = new TLegend();
+  legend->SetHeader("Chopper State","C");
+  legend->AddEntry(hin, "Chopper On");
+  legend->AddEntry(hin_off, "Chopper Off");
+  legend->Draw();
+
+  TCanvas* c2 = new TCanvas("c2","Incident Plexiglass",600,400);
+  c2->cd();
+  hplexi->Draw("h");
+  hplexi_off->Draw("h,SAME");
+  auto legend2 = new TLegend();
+  legend2->SetHeader("Chopper State","C");
+  legend2->AddEntry(hplexi, "Chopper On");
+  legend2->AddEntry(hplexi_off, "Chopper Off");
+  legend2->Draw();
+
+  TCanvas* c3 = new TCanvas("c3","Detected",600,400);
+  c3->cd();
+  hdet->Draw("h");
+  hdet_off->Draw("h,SAME");
+  auto legend3 = new TLegend();
+  legend3->SetHeader("Chopper State","C");
+  legend3->AddEntry(hdet, "Chopper On");
+  legend3->AddEntry(hdet_off, "Chopper Off");
+  legend3->Draw();
+  
   std::cout << "MantisROOT::RunSummary -> COMPLETE." << std::endl;
 
 
