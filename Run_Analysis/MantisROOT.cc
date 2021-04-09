@@ -68,6 +68,7 @@ public:
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
     void RunSummary(const char*, const char*, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
+    void CheckIntObjRegion(const char*, const char*, double, TCut);
 
 private:
 
@@ -261,6 +262,8 @@ private:
     void Show_GetScintillationDistribution_Description();
     void Show_RunSummary();
     void Show_RunSummary_Description();
+    void Show_CheckIntObjRegion();
+    void Show_CheckIntObjRegion_Description();
 
     double hc = 6.62607004e-34*299792458;
 
@@ -322,6 +325,10 @@ void MantisROOT::Help()
 
   Show_CheckIntObj();
   Show_CheckIntObj_Description();
+  std::cout << std::endl;
+
+  Show_CheckIntObjRegion();
+  Show_CheckIntObjRegion_Description();
   std::cout << std::endl;
 
   Show_ChopperWeightandCost();
@@ -1086,6 +1093,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CheckDet();
     Show_CheckEvents();
     Show_CheckIntObj();
+    Show_CheckIntObjRegion();
     Show_ChopperWeightandCost();
     Show_CombineFiles();
     Show_CopyTrees();
@@ -1265,6 +1273,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CheckIntObj();
     if(description)
       Show_CheckIntObj_Description();
+  }
+  else if(!name.compare("CheckIntObjRegion"))
+  {
+    Show_CheckIntObjRegion();
+    if(description)
+      Show_CheckIntObjRegion_Description();
   }
   else if(!name.compare("CheckAngles"))
   {
@@ -2936,6 +2950,48 @@ void MantisROOT::CheckIntObj(const char* onFile, const char* offFile, double Er=
 
 } // end of CheckIntObj
 
+void MantisROOT::CheckIntObjRegion(const char* onFilename, const char* offFilename, double regionCutE, TCut regionCut)
+{
+  CheckFile(onFilename);
+  CheckFile(offFilename);
+  TFile* fon = new TFile(onFilename);
+  fon->cd();
+  TTree* tobj;
+  fon->GetObject("IntObjIn",tobj);
+  double maxE = tobj->GetMaximum("Energy");
+  TH1D* hon = new TH1D("hon","Incident Interrogation Object",100,regionCutE, maxE);
+  tobj->Draw("Energy>>hon",regionCut, "goff");
+  hon->Sumw2();
+  hon->GetXaxis()->SetTitle("Energy [MeV]");
+  hon->SetLineColor(kBlue);
+
+  TFile* foff = new TFile(offFilename);
+  foff->cd();
+  TTree* tobj_off;
+  foff->GetObject("IntObjIn",tobj_off);
+  TH1D* hoff = new TH1D("hoff","Incident Interrogation Object",100, regionCutE, maxE);
+  tobj_off->Draw("Energy>>hoff",regionCut,"goff");
+  hoff->SetLineColor(kRed);
+  hoff->Sumw2();
+
+  TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
+  c1->cd();
+  hon->Draw("h");
+  hoff->Draw("h,SAME");
+  auto legend = new TLegend();
+  legend->SetHeader("Chopper State","C");
+  legend->AddEntry(hon, "Chopper On");
+  legend->AddEntry(hoff, "Chopper Off");
+  legend->Draw();
+  std::cout << "Chopper On Counts: " << hon->Integral() << std::endl
+  << "Chopper On Mean: " << hon->GetMean() << std::endl
+  << "Chopper Off Counts: " << hoff->Integral() << std::endl
+  << "Chopper Off Mean: " << hoff->GetMean() << std::endl;
+  ZScore(hon->Integral(), hoff->Integral());
+
+  std::cout << "MantisROOT::CheckIntObjRegion -> COMPLETE." << std::endl;
+}
+
 void MantisROOT::CheckAngles(const char* filename, const char* obj1, const char* obj2, int estimate=-1)
 {
   if(debug)
@@ -4475,6 +4531,18 @@ void MantisROOT::Show_ChopperWeightandCost()
 void MantisROOT::Show_ChopperWeightandCost_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "Determines Chopper Weight and Cost for a given material and chopper thickness."
+  << std::endl;
+}
+
+void MantisROOT::Show_CheckIntObjRegion()
+{
+  std::cout << "void CheckIntObjRegion(const char* filename1, const char* filename2, double Region Energy, TCut Region Energy TCut)" << std::endl;
+}
+
+void MantisROOT::Show_CheckIntObjRegion_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl
+  << "Checks Chopper On and Chopper Off IntObj in a specific region greater than the Region Energy cut provided."
   << std::endl;
 }
 
