@@ -52,13 +52,13 @@ void PhysicsListNew::ConstructPhysics()
         G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics(0);
   #ifdef G4_OPTPARAM
         auto optParam = G4OpticalParameters::Instance();
-        G4cout << "Geant4.10.7 Physics List Used!" << G4endl;
+        G4cout << "PhysicsListNew::ConstructPhysics -> Geant4.10.7 Physics List Used!" << G4endl;
   #else
         opticalPhysics->SetWLSTimeProfile("delta");
         opticalPhysics->SetScintillationYieldFactor(1.0); // this would change if the yield changed based on particle type --> not relevant here
         opticalPhysics->SetTrackSecondariesFirst(kCerenkov, true);
         opticalPhysics->SetTrackSecondariesFirst(kScintillation, true);
-        G4cout << "Geant4 10.5 Optical Physics Set." << G4endl;
+        G4cout << "PhysicsListNew::ConstructPhysics -> Geant4 10.5 Optical Physics Set." << G4endl;
   #endif
 
         RegisterPhysics(opticalPhysics);
@@ -67,9 +67,9 @@ void PhysicsListNew::ConstructPhysics()
         if(addNRF)
         {
           RegisterPhysics(new G4NRFPhysics("NRF", use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
-          G4cout << "\nAdded NRF to the physicsList.\n" << G4endl;
+          G4cout << "PhysicsListNew::ConstructPhysics -> Added NRF to the physicsList." << G4endl;
           if(force_isotropic)
-            G4cout << "NRF Force Isotropic Emission Turned ON!" << G4endl;
+            G4cout << "PhysicsListNew::ConstructPhysics -> NRF Force Isotropic Emission Turned ON!" << G4endl;
         }
 
         // Add the rest of the usual suspects
