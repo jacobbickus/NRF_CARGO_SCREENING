@@ -67,7 +67,7 @@ public:
     void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=1.0e-3, string outfile="brem.root");
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
-    void RunSummary(const char*, const char*);
+    void RunSummary(const char*, const char*, bool drawPlots=false);
 
 private:
 
@@ -3815,7 +3815,7 @@ void MantisROOT::PrepareAnalysis(std::vector<string> filebases, bool weighted=fa
   std::cout << "MantisROOT::PrepareAnalysis -> Complete." << std::endl;
 } // end PrepareAnalysis
 
-void MantisROOT::RunSummary(const char* onFile, const char* offFile)
+void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool drawPlots=false)
 {
   CheckFile(onFile);
   CheckFile(offFile);
@@ -3977,36 +3977,40 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile)
   std::cout << "MantisROOT::RunSummary -> Detected ZScore(Energy Sum Method) " << std::endl;
   ZScore(onFile, offFile, {"DetInfo"});
 
-  TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
-  c1->cd();
-  hin->Draw("h");
-  hin_off->Draw("h,SAME");
-  auto legend = new TLegend();
-  legend->SetHeader("Chopper State","C");
-  legend->AddEntry(hin, "Chopper On");
-  legend->AddEntry(hin_off, "Chopper Off");
-  legend->Draw();
+  if(drawPlots)
+  {
 
-  TCanvas* c2 = new TCanvas("c2","Incident Plexiglass",600,400);
-  c2->cd();
-  hplexi->Draw("h");
-  hplexi_off->Draw("h,SAME");
-  auto legend2 = new TLegend();
-  legend2->SetHeader("Chopper State","C");
-  legend2->AddEntry(hplexi, "Chopper On");
-  legend2->AddEntry(hplexi_off, "Chopper Off");
-  legend2->Draw();
+    TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
+    c1->cd();
+    hin->Draw("h");
+    hin_off->Draw("h,SAME");
+    auto legend = new TLegend();
+    legend->SetHeader("Chopper State","C");
+    legend->AddEntry(hin, "Chopper On");
+    legend->AddEntry(hin_off, "Chopper Off");
+    legend->Draw();
 
-  TCanvas* c3 = new TCanvas("c3","Detected",600,400);
-  c3->cd();
-  hdet->Draw("h");
-  hdet_off->Draw("h,SAME");
-  auto legend3 = new TLegend();
-  legend3->SetHeader("Chopper State","C");
-  legend3->AddEntry(hdet, "Chopper On");
-  legend3->AddEntry(hdet_off, "Chopper Off");
-  legend3->Draw();
-  
+    TCanvas* c2 = new TCanvas("c2","Incident Plexiglass",600,400);
+    c2->cd();
+    hplexi->Draw("h");
+    hplexi_off->Draw("h,SAME");
+    auto legend2 = new TLegend();
+    legend2->SetHeader("Chopper State","C");
+    legend2->AddEntry(hplexi, "Chopper On");
+    legend2->AddEntry(hplexi_off, "Chopper Off");
+    legend2->Draw();
+
+    TCanvas* c3 = new TCanvas("c3","Detected",600,400);
+    c3->cd();
+    hdet->Draw("h");
+    hdet_off->Draw("h,SAME");
+    auto legend3 = new TLegend();
+    legend3->SetHeader("Chopper State","C");
+    legend3->AddEntry(hdet, "Chopper On");
+    legend3->AddEntry(hdet_off, "Chopper Off");
+    legend3->Draw();
+  }
+
   std::cout << "MantisROOT::RunSummary -> COMPLETE." << std::endl;
 
 
@@ -4210,7 +4214,7 @@ void MantisROOT::Show_CheckEvents()
 }
 void MantisROOT::Show_RunSummary()
 {
-  std::cout << "void RunSummary(const char* onFilename, const char* offFilename)" << std::endl;
+  std::cout << "void RunSummary(const char* onFilename, const char* offFilename, bool drawPlots=false)" << std::endl;
 }
 void MantisROOT::Show_RunSummary_Description()
 {
