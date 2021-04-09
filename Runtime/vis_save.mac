@@ -11,7 +11,11 @@
 /chopper/distance 2
 /mydet/Angle 150
 /mydet/attenuator Off
+#/mydet/attenuatorThickness 1
+#/mydet/attenuatorMaterial G4_Pb
 /mydet/attenuator2 Off
+#/mydet/attenuatorThickness2 1
+#/mydet/attenuatorMaterial2 G4_POLYETHYLENE
 /mydet/nPMT 8
 
 # Units cm WaterX, WaterY, WaterZ sets the cherenkov detector size
