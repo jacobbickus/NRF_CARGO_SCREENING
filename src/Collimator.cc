@@ -74,8 +74,11 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4cout << G4endl << "Collimator::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------"
   << G4endl;
-  G4cout << "Collimator::Construct -> Edge of Colimator placement: "
-  << col_edge_position/(cm) << " cm" << G4endl << G4endl;
+  if(checkOverlaps)
+  {
+    G4cout << "Collimator::Construct -> Edge of Colimator placement: "
+    << col_edge_position/(cm) << " cm" << G4endl << G4endl;
+  }
 
   new G4PVPlacement(0, G4ThreeVector(-0.3048*m - 1*cm, 0, col_position),
                     logicCollimator, "ColL-Pb", logicWorld,

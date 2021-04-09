@@ -275,7 +275,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     {
       PMT_y_pos = PMT_y_pos_start + i*(PMT_rmax*2.);
       PMT_y_posv.push_back(PMT_y_pos);
-      G4cout << "DetectorConstruction::Construct -> PMT Position " << i << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+
+      if(checkOverlaps)
+      {
+        G4cout << "DetectorConstruction::Construct -> PMT Position " << i
+                << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+      }
     }
   }
   else

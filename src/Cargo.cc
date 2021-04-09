@@ -66,7 +66,13 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
   // Set up shipping container environment (8ft wide and 8.5ft high)
   G4double c_thick = 0.1905*cm; // approx 0.075 inch thick
   G4Box *solidContainer = new G4Box("Container", 0.3048*m, 1.2954*m, 1.2192*m);
-  G4cout << "Cargo::Construct -> Edge of Container Placement: " << container_edge_position/(cm) << " cm" << G4endl << G4endl;
+
+  if(checkOverlaps)
+  {
+    G4cout << "Cargo::Construct -> Edge of Container Placement: "
+            << container_edge_position/(cm) << " cm" << G4endl << G4endl;
+  }
+
   logicContainer = new G4LogicalVolume(solidContainer, steel, "Container");
 
   if(!RemoveContainer)
