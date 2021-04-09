@@ -224,7 +224,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->FillNtupleDColumn(2,3, loc.z()/(cm));
           // for angles you want the endpoint momentum since the process is
           // defined by endPoint->GetProcessDefinedStep()
-          G4double p_nrf = endPoint->GetMomentum();
+          G4ThreeVector p_nrf = endPoint->GetMomentum();
           G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
           G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
           manager->FillNtupleDColumn(2,4, theta_nrf);
