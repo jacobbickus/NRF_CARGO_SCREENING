@@ -31,19 +31,14 @@ PGAMessenger::PGAMessenger(PrimaryGeneratorAction* pga_in)
   myDir = new G4UIdirectory("/PGA/");
   myDir->SetGuidance("Primary Generator Action Commands");
   Cmd = new G4UIcmdWithADouble("/PGA/beamSize",this);
-  Cmd1 = new G4UIcmdWithADouble("/PGA/EnergyCut",this);
   Cmd->SetGuidance("Choose Desired Beam Size");
-  Cmd1->SetGuidance("Choose the Low Importance Energy Cut. Be Careful with this!");
   Cmd->SetParameterName("beamSize",false);
-  Cmd1->SetParameterName("energycut",false);
   Cmd->SetRange("beamSize > 0. && beamSize < 80.0");
-  Cmd1->SetRange("energycut > 0.1");
 }
 
 PGAMessenger::~PGAMessenger()
 {
   delete Cmd;
-  delete Cmd1;
 }
 
 
@@ -53,11 +48,6 @@ void PGAMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   {
     G4double theCommand = Cmd->GetNewDoubleValue(newValue);
     pga->SetBeamSize(theCommand);
-  }
-  else if(command == Cmd1)
-  {
-    G4double theCommand = Cmd->GetNewDoubleValue(newValue);
-    pga->SetEnergyCut(theCommand);
   }
   else
   {

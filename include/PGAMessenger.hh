@@ -20,7 +20,7 @@ public:
   void SetNewValue(G4UIcommand*, G4String); // must always be a string input
 private:
   PrimaryGeneratorAction* pga;
-  G4UIcmdWithADouble *Cmd, *Cmd1;
+  G4UIcmdWithADouble *Cmd;
   G4UIdirectory *myDir;
 };
 

@@ -2442,7 +2442,7 @@ TH1D* MantisROOT::BuildBremSampling(const std::vector<double> Evec_above_thresho
 	// user can adjust relative scales in SetBinContent
   int nbins = Emax/deltaE;
   string hName;
-  if(deltaE == 1.0e-3)
+  if(deltaE == 10.0e-3)
     hName = "hSample_short";
   else
     hName = "hSample_long";
@@ -2495,7 +2495,13 @@ TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE
   double Emax = ReturnBremMax(bremInputFilename);
 
   int nbins = Emax/deltaE;
-  TH1D *hSample = new TH1D("hSample", "hSample", nbins, 0., Emax);
+  string hName;
+  if(deltaE == 10.0e-3)
+    hName = "hSample_short";
+  else
+    hName = "hSample_long";
+
+  TH1D *hSample = new TH1D(hName.c_str(), "hSample", nbins, 0., Emax);
   double theWeight = 1./weight;
 	// create the sampling distribution
 	// user can adjust relative scales in SetBinContent
@@ -2560,7 +2566,7 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double delt
   return gBrems;
 }
 
-void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* obj="ChopIn", double deltaE=1.0e-3, string outfile="brem.root")
+void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* obj="ChopIn", double deltaE=10.0e-3, string outfile="brem.root")
 {
   CheckFile(bremInputFilename);
   TFile *f = new TFile(bremInputFilename);
@@ -2592,9 +2598,9 @@ void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* ob
 
 void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false)
 {
-	TGraph *gBrems_short = PrepInputSpectrum(bremInputFilename, 1.0e-3);
+	TGraph *gBrems_short = PrepInputSpectrum(bremInputFilename, 10.0e-3);
   TH1D* hSample_long = BuildSimpleSample(bremInputFilename, deltaE, cut_energy, weight);
-  TH1D* hSample_short = BuildSimpleSample(bremInputFilename, 1.0e-3, cut_energy, weight);
+  TH1D* hSample_short = BuildSimpleSample(bremInputFilename, 10.0e-3, cut_energy, weight);
   TGraph *gSample_short = new TGraph(hSample_short);
   // writes Brem TGraph with 1e-3 bin widths and Sampling TGraph with
   // same bin width then writes sampling histogram to sample energies
@@ -2610,7 +2616,7 @@ void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="
 	// Convert Input Bremsstrahlung Spectrum Histogram to TGraph
 	CheckFile(bremInputFilename);
 
-  TGraph* gBrems_short = PrepInputSpectrum(bremInputFilename, 1.0e-3);
+  TGraph* gBrems_short = PrepInputSpectrum(bremInputFilename, 10.0e-3);
   double Emax = ReturnBremMax(bremInputFilename);
 	// resonance energies in MeV as calculated by G4NRF
 	vector<double> Evec;
@@ -2666,7 +2672,7 @@ void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="
                                     deltaE, Emax, weights);
   // create Short Sampling
   TH1D* hSample_short = BuildBremSampling(Evec_above_threshold, non_nrf_energy_cut,
-                                          1.0e-3, Emax, weights);
+                                          10.0e-3, Emax, weights);
   TGraph* gSample = new TGraph(hSample_short);
 
 	WriteSampling(gBrems_short, gSample, hSample, deltaE);

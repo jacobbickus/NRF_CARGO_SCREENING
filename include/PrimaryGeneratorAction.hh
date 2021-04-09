@@ -71,16 +71,6 @@ void SetBeamSize(G4double x)
   G4cout << "PrimaryGeneratorAction::BeamSize set to: " << beam_size << " mm" << G4endl;
 }
 
-void SetEnergyCut(G4double x)
-{
-  cutE = x;
-  G4cout << "WARNING: " << G4endl;
-  G4cout << "PrimaryGeneratorAction::EnergyCut Set to: " << cutE << " MeV" << G4endl;
-  if(cutE > 0.1)
-    lowImportance = gSample->Eval(cutE - 0.1);
-  G4cout << "PrimaryGeneratorAction::LowImportance Set to: " << lowImportance << G4endl;
-}
-
 void CloseInputFile(){if(fFileOpen) fin->Close();}
 
 private:
@@ -95,7 +85,6 @@ private:
   G4double beamStart;
   G4double beam_size, energy;
   G4bool file_check, fFileOpen;
-  G4double cutE, lowImportance;
   std::vector<double> energies, N;
   // ROOT
   TRandom2 Random;
