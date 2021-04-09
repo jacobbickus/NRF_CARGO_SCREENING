@@ -50,7 +50,7 @@ public:
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
     void CheckEvents(const char*, bool, bool);
     void Sampling(const char*, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
-    void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false);
+    void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
     void CheckAngles(const char*, const char*, const char*, int estimate=-1);
@@ -200,7 +200,7 @@ private:
 
     double ReturnBremMax(const char*);
     TH1D* BuildBremSampling(const std::vector<double>, double, double, double, double);
-    TH1D* BuildSimpleSample(const char*, double, double, double);
+    TH1D* BuildSimpleSample(const char*, double, double, double, double, double);
     void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
     TGraph* PrepInputSpectrum(const char*, double);
 
@@ -2490,8 +2490,14 @@ double MantisROOT::ReturnBremMax(const char* bremInputFilename)
   return Emax;
 }
 
-TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE, double cut_energy, double weight)
+TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
 {
+  if(cut_energy1 > cut_energy2)
+  {
+    std::cerr << "MantisROOT::BuildSimpleSample -> FATAL ERROR Energy Cut 1 cannot be greater than Energy Cut 2!" << std::endl;
+    exit(1);
+  }
+
   double Emax = ReturnBremMax(bremInputFilename);
 
   int nbins = Emax/deltaE;
@@ -2502,15 +2508,18 @@ TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE
     hName = "hSample_long";
 
   TH1D *hSample = new TH1D(hName.c_str(), "hSample", nbins, 0., Emax);
-  double theWeight = 1./weight;
+  double theWeight1 = 1./weight1;
+  double theWeight2 = 1./weight2;
 	// create the sampling distribution
 	// user can adjust relative scales in SetBinContent
 	for (int i = 1; i <= nbins; ++i)
   {
 		double e = hSample->GetBinCenter(i);
 
-		if (e < cut_energy)
-			hSample->SetBinContent(i, theWeight);
+		if (e < cut_energy1)
+			hSample->SetBinContent(i, theWeight1);
+    else if(e < cut_energy2 && e > cut_energy1)
+      hSample->SetBinContent(i, theWeight2);
 		else
 			hSample->SetBinContent(i, 1);
 	}
@@ -2596,17 +2605,51 @@ void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* ob
   f->Close();
 }
 
-void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false)
+void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)
 {
 	TGraph *gBrems_short = PrepInputSpectrum(bremInputFilename, 10.0e-3);
-  TH1D* hSample_long = BuildSimpleSample(bremInputFilename, deltaE, cut_energy, weight);
-  TH1D* hSample_short = BuildSimpleSample(bremInputFilename, 10.0e-3, cut_energy, weight);
+  TH1D* hSample_long = BuildSimpleSample(bremInputFilename, deltaE, cut_energy1, cut_energy2, weight, weight2);
+  TH1D* hSample_short = BuildSimpleSample(bremInputFilename, 10.0e-3, cut_energy1, cut_energy2, weight, weight2);
   TGraph *gSample_short = new TGraph(hSample_short);
   // writes Brem TGraph with 1e-3 bin widths and Sampling TGraph with
   // same bin width then writes sampling histogram to sample energies
   // from with user bin_width
 
   WriteSampling(gBrems_short, gSample_short, hSample_long, deltaE, 10.0e-3);
+
+  if(drawWeights)
+  {
+    std::cout << "MantisROOT::SimpleSampling -> Drawing Weights..." << std::endl;
+    TCanvas* c1 = new TCanvas("c1","Weighting Spectra",600,400);
+    c1->cd();
+    gPad->SetTicks(1,1);
+	  gPad->SetLogy();
+    std::vector<double> energies, theweights;
+    energies.push_back(0);
+    theweights.push_back(0);
+    double maxE = TMath::MaxElement(gBrems_short->GetN(), gBrems_short->GetX());
+    for(double i=maxE/1000.;i<maxE;i += maxE/1000.)
+    {
+      energies.push_back(i);
+    }
+    for(int i=1;i<energies.size();++i)
+    {
+      double energy = energies[i];
+      double w = gBrems_short->Eval(energy)/gSample_short->Eval(energy);
+      theweights.push_back(w);
+    }
+
+    TGraph* gWeights = new TGraph(energies.size(), &energies[0], &theweights[0]);
+    gWeights->SetTitle("Weighting Spectrum");
+    gWeights->GetXaxis()->SetTitle("Energy [MeV]");
+    gWeights->GetYaxis()->SetTitle("Weight");
+    gWeights->GetYaxis()->SetRangeUser(1e-4,1e5);
+    gWeights->Draw("AC");
+
+    std::cout << "MantisROOT::SimpleSampling -> Weighting Drawn." << std::endl;
+
+  }
+
   std::cout << "MantisROOT::SimpleSampling -> Complete." << std::endl;
 
 }
@@ -4287,7 +4330,7 @@ void MantisROOT::Show_Sampling_Description()
 
 void MantisROOT::Show_SimpleSampling()
 {
-  std::cout << "void SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false)" << std::endl;
+  std::cout << "void SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)" << std::endl;
 }
 
 void MantisROOT::Show_SimpleSampling_Description()
