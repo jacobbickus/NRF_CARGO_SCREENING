@@ -133,7 +133,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     if(theTrack->GetCreatorProcess() !=0)
       CPName = theTrack->GetCreatorProcess()->GetProcessName();
 
-    G4ThreeVector p = aStep->GetPreStepPoint()->GetMomentum();
+    G4ThreeVector p = startPoint->GetMomentum();
     // sin(theta) = (vector magnitude in XY plane)/(total vector magnitude)
     // polar angle measured between the positive Z axis and the vector
     G4double theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
@@ -222,8 +222,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->FillNtupleDColumn(2,1, energy);
           manager->FillNtupleSColumn(2,2, nextStep_VolumeName);
           manager->FillNtupleDColumn(2,3, loc.z()/(cm));
-          manager->FillNtupleDColumn(2,4, theta);
-          manager->FillNtupleDColumn(2,5, phi);
+          // for angles you want the endpoint momentum since the process is
+          // defined by endPoint->GetProcessDefinedStep()
+          G4double p_nrf = endPoint->GetMomentum();
+          G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
+          G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
+          manager->FillNtupleDColumn(2,4, theta_nrf);
+          manager->FillNtupleDColumn(2,5, phi_nrf);
           manager->FillNtupleIColumn(2,6, seed);
 
           if(WEIGHTED)
