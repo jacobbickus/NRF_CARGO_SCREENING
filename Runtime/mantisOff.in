@@ -68,14 +68,14 @@
 # Attenuator Settings Surrounding Cherenkov Detector (optional)
 
 /mydet/attenuator Off
-# Attenuator Thickness in cm
+# Attenuator Thickness in mm
 #/mydet/attenuatorThickness 1
 # Attenuator Material Options from NIST materials
 # First Attenuator Layer (first material to be impacted by particles)
 #/mydet/attenuatorMaterial G4_Pb
 # Second Attenuator material automatically removed if attenuator layer 1 set to "off"
 #/mydet/attenuator2 On
-# Second Attenuator Layer thickness in cm
+# Second Attenuator Layer thickness in mm
 #/mydet/attenuatorThickness2 1
 # Second Attenuator Layer (second material to be impacted by particles after first layer
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
