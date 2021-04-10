@@ -122,10 +122,11 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       G4double c_time;
       if(timev.size() > 0)
       {
-              c_time = calcAvg();
+        c_time = calcAvg();
       }
       else
-              c_time = 0;
+        c_time = 0;
+        
       // Fill the TTree
       G4AnalysisManager* manager = G4AnalysisManager::Instance();
       manager->FillNtupleIColumn(8,0,anEvent->GetEventID());

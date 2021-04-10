@@ -71,6 +71,7 @@ private:
 
 G4double calcAvg()
 {
+  sum = 0;
   for(std::size_t i=0;i<timev.size();++i)
   {
     sum += timev.at(i);
