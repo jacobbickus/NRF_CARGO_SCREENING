@@ -45,7 +45,7 @@ ChopperMessenger::ChopperMessenger(ChopperSetup* ChopperAction)
   CmdChopZ->SetParameterName("chopperZ", false);
   CmdChopZ->SetRange("chopperZ > 0.1 && chopperZ < 10");
   CmdChopthick->SetParameterName("chopperthickness",false);
-  CmdChopthick->SetRange("chopperthickness > 0 && chopperthickness < 38");
+  CmdChopthick->SetRange("chopperthickness > 0 && chopperthickness < 100");
   CmdChopperOn->SetParameterName("chopperOn",false);
   CmdChopperAbundance->SetParameterName("chopperAbundance",false);
   CmdChopperAbundance->SetRange("chopperAbundance > 0 && chopperAbundance < 100");
