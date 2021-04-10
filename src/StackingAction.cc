@@ -46,9 +46,12 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
     runInfo->AddStatusKilledPosition();
     return fKill;
   }
-  
+
+  if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it 
+
   G4ParticleDefinition *pdef = currentTrack->GetDefinition();
   // kill neutrons (probably not important)
   if(pdef == G4Neutron::Definition()) return fKill;
+
   return fUrgent;
 }

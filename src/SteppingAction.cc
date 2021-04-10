@@ -116,7 +116,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     }
 
     // Run Time Cut
-    if(theTrack->GetGlobalTime() > 250) // cut placed on particles time greater than 1500 ns
+    if(theTrack->GetGlobalTime() > 250) // cut placed on particles time greater than 250 ns
     {
       theTrack->SetTrackStatus(fStopAndKill);
       krun->AddStatusKilledTime();
