@@ -67,7 +67,7 @@ public:
     void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=1.0e-3, string outfile="brem.root");
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
-    void RunSummary(const char*, const char*, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
+    void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
 
 private:
@@ -4014,61 +4014,118 @@ void MantisROOT::PrepareAnalysis(std::vector<string> filebases, bool weighted=fa
   std::cout << "MantisROOT::PrepareAnalysis -> Complete." << std::endl;
 } // end PrepareAnalysis
 
-void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false)
+void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false)
 {
   CheckFile(onFile);
   CheckFile(offFile);
   TFile* fon = new TFile(onFile);
   fon->cd();
-  TTree *nrf, *objIn, *objOut, *shield, *plexi, *cher1, *cher2, *detInfo;
+  TTree *nrf, *objIn, *objOut, *shield, *plexi, *cher1, *cher2, *detInfo, *e_tree1, *e_tree2;
   fon->GetObject("NRF",nrf);
-  fon->GetObject("IntObjIn",objIn);
+
+  if(IntObjIn)
+    fon->GetObject("IntObjIn",objIn);
   fon->GetObject("IntObjOut",objOut);
   fon->GetObject("Shielding",shield);
   fon->GetObject("Plexiglass",plexi);
   fon->GetObject("Cherenkov",cher1);
   fon->GetObject("Cherenkov2",cher2);
   fon->GetObject("DetInfo",detInfo);
+  fon->GetObject("event_tree",e_tree1);
+  fon->GetObject("event_tree2",e_tree2);
 
   nrf->SetEstimate(-1);
   std::cout << "MantisROOT::RunSummary -> " << onFile << " Summary:" << std::endl << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << nrf->GetEntries() << std::endl;
-  objIn->SetEstimate(-1);
-  TH1D* hin = new TH1D("hin","Incident Interrogation Object",100,0.,objIn->GetMaximum("Energy"));
-  TH1D* hin2 = new TH1D("hin2","Beam Energy of Photons Incident Interrogation Object",100,0.,objIn->GetMaximum("BeamEnergy"));
-  objIn->Draw("Energy>>hin","","goff");
-  objIn->Draw("BeamEnergy>>hin2","","goff");
-  hin->Sumw2();
-  hin->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin->GetEntries() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin->GetMean() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2->GetMean() << std::endl;
+  TH1D* hnrf = new TH1D("hnrf","NRF",100,0.,nrf->GetMaximum("Energy"));
+
+  if(weighted)
+    nrf->Draw("Energy>>hnrf","Weight","goff");
+  else
+    nrf->Draw("Energy>>hnrf","","goff");
+
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << hnrf->Integral() << std::endl;
+  TH1D *hin = new TH1D();
+  TH1D *hin2 = new TH1D();
+  if(IntObjIn)
+  {
+    objIn->SetEstimate(-1);
+    hin->SetNameTitle("hin","Incident Interrogation Object");
+    //hin->GetXaxis()->SetNbinsX(100);
+    hin->SetMinimum(0.);
+    hin->SetMaximum(objIn->GetMaximum("Energy"));
+    hin2->SetNameTitle("hin2","Beam Energy of Photons Incident Interrogation Object");
+    //hin2->GetXaxis()->SetNbinsX(100);
+    hin2->SetMinimum(0.);
+    hin2->SetMaximum(objIn->GetMaximum("BeamEnergy"));
+    if(weighted)
+    {
+      objIn->Draw("Energy>>hin","Weight","goff");
+      objIn->Draw("BeamEnergy>>hin2","Weight","goff");
+    }
+    else
+    {
+      objIn->Draw("Energy>>hin","","goff");
+      objIn->Draw("BeamEnergy>>hin2","","goff");
+      hin->Sumw2();
+    }
+    hin->SetStats(0);
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin->Integral() << std::endl;
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin->GetMean() << std::endl;
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2->GetMean() << std::endl;
+  }
+
   objOut->SetEstimate(-1);
   TH1D* hout = new TH1D("hout","Interrogation Object Emission Spectrum",100,0.,objOut->GetMaximum("Energy"));
   TH1D* hout2 = new TH1D("hout2","Beam Energy of Interrogation Object Emission",100,0.,objOut->GetMaximum("BeamEnergy"));
-  objOut->Draw("Energy>>hout","","goff");
-  objOut->Draw("BeamEnergy>>hout2","","goff");
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout->GetEntries() << std::endl;
+  if(weighted)
+  {
+    objOut->Draw("Energy>>hout","Weight","goff");
+    objOut->Draw("BeamEnergy>>hout2","Weight","goff");
+  }
+  else
+  {
+    objOut->Draw("Energy>>hout","","goff");
+    objOut->Draw("BeamEnergy>>hout2","","goff");
+  }
+
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Mean:                         " << hout->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Beam Energy Mean:             " << hout2->GetMean() << std::endl;
   shield->SetEstimate(-1);
   TH1D* hshield = new TH1D("hshield","Incident Outer Shielding Layer", 100, 0.,shield->GetMaximum("Energy"));
   TH1D* hshield2 = new TH1D("hshield2","Beam Energy of Incident Outer Shielding Layer",100,0.,shield->GetMaximum("BeamEnergy"));
-  shield->Draw("Energy>>hshield","","goff");
-  shield->Draw("BeamEnergy>>hshield2","","goff");
-  hshield2->Sumw2();
+  if(weighted)
+  {
+    shield->Draw("Energy>>hshield","Weight","goff");
+    shield->Draw("BeamEnergy>>hshield2","Weight","goff");
+  }
+  else
+  {
+    shield->Draw("Energy>>hshield","","goff");
+    shield->Draw("BeamEnergy>>hshield2","","goff");
+    hshield2->Sumw2();
+  }
   hshield2->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Shielding Mean:                         " << hshield->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Incident Shielding Mean: " << hshield2->GetMean() << std::endl;
   plexi->SetEstimate(-1);
   TH1D* hplexi = new TH1D("hplexi","Incident Plexiglass",100,0.,plexi->GetMaximum("Energy"));
   TH1D* hplexi2 = new TH1D("hplexi2","Beam Energy of Incident Plexiglass",100,0,plexi->GetMaximum("BeamEnergy"));
-  plexi->Draw("Energy>>hplexi","","goff");
-  plexi->Draw("BeamEnergy>>hplexi2","","goff");
-  hplexi->Sumw2();
+  if(weighted)
+  {
+    plexi->Draw("Energy>>hplexi","Weight","goff");
+    plexi->Draw("BeamEnergy>>hplexi2","Weight","goff");
+  }
+  else
+  {
+    plexi->Draw("Energy>>hplexi","","goff");
+    plexi->Draw("BeamEnergy>>hplexi2","","goff");
+    hplexi->Sumw2();
+  }
+
   hplexi->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                             " << hplexi->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean:         " << hplexi2->GetMean() << std::endl;
   cher1->SetEstimate(-1);
@@ -4078,70 +4135,150 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscore
   detInfo->SetEstimate(-1);
   TH1D* hdet = new TH1D("hdet","Detected",50,0.,8.0e-6);
   TH1D* hdet2 = new TH1D("hdet2","Beam Energy of Detected",100,0,detInfo->GetMaximum("BeamEnergy"));
-  detInfo->Draw("Energy>>hdet","","goff");
-  detInfo->Draw("BeamEnergy>>hdet2","","goff");
-  hdet->Sumw2();
+  if(weighted)
+  {
+    detInfo->Draw("Energy>>hdet","Weight","goff");
+    detInfo->Draw("BeamEnergy>>hdet2","Weight","goff");
+  }
+  else
+  {
+    detInfo->Draw("Energy>>hdet","","goff");
+    detInfo->Draw("BeamEnergy>>hdet2","","goff");
+    hdet->Sumw2();
+    hdet2->Sumw2();
+  }
   hdet->SetStats(0);
-  hdet2->Sumw2();
   hdet2->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:           " << hdet2->GetMean() << std::endl;
+  e_tree1->SetEstimate(-1);
+  TH1D* he_tree1 = new TH1D("he_tree1","NRF Optical Photons Detected",100,0.,e_tree1->GetMaximum("Energy"));
+  if(weighted)
+    e_tree1->Draw("Energy>>he_tree1","Weight","goff");
+  else
+    e_tree1->Draw("Energy>>he_tree1","","goff");
+
+  e_tree2->SetEstimate(-1);
+  TH1D* he_tree2 = new TH1D("he_tree2","IntObj NRF Optical Photons Detected",100,0.,e_tree2->GetMaximum("Energy"));
+  if(weighted)
+    e_tree2->Draw("Energy>>he_tree2","Weight","goff");
+  else
+    e_tree2->Draw("Energy>>he_tree2","","goff");
+
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << he_tree1->Integral() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << he_tree2->Integral() << std::endl;
 
   // OFF FILE ANALYSIS
   TFile* foff = new TFile(offFile);
   foff->cd();
-  TTree *nrf_off, *objIn_off, *objOut_off, *shield_off, *plexi_off, *cher1_off, *cher2_off, *detInfo_off;
+  TTree *nrf_off, *objIn_off, *objOut_off, *shield_off, *plexi_off, *cher1_off, *cher2_off, *detInfo_off, *e_tree1_off, *e_tree2_off;
   foff->GetObject("NRF",nrf_off);
-  foff->GetObject("IntObjIn",objIn_off);
+
+  if(IntObjIn)
+    foff->GetObject("IntObjIn",objIn_off);
+
   foff->GetObject("IntObjOut",objOut_off);
   foff->GetObject("Shielding",shield_off);
   foff->GetObject("Plexiglass",plexi_off);
   foff->GetObject("Cherenkov",cher1_off);
   foff->GetObject("Cherenkov2",cher2_off);
   foff->GetObject("DetInfo",detInfo_off);
+  foff->GetObject("event_tree",e_tree1_off);
+  foff->GetObject("event_tree2",e_tree2_off);
 
   nrf_off->SetEstimate(-1);
+  TH1D* hnrf_off = new TH1D("hnrf_off","NRF",100, 0., nrf_off->GetMaximum("Energy"));
+  if(weighted)
+    nrf_off->Draw("Energy>>hnrf_off","Weight","goff");
+  else
+    nrf_off->Draw("Energy>>hnrf_off","","goff");
+
   std::cout << std::endl << "MantisROOT::RunSummary -> " << offFile << " Summary:" << std::endl << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << nrf_off->GetEntries() << std::endl;
-  objIn_off->SetEstimate(-1);
-  TH1D* hin_off = new TH1D("hin_off","Incident Interrogation Object",100,0.,objIn_off->GetMaximum("Energy"));
-  TH1D* hin2_off = new TH1D("hin2_off","Beam Energy of Photons Incident Interrogation Object",100,0.,objIn_off->GetMaximum("BeamEnergy"));
-  objIn_off->Draw("Energy>>hin_off","","goff");
-  objIn_off->Draw("BeamEnergy>>hin2_off","","goff");
-  hin_off->Sumw2();
-  hin_off->SetStats(0);
-  hin_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin_off->GetEntries() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin_off->GetMean() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2_off->GetMean() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << hnrf_off->Integral() << std::endl;
+  TH1D *hin_off = new TH1D();
+  TH1D *hin2_off = new TH1D();
+  if(IntObjIn)
+  {
+    objIn_off->SetEstimate(-1);
+    hin_off->SetNameTitle("hin_off","Incident Interrogation Object");
+    //hin_off->GetXaxis()->SetNbinsX(100);
+    hin_off->SetMinimum(0.);
+    hin_off->SetMaximum(objIn_off->GetMaximum("Energy"));
+    hin2_off->SetNameTitle("hin2_off","Beam Energy of Photons Incident Interrogation Object");
+    //hin2_off->GetXaxis()->SetNbinsX(100);
+    hin2_off->SetMinimum(0.);
+    hin2_off->SetMaximum(objIn_off->GetMaximum("BeamEnergy"));
+    if(weighted)
+    {
+      objIn_off->Draw("Energy>>hin_off","Weight","goff");
+      objIn_off->Draw("BeamEnergy>>hin2_off","Weight","goff");
+    }
+    else
+    {
+      objIn_off->Draw("Energy>>hin_off","","goff");
+      objIn_off->Draw("BeamEnergy>>hin2_off","","goff");
+      hin_off->Sumw2();
+    }
+    hin_off->SetStats(0);
+    hin_off->SetLineColor(kRed);
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin_off->Integral() << std::endl;
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin_off->GetMean() << std::endl;
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2_off->GetMean() << std::endl;
+  }
+
   objOut_off->SetEstimate(-1);
   TH1D* hout_off = new TH1D("hout_off","Interrogation Object Emission Spectrum",100,0.,objOut_off->GetMaximum("Energy"));
   TH1D* hout2_off = new TH1D("hout2_off","Beam Energy of Interrogation Object Emission",100,0.,objOut_off->GetMaximum("BeamEnergy"));
-  objOut_off->Draw("Energy>>hout_off","","goff");
-  objOut_off->Draw("BeamEnergy>>hout2_off","","goff");
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout_off->GetEntries() << std::endl;
+  if(weighted)
+  {
+    objOut_off->Draw("Energy>>hout_off","Weight","goff");
+    objOut_off->Draw("BeamEnergy>>hout2_off","Weight","goff");
+  }
+  else
+  {
+    objOut_off->Draw("Energy>>hout_off","","goff");
+    objOut_off->Draw("BeamEnergy>>hout2_off","","goff");
+  }
+
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout_off->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Mean:                         " << hout_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Beam Energy Mean:             " << hout2_off->GetMean() << std::endl;
   shield_off->SetEstimate(-1);
   TH1D* hshield_off = new TH1D("hshield_off","Incident Outer Shielding Layer", 100, 0.,shield_off->GetMaximum("Energy"));
   TH1D* hshield2_off = new TH1D("hshield2_off","Beam Energy of Incident Outer Shielding Layer",100,0.,shield_off->GetMaximum("BeamEnergy"));
-  shield_off->Draw("Energy>>hshield_off","","goff");
-  shield_off->Draw("BeamEnergy>>hshield2_off","","goff");
-  hshield2_off->Sumw2();
+  if(weighted)
+  {
+    shield_off->Draw("Energy>>hshield_off","Weight","goff");
+    shield_off->Draw("BeamEnergy>>hshield2_off","Weight","goff");
+  }
+  else
+  {
+    shield_off->Draw("Energy>>hshield_off","","goff");
+    shield_off->Draw("BeamEnergy>>hshield2_off","","goff");
+    hshield2_off->Sumw2();
+  }
   hshield2_off->SetStats(0);
   hshield2_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield_off->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield_off->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Shielding Mean:                         " << hshield_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Incident Shielding Mean: " << hshield2_off->GetMean() << std::endl;
   plexi_off->SetEstimate(-1);
   TH1D* hplexi_off = new TH1D("hplexi_off","Incident Plexiglass",100,0.,plexi_off->GetMaximum("Energy"));
   TH1D* hplexi2_off = new TH1D("hplexi2_off","Beam Energy of Incident Plexiglass",100,0,plexi_off->GetMaximum("BeamEnergy"));
-  plexi_off->Draw("Energy>>hplexi_off","","goff");
-  plexi_off->Draw("BeamEnergy>>hplexi2_off","","goff");
-  hplexi_off->Sumw2();
+  if(weighted)
+  {
+    plexi_off->Draw("Energy>>hplexi_off","Weight","goff");
+    plexi_off->Draw("BeamEnergy>>hplexi2_off","Weight","goff");
+  }
+  else
+  {
+    plexi_off->Draw("Energy>>hplexi_off","","goff");
+    plexi_off->Draw("BeamEnergy>>hplexi2_off","","goff");
+    hplexi_off->Sumw2();
+  }
   hplexi_off->SetStats(0);
   hplexi_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi_off->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi_off->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                             " << hplexi_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean:         " << hplexi2_off->GetMean() << std::endl;
   cher1_off->SetEstimate(-1);
@@ -4151,16 +4288,41 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscore
   detInfo_off->SetEstimate(-1);
   TH1D* hdet_off = new TH1D("hdet_off","Detected",50,0.,8.0e-6);
   TH1D* hdet2_off = new TH1D("hdet2_off","Beam Energy of Detected",100,0.,detInfo_off->GetMaximum("BeamEnergy"));
-  detInfo_off->Draw("Energy>>hdet_off","","goff");
-  detInfo_off->Draw("BeamEnergy>>hdet2_off","","goff");
-  hdet_off->Sumw2();
+  if(weighted)
+  {
+    detInfo_off->Draw("Energy>>hdet_off","Weight","goff");
+    detInfo_off->Draw("BeamEnergy>>hdet2_off","Weight","goff");
+  }
+  else
+  {
+    detInfo_off->Draw("Energy>>hdet_off","","goff");
+    detInfo_off->Draw("BeamEnergy>>hdet2_off","","goff");
+    hdet_off->Sumw2();
+    hdet2_off->Sumw2();
+  }
   hdet_off->SetStats(0);
   hdet_off->SetLineColor(kRed);
-  hdet2_off->Sumw2();
   hdet2_off->SetStats(0);
   hdet2_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet_off->GetEntries() << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet_off->Integral() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:           " << hdet2_off->GetMean() << std::endl;
+  e_tree1_off->SetEstimate(-1);
+  TH1D* he_tree1_off = new TH1D("he_tree1_off","NRF Optical Photons Detected",100,0.,e_tree1_off->GetMaximum("Energy"));
+  if(weighted)
+    e_tree1_off->Draw("Energy>>he_tree1_off","Weight","goff");
+  else
+    e_tree1_off->Draw("Energy>>he_tree1_off","","goff");
+
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << he_tree1_off->Integral() << std::endl;
+
+  e_tree2_off->SetEstimate(-1);
+  TH1D* he_tree2_off = new TH1D("he_tree2_off","IntObj NRF Optical Photons Detected",100,0.,e_tree2_off->GetMaximum("Energy"));
+  if(weighted)
+    e_tree2_off->Draw("Energy>>he_tree2_off","Weight","goff");
+  else
+    e_tree2_off->Draw("Energy>>he_tree2_off","","goff");
+
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << he_tree2_off->Integral() << std::endl;
 
 
   // Z SCORE ANALYSIS
@@ -4168,11 +4330,13 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscore
   {
 
     std::cout << std::endl << "MantisROOT::RunSummary -> Running Z-Scores..." << std::endl << std::endl;
-
-    std::cout << "MantisROOT::RunSummary -> Incident Interrogation Object Z Score(Entry Method):      " << std::endl;
-    ZScore(hin->GetEntries(),hin_off->GetEntries());
-    std::cout << "MantisROOT::RunSummary -> Incident Interrogation Object Z Score(Energy Sum Method): " << std::endl;
-    ZScore(onFile, offFile, {"IntObjIn"});
+    if(IntObjIn)
+    {
+      std::cout << "MantisROOT::RunSummary -> Incident Interrogation Object Z Score(Entry Method):      " << std::endl;
+      ZScore(hin->GetEntries(),hin_off->GetEntries());
+      std::cout << "MantisROOT::RunSummary -> Incident Interrogation Object Z Score(Energy Sum Method): " << std::endl;
+      ZScore(onFile, offFile, {"IntObjIn"});
+    }
 
     std::cout << "MantisROOT::RunSummary -> Interrogation Object Emission Z Score(Entry Method):      " << std::endl;
     ZScore(hout->GetEntries(),hout_off->GetEntries());
@@ -4199,15 +4363,18 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool zscore
   if(drawPlots)
   {
 
-    TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
-    c1->cd();
-    hin->Draw("h");
-    hin_off->Draw("h,SAME");
-    auto legend = new TLegend();
-    legend->SetHeader("Chopper State","C");
-    legend->AddEntry(hin, "Chopper On");
-    legend->AddEntry(hin_off, "Chopper Off");
-    legend->Draw();
+    if(IntObjIn)
+    {
+      TCanvas* c1 = new TCanvas("c1","Incident Interrogation Object",600,400);
+      c1->cd();
+      hin->Draw("h");
+      hin_off->Draw("h,SAME");
+      auto legend = new TLegend();
+      legend->SetHeader("Chopper State","C");
+      legend->AddEntry(hin, "Chopper On");
+      legend->AddEntry(hin_off, "Chopper Off");
+      legend->Draw();
+    }
 
     TCanvas* c2 = new TCanvas("c2","Incident Plexiglass",600,400);
     c2->cd();
@@ -4457,7 +4624,7 @@ void MantisROOT::Show_CheckEvents()
 }
 void MantisROOT::Show_RunSummary()
 {
-  std::cout << "void RunSummary(const char* onFilename, const char* offFilename, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false)" << std::endl;
+  std::cout << "void RunSummary(const char* onFilename, const char* offFilename, bool IntObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false)" << std::endl;
 }
 void MantisROOT::Show_RunSummary_Description()
 {
