@@ -218,26 +218,31 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(process->GetProcessName() == "NRF")
         {
           krun->AddNRF();
-          manager->FillNtupleIColumn(2,0, eventID);
-          manager->FillNtupleDColumn(2,1, energy);
-          manager->FillNtupleSColumn(2,2, nextStep_VolumeName);
-          manager->FillNtupleDColumn(2,3, loc.z()/(cm));
-          // for angles you want the endpoint momentum since the process is
-          // defined by endPoint->GetProcessDefinedStep()
-          G4ThreeVector p_nrf = endPoint->GetMomentum();
-          G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
-          G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
-          manager->FillNtupleDColumn(2,4, theta_nrf);
-          manager->FillNtupleDColumn(2,5, phi_nrf);
-          manager->FillNtupleIColumn(2,6, seed);
+          const G4TrackVector* emitted_nrf = aStep->GetSecondary();
+          for(unsigned int i=0;i<emitted_nrf->size();++i)
+          {
+            if(emitted_nrf->at(i)->GetCreatorProcess()->GetProcessName() == "NRF")
+            {
+              manager->FillNtupleIColumn(2,0, eventID);
+              manager->FillNtupleDColumn(2,1, energy);
+              manager->FillNtupleSColumn(2,2, nextStep_VolumeName);
+              manager->FillNtupleDColumn(2,3, loc.z()/(cm));
+              G4ThreeVector p_nrf = emitted_nrf->at(i)->GetMomentum();
+              G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
+              G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
+              manager->FillNtupleDColumn(2,4, theta_nrf);
+              manager->FillNtupleDColumn(2,5, phi_nrf);
+              manager->FillNtupleIColumn(2,6, seed);
 
-          if(WEIGHTED)
-            manager->FillNtupleDColumn(2,7,weight);
+              if(WEIGHTED)
+                manager->FillNtupleDColumn(2,7,weight);
 
-          manager->AddNtupleRow(2);
-        }
-      }
-    }
+              manager->AddNtupleRow(2);
+            } // end if emitted_nrf->at(i)->GetCreatorProcess()
+          } // end of for loop
+        } // end of process->GetProcessName() == "NRF"
+      } // end of if drawNRFDataFlag
+    } // end of if addNRF
 
 // *********************************************** Track Chopper Interactions **************************************************** //
 
