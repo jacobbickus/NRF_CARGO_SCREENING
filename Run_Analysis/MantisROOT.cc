@@ -48,7 +48,7 @@ public:
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
-    void CheckEvents(const char*, bool, bool);
+    void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
     void Sampling(const char*, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
     void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
@@ -1295,12 +1295,23 @@ TFile* MantisROOT::OpenFile(const char* filename)
   return (new TFile(filename));
 } // end of OpenFile function
 
-void MantisROOT::CheckEvents(const char* filename, bool Weighted=false, bool Corrected=false)
+void MantisROOT::CheckEvents(const char* filename, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false)
 {
   CheckFile(filename);
   time_t timer;
   time_t time_start = std::time(&timer);
   Compute(filename, time_start, Weighted, Corrected);
+  string file_ce = "w_events_" + string(filename);
+
+  if(copy_to_original_file)
+  {
+    if(Weighted)
+      CopyTrees(file_ce.c_str(), {"Weight","event_tree"}, filename);
+    else
+      CopyTrees(file_ce.c_str(), {"event_tree"}, filename);
+  }
+
+  std::cout << "MantisROOT::CheckEvents -> COMPLETE!" << std::endl;
 }
 
 void MantisROOT::Compute(const char* fname, time_t time_start, bool Weighted, bool Corrected)
@@ -1367,7 +1378,7 @@ void MantisROOT::Compute(const char* fname, time_t time_start, bool Weighted, bo
 
   std::cout << "MantisROOT::Compute -> Setting CreatorProcess Branch Address..." << std::endl;
 
-  string *creators;
+  Char_t creators[16];
   DetInfo_in->SetBranchAddress("CreatorProcess",&creators);
 
   double *detTime = DetInfo_in->GetVal(3);
@@ -1384,7 +1395,8 @@ void MantisROOT::Compute(const char* fname, time_t time_start, bool Weighted, bo
   {
     detEventv.push_back((int)detEvent[i]);
     DetInfo_in->GetEntry(i);
-    detCreatorv.push_back(*creators);
+    string creator_string = string(creators);
+    detCreatorv.push_back(creator_string);
     detEnergyv.push_back(detEnergy[i]);
     detTimev.push_back(detTime[i]);
 
@@ -3865,24 +3877,8 @@ void MantisROOT::PrepareAnalysis(std::vector<string> filebases, bool weighted=fa
 
     std::cout << "MantisROOT::PrepareAnalysis -> Checking NRF Events Detected..." << std::endl;
 
-    CheckEvents(fileOn.c_str(),weighted, true);
-    CheckEvents(fileOff.c_str(),weighted, true);
-
-    string fileOnce = "w_events_" + fileOn;
-    string fileOffce = "w_events_" + fileOff;
-
-    std::cout << "MantisROOT::PrepareAnalysis -> Copying NRF Events Detected..." << std::endl;
-
-    if(weighted)
-    {
-      CopyTrees(fileOnce.c_str(), {"Weight","event_tree"}, fileOn.c_str());
-      CopyTrees(fileOffce.c_str(), {"Weight","event_tree"}, fileOff.c_str());
-    }
-    else
-    {
-      CopyTrees(fileOnce.c_str(), {"event_tree"}, fileOn.c_str());
-      CopyTrees(fileOffce.c_str(), {"event_tree"}, fileOff.c_str());
-    }
+    CheckEvents(fileOn.c_str(), weighted, true, true);
+    CheckEvents(fileOff.c_str(), weighted, true, true);
 
     std::cout << "MantisROOT::PrepareAnalysis -> Conducting SNR Analysis..." << std::endl;
 
@@ -4337,7 +4333,7 @@ void MantisROOT::Show_VarRebin_Description()
 
 void MantisROOT::Show_CheckEvents()
 {
-  std::cout << "void CheckEvents(const char* filename, bool Weighted, bool Corrected)" << std::endl;
+  std::cout << "void CheckEvents(const char* filename, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false)" << std::endl;
 }
 void MantisROOT::Show_RunSummary()
 {
@@ -4353,7 +4349,7 @@ void MantisROOT::Show_CheckEvents_Description()
   std::cout << "DESCRIPTION: " << std::endl << "Checks TTrees NRF, Cherenkov and DetInfo for EventIDs that match."
   << std::endl << "If the events match the event data in the detector is collected and written to w_events_(filename)."
   << std::endl << "This function is called in Sig2Noise." << std::endl
-  << "Example: mantis->CheckEvents(\"test.root\",true, true) would Check WEIGHTED CORRECTED events in file test.root." << std::endl;
+  << "Example: mantis->CheckEvents(\"test.root\",true, true, true) would Check WEIGHTED CORRECTED events in file test.root and copy the event_tree from check_events_filename to the original file." << std::endl;
 }
 
 void MantisROOT::Show_CheckDet()
