@@ -110,7 +110,7 @@ G4MaterialPropertiesTable* MaterialProperties::SetWaterProperties()
   waterMPT->AddProperty("SLOWCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint); // Energy distribution for decay scintillation
 
   // Data from Caravaca et al. "Characterization of water-based liquid scintillator for Cherenkov and scintillation separation"
-  waterMPT->AddConstProperty("SCINTILLATIONYIELD",234.0/MeV); // Light Yield Constant Number of photons/MeV
+  waterMPT->AddConstProperty("SCINTILLATIONYIELD",108.0/MeV); // Light Yield Constant Number of photons/MeV
   waterMPT->AddConstProperty("RESOLUTIONSCALE",1.0); // the normal distribution will follow a normal standard deviation width
   waterMPT->AddConstProperty("FASTTIMECONSTANT", 2.25*ns); // value of a 1% WbLS
   waterMPT->AddConstProperty("SLOWTIMECONSTANT",15.10*ns); // value of a 1% WbLS
