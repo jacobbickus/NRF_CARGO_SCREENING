@@ -193,19 +193,41 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 8 Ntuple for cherenkov in water tracking Creation Event
-    manager->CreateNtuple("Cherenkov","Optical Photons Scinitllation and Cherenkov in Water Data");
+    // Create ID 8 Ntuple for scinitllation in water per EVENT
+    manager->CreateNtuple("Scintillation","Scintillation per Event Water Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleIColumn("NumSecondaries");
-    manager->CreateNtupleDColumn("Time");
 
     if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
 
-    // Create ID 9 Ntuple for Cherenkov in water tracking optical photons
+    // Create ID 9 Ntuple for Scintillation in water tracking
+    manager->CreateNtuple("Scintillation2","Scintillation in Water Optical Photon Data");
+    manager->CreateNtupleIColumn("EventID");
+    manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleDColumn("Phi");
+    manager->CreateNtupleDColumn("Theta");
+
+    if(WEIGHTED)
+      manager->CreateNtupleDColumn("Weight");
+
+    manager->FinishNtuple();
+
+    // Create ID 10 Ntuple for cherenkov in water per EVENT
+    manager->CreateNtuple("Cherenkov","Cherenkov per Event Water Data");
+    manager->CreateNtupleIColumn("EventID");
+    manager->CreateNtupleDColumn("Energy");
+    manager->CreateNtupleIColumn("NumSecondaries");
+
+    if(WEIGHTED)
+      manager->CreateNtupleDColumn("Weight");
+
+    manager->FinishNtuple();
+
+    // Create ID 11 Ntuple for Cherenkov in water tracking optical photons
     manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
@@ -216,7 +238,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 10 Ntuple for Detected Information
+    // Create ID 12 Ntuple for Detected Information
     manager->CreateNtuple("DetInfo","Detected Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");
@@ -232,7 +254,7 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
-    // Create ID 11 Ntuple for Detector Process Information
+    // Create ID 13 Ntuple for Detector Process Information
     manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
     manager->CreateNtupleIColumn("EventID");
     manager->CreateNtupleDColumn("Energy");

@@ -98,9 +98,11 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
                 << std::setprecision(6) << std::flush;
     }
 
+    // Reset values 
+    s_secondaries = 0;
     c_secondaries = 0;
-    energyv.clear();
-    timev.clear();
+    scintillation_energyv.clear();
+    cherenkov_energyv.clear();
 
     if(debug)
         std::cout << "EventAction::BeginOfEventAction -> Ending" << std::endl;
@@ -111,33 +113,40 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     if(debug)
         std::cout << "EventAction::EndOfEventAction -> Beginning" << std::endl;
 
+    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    G4double weight = info->GetWeight();
+    G4AnalysisManager* manager = G4AnalysisManager::Instance();
+    // Deal With Scintillation per Event
+    if(s_secondaries > 0)
+    {
+      // Grab Max Energy
+      G4double maxE = *std::max_element(scintillation_energyv.begin(), scintillation_energyv.end());
+
+      // Fill the Tree
+      manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
+      manager->FillNtupleDColumn(8,1,maxE);
+      manager->FillNtupleIColumn(8,2,s_secondaries);
+
+      if(WEIGHTED)
+        manager->FillNtupleDColumn(8,3,weight);
+
+      manager->AddNtupleRow(8);
+    }
+    // Deal With Cherenkov per Event
     if(c_secondaries > 0)
     {
       // Grab Max Energy
-      G4double maxE = *std::max_element(energyv.begin(),energyv.end());
-      // Find Max Energy's Weight
-      eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
-      G4double weight = info->GetWeight();
-      // Find the Average Time
-      G4double c_time;
-      if(timev.size() > 0)
-      {
-        c_time = calcAvg();
-      }
-      else
-        c_time = 0;
-        
+      G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
+
       // Fill the TTree
-      G4AnalysisManager* manager = G4AnalysisManager::Instance();
-      manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
-      manager->FillNtupleDColumn(8,1,maxE);
-      manager->FillNtupleIColumn(8,2,c_secondaries);
-      manager->FillNtupleDColumn(8,3,c_time);
+      manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
+      manager->FillNtupleDColumn(10,1,maxE);
+      manager->FillNtupleIColumn(10,2,c_secondaries);
 
       if(WEIGHTED)
-        manager->FillNtupleDColumn(8,4, weight);
+        manager->FillNtupleDColumn(10,3, weight);
 
-      manager->AddNtupleRow(8);
+      manager->AddNtupleRow(10);
     }
 
     if(debug)

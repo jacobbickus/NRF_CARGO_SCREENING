@@ -28,14 +28,14 @@
 StepMessenger::StepMessenger(SteppingAction* stepAction)
         : stepA(stepAction)
 {
-        myDir = new G4UIdirectory("/output/");
-        myDir->SetGuidance("Output Commands");
-        Cmd = new G4UIcmdWithAString("/output/myoutput",this);
-        Cmd->SetGuidance("Choose Desired Outputs");
-        Cmd->SetGuidance("Choice: ChopIncData, ChopOutData, NRFData, IntObjInData, IntObjOutData, ShieldingData, PlexiData, WaterIncData, CherenkovData, CherenkovData2, DetData, none (default)");
-        Cmd->SetParameterName("choice",false);
-        Cmd->SetDefaultValue("none");
-        Cmd->SetCandidates("ChopIncData ChopOutData NRFData IntObjInData IntObjOutData ShieldingData PlexiData WaterIncData CherenkovData CherenkovData2 DetData none");
+  myDir = new G4UIdirectory("/output/");
+  myDir->SetGuidance("Output Commands");
+  Cmd = new G4UIcmdWithAString("/output/myoutput",this);
+  Cmd->SetGuidance("Choose Desired Outputs");
+  Cmd->SetGuidance("Choice: ChopIncData, ChopOutData, NRFData, IntObjInData, IntObjOutData, ShieldingData, PlexiData, WaterIncData, ScintillationData, ScintillationData2, CherenkovData, CherenkovData2, DetData, none (default)");
+  Cmd->SetParameterName("choice",false);
+  Cmd->SetDefaultValue("none");
+  Cmd->SetCandidates("ChopIncData ChopOutData NRFData IntObjInData IntObjOutData ShieldingData PlexiData WaterIncData ScintillationData ScintillationData2 CherenkovData CherenkovData2 DetData none");
 }
 
 StepMessenger::~StepMessenger()
@@ -89,6 +89,16 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
             stepA->SetWaterIncDataFlag(1);
             G4cout << G4endl << "User Selected Incident Water Data." <<G4endl;
     }
+    else if(theCommand == "ScintillationData")
+    {
+      stepA->SetScintillationDataFlag(1);
+      G4cout << G4endl << "User Selected Scintillation Data." << G4endl;
+    }
+    else if(theCommand == "ScintillationData2")
+    {
+      stepA->SetScintillation2DataFlag(1);
+      G4cout << G4endl << "User Selected Scintillation2 Data." << G4endl;
+    }
     else if(theCommand == "CherenkovData")
     {
             stepA->SetCherenkovDataFlag(1);
@@ -110,12 +120,12 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else
     {
-            G4cerr << "ERROR: StepMessenger::SetStepInputValue Command not found." << G4endl;
+      G4cerr << "ERROR: StepMessenger::SetStepInputValue Command not found." << G4endl;
     }
 
   }
   else
   {
-          G4cerr << "ERROR StepMessenger :: SetStepInputValue command != Cmd" << G4endl;
+    G4cerr << "ERROR StepMessenger :: SetStepInputValue command != Cmd" << G4endl;
   }
 }

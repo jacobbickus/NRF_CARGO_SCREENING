@@ -35,6 +35,7 @@ SteppingAction::SteppingAction(EventAction* event)
         drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
         drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
         drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
+        drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
         drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
         WEIGHTED(false),
         stepM(NULL)
@@ -70,7 +71,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     }
 
     // Grab Relevant event information including the particle weight
-    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    eventInformation* info =
+              (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double beamEnergy = info->GetBeamEnergy()/(MeV);
 
     if(WEIGHTED)
@@ -462,13 +464,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       const std::vector<const G4Track*>* secondaries = aStep->GetSecondaryInCurrentStep();
       if(secondaries->size()>0)
       {
-        if(drawCherenkovDataFlag)
-        {
-          kevent->CherenkovEnergy(energy);
-          kevent->CherenkovSecondaries(secondaries->size());
-          kevent->CherenkovTime(theTrack->GetGlobalTime());
-        }
-
         for(unsigned int i=0; i<secondaries->size(); ++i)
         {
           if(secondaries->at(i)->GetParentID()>0)
@@ -477,24 +472,51 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
               {
                 if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation")
                 {
+                  // for event level scintillation photon data
+                  if(drawScintillationDataFlag)
+                  {
+                    kevent->ScintillationEnergy(energy);
+                    kevent->ScintillationAddSecondary();
+                  }
+                  // for individual scintillation photon data
+                  if(drawScintillation2DataFlag)
+                  {
+                    manager->FillNtupleIColumn(9,0, eventID);
+                    manager->FillNtupleDColumn(9,1, secondaries->at(i)->GetKineticEnergy()/(MeV));
+                    G4ThreeVector p_scint = secondaries->at(i)->GetMomentum();
+                    G4double phi_scint = std::asin(p_scint.y()/p_scint.mag());
+                    G4double theta_scint = std::asin(std::sqrt(std::pow(p_scint.x(),2)+std::pow(p_scint.y(),2))/p_scint.mag());
+                    manager->FillNtupleDColumn(9,2, phi_scint);
+                    manager->FillNtupleDColumn(9,3, theta_scint);
+                    if(WEIGHTED)
+                      manager->FillNtupleDColumn(9,4, weight);
+
+                    manager->AddNtupleRow(9);
+                  }
                   krun->AddScintillationEnergy(secondaries->at(i)->GetKineticEnergy());
                   krun->AddScintillation();
                 }
                 if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Cerenkov")
                 {
-                  // for total run
+                  // for event level cherenkov photon data
+                  if(drawCherenkovDataFlag)
+                  {
+                    kevent->CherenkovEnergy(energy);
+                    kevent->CherenkovAddSecondary();
+                  }
+                  // for individual cherenkov photon data
                   if(drawCherenkov2DataFlag)
                   {
-                    manager->FillNtupleIColumn(9,0, eventID);
-                    manager->FillNtupleDColumn(9,1,secondaries->at(i)->GetKineticEnergy()/(MeV));
+                    manager->FillNtupleIColumn(11,0, eventID);
+                    manager->FillNtupleDColumn(11,1,secondaries->at(i)->GetKineticEnergy()/(MeV));
                     G4ThreeVector p_cher = secondaries->at(i)->GetMomentum();
                     G4double phi_cher = std::asin(p_cher.y()/p_cher.mag());
-                    manager->FillNtupleDColumn(9,2,phi_cher);
+                    manager->FillNtupleDColumn(11,2,phi_cher);
 
                     if(WEIGHTED)
-                      manager->FillNtupleDColumn(9,3, weight);
+                      manager->FillNtupleDColumn(11,3, weight);
 
-                    manager->AddNtupleRow(9);
+                    manager->AddNtupleRow(11);
                   }
                   krun->AddCerenkovEnergy(secondaries->at(i)->GetKineticEnergy());
                   krun->AddCerenkov();
@@ -571,11 +593,11 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             else if (theStatus == Detection)
             {
                 procCount = "Det";
-                manager->FillNtupleIColumn(10,0,eventID);
-                manager->FillNtupleDColumn(10,1, theParticle->GetKineticEnergy()/(MeV));
-                manager->FillNtupleDColumn(10,2, beamEnergy);
-                manager->FillNtupleDColumn(10,3, loc.x()/(cm));
-                manager->FillNtupleDColumn(10,4, loc.y()/(cm));
+                manager->FillNtupleIColumn(12,0,eventID);
+                manager->FillNtupleDColumn(12,1, theParticle->GetKineticEnergy()/(MeV));
+                manager->FillNtupleDColumn(12,2, beamEnergy);
+                manager->FillNtupleDColumn(12,3, loc.x()/(cm));
+                manager->FillNtupleDColumn(12,4, loc.y()/(cm));
                 G4String creatorProcess;
 
                 if(theTrack->GetCreatorProcess() !=0)
@@ -583,12 +605,14 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 else
                     creatorProcess = "Brem";
 
-                manager->FillNtupleSColumn(10,5, creatorProcess);
-                manager->FillNtupleDColumn(10,6, theTrack->GetGlobalTime()); // time units is nanoseconds
-                manager->FillNtupleIColumn(10,7, seed);
+                manager->FillNtupleSColumn(12,5, creatorProcess);
+                manager->FillNtupleDColumn(12,6, theTrack->GetGlobalTime()); // time units is nanoseconds
+                manager->FillNtupleIColumn(12,7, seed);
+
                 if(WEIGHTED)
-                  manager->FillNtupleDColumn(10,8, weight);
-                manager->AddNtupleRow(10);
+                  manager->FillNtupleDColumn(12,8, weight);
+
+                manager->AddNtupleRow(12);
             }
             else if (theStatus == NotAtBoundary)
             {
@@ -613,16 +637,16 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
             // Keep track of Detector Process Data
             if(drawDetDataFlag && !bremTest)
             {
-              manager->FillNtupleIColumn(11,0,eventID);
-              manager->FillNtupleDColumn(11,1, theParticle->GetKineticEnergy()/(MeV));
-              manager->FillNtupleDColumn(11,2, beamEnergy);
-              manager->FillNtupleSColumn(11,3, procCount);
-              manager->FillNtupleIColumn(11,4,seed);
+              manager->FillNtupleIColumn(13,0,eventID);
+              manager->FillNtupleDColumn(13,1, theParticle->GetKineticEnergy()/(MeV));
+              manager->FillNtupleDColumn(13,2, beamEnergy);
+              manager->FillNtupleSColumn(13,3, procCount);
+              manager->FillNtupleIColumn(13,4,seed);
 
               if(WEIGHTED)
-                manager->FillNtupleDColumn(11,5, weight);
+                manager->FillNtupleDColumn(13,5, weight);
 
-              manager->AddNtupleRow(11);
+              manager->AddNtupleRow(13);
             } // for if keeping track of detector process data
 
           } // for if opProc
