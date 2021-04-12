@@ -182,26 +182,25 @@ int main(int argc,char **argv)
 
         if(!ui && macro != "vis_save.mac")
         {
-                output = true;
-                UI->SetCoutDestination(LoggedSession);
+          output = true;
+          UI->SetCoutDestination(LoggedSession);
         }
 
         // Physics List Options
         if(standalone_in == "True" || standalone_in == "true")
         {
-                G4cout << "Standalone File Requested." << G4endl;
-                standalone = true;
+          G4cout << "Standalone File Requested." << G4endl;
+          standalone = true;
         }
         if(verbose_in == "True" || verbose_in == "true")
         {
-                G4cout << "NRF Verbose set to: " << verbose_in << G4endl;
-                NRF_Verbose = true;
+          G4cout << "NRF Verbose set to: " << verbose_in << G4endl;
+          NRF_Verbose = true;
         }
         if(addNRF_in == "False" || addNRF_in == "false")
         {
-                //std::cout << "NRF Physics turned OFF!" << std::endl;
-                G4cout << "NRF Physics turned OFF!" << G4endl;
-                addNRF = false;
+          G4cout << "NRF Physics turned OFF!" << G4endl;
+          addNRF = false;
         }
         if(force_isotropic_in == "False" || force_isotropic_in == "false")
         {
@@ -217,14 +216,14 @@ int main(int argc,char **argv)
         // Primary Generator Options
         if(bremTest_in == "True" || bremTest_in == "true")
         {
-                G4cout << "Conducting Brem Test!" << G4endl;
-                bremTest = true;
+          G4cout << "Conducting Brem Test!" << G4endl;
+          bremTest = true;
         }
 
         if(resonance_in == "True" || resonance_in == "true")
         {
-                G4cout << "Completing Resonance Test!" << G4endl;
-                resonanceTest = true;
+          G4cout << "Completing Resonance Test!" << G4endl;
+          resonanceTest = true;
         }
 
         if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
@@ -234,16 +233,19 @@ int main(int argc,char **argv)
           SampleEnergyRangebool = true;
         }
 
+        if(chosen_energy > 0)
+          inFile = "NO_INPUT_FILE";
+
         // Some User Error Checking
         if(bremTest && resonanceTest)
         {
-                G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
-                exit(1);
+          G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
+          exit(1);
         }
         if(bremTest && chosen_energy < 0)
         {
-                G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
-                exit(1);
+          G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
+          exit(1);
         }
 
         if(SampleEnergyRangebool && chosen_energy < 0)
