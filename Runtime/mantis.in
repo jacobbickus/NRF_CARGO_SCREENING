@@ -119,6 +119,8 @@
 #/output/myoutput ShieldingData
 #/output/myoutput PlexiData
 #/output/myoutput WaterIncData
+#/output/myoutput ScintillationData 
+#/output/myoutput ScintillationData2
 #/output/myoutput CherenkovData
 #/output/myoutput CherenkovData2
 #/output/myoutput DetData
