@@ -69,6 +69,7 @@ public:
     void GetScintillationDistribution(const char*, bool Corrected=true);
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
+    void CreateOptPerEnergy(const char*, double e_cut=1.4);
 
 private:
 
@@ -264,6 +265,8 @@ private:
     void Show_RunSummary_Description();
     void Show_CheckIntObjRegion();
     void Show_CheckIntObjRegion_Description();
+    void Show_CreateOptPerEnergy();
+    void Show_CreateOptPerEnergy_Description();
 
     double hc = 6.62607004e-34*299792458;
 
@@ -345,6 +348,10 @@ void MantisROOT::Help()
 
   Show_CreateDetEfficiencyCurve();
   Show_CreateDetEfficiencyCurve_Description();
+  std::cout << std::endl;
+
+  Show_CreateOptPerEnergy();
+  Show_CreateOptPerEnergy_Description();
   std::cout << std::endl;
 
   Show_CreateScintillationDistribution();
@@ -1098,6 +1105,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CombineFiles();
     Show_CopyTrees();
     Show_CreateDetEfficiencyCurve();
+    Show_CreateOptPerEnergy();
     Show_CreateScintillationDistribution();
     Show_CreateTKDE();
     Show_Energy2Wave();
@@ -1165,6 +1173,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CreateDetEfficiencyCurve();
     if(description)
       Show_CreateDetEfficiencyCurve_Description();
+  }
+  else if(!name.compare("CreateOptPerEnergy"))
+  {
+    Show_CreateOptPerEnergy();
+    if(description)
+      Show_CreateOptPerEnergy_Description();
   }
   else if(!name.compare("CreateTKDE"))
   {
@@ -3362,6 +3376,65 @@ TGraph* MantisROOT::CreateTKDE(const char* filename, int nentries=10000)
 
 } // End of CreateTKDE Function
 
+
+void MantisROOT::CreateOptPerEnergy(const char* filename, double e_cut=1.4)
+{
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
+  TTree *t_cher, *t_scint;
+  f->GetObject("Cherenkov",t_cher);
+  f->GetObject("Scintillation",t_scint);
+  t_cher->SetEstimate(-1);
+  t_scint->SetEstimate(-1);
+  TProfile* p1 = new TProfile("p1","Number of Optical Photons Emitted vs Incident Photon Energy",100,0.,e_cut);
+  TProfile* p2 = new TProfile("p2","Number of Optical Photons Emitted vs Incident Photon Energy",100,0.,e_cut);
+  TProfile* p3 = new TProfile("p3","Number of Optical Photons Emitted vs Incident Photon Energy",100,0.,e_cut);
+  string cut_s = "Energy < " + std::to_string(e_cut);
+  TCut cut_tcut = cut_s.c_str();
+  std::cout << "MantisROOT::CreateOptPerEnergy -> Setting TCut: " << cut_s << std::endl;
+  t_cher->Draw("NumSecondaries:Energy>>p1",cut_tcut,"prof,goff");
+  t_scint->Draw("NumSecondaries:Energy>>p2",cut_tcut,"prof,goff");
+
+  for(int i=0;i<100;++i)
+  {
+    double p3_value = p1->GetBinContent(i) + p2->GetBinContent(i);
+    p3->Fill(p3->GetBinCenter(i),p3_value);
+  }
+
+  double maxCounts = p3->GetBinContent(99);
+
+  p1->SetName("Cherenkov");
+  p2->SetName("Scintillation");
+  p3->SetName("Optical Photon Sum");
+  p1->SetLineColor(kBlue);
+  p2->SetLineColor(kRed);
+  p3->SetLineColor(kBlack);
+  p1->GetXaxis()->SetTitle("Incident Photon Energy [MeV]");
+  p1->GetYaxis()->SetTitle("Average Number of Optical Photons Emitted");
+  p1->SetStats(1);
+  p2->SetStats(1);
+  p3->SetStats(0);
+  p1->GetYaxis()->SetRangeUser(0,maxCounts);
+
+  TCanvas* c1 = new TCanvas("c1","Optical Photons", 600, 400);
+  c1->cd();
+
+  p1->Draw("h");
+  p2->Draw("h,SAMES");
+  p3->Draw("h,SAME");
+  auto legend = new TLegend();
+  legend->SetHeader("Optical Process","C");
+  legend->AddEntry(p1, "Cherenkov");
+  legend->AddEntry(p2, "Scintillation");
+  legend->AddEntry(p3, "Sum");
+  legend->Draw();
+  c1->Update();
+
+  std::cout << "MantisROOT::CreateOptPerEnergy -> COMPLETE." << std::endl;
+
+}
+
 void MantisROOT::CheckDet(const char* filename, bool weighted=false, int estimate=-1)
 {
   CheckFile(filename);
@@ -4826,6 +4899,18 @@ void MantisROOT::Show_CheckIntObjRegion_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl
   << "Checks Chopper On and Chopper Off IntObj in a specific region greater than the Region Energy cut provided."
+  << std::endl;
+}
+
+void MantisROOT::Show_CreateOptPerEnergy()
+{
+  std::cout << "void CreateOptPerEnergy(const char* filename, double cut_energy=1.4)" << std::endl;
+}
+
+void MantisROOT::Show_CreateOptPerEnergy_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl
+  << "Creates Optical number of photons emitted per incident photon energy graph."
   << std::endl;
 }
 
