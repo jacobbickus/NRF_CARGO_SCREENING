@@ -311,6 +311,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->AddNtupleRow(1);
           return;
         }
+        else
+          return;
       }
     }
 
@@ -370,6 +372,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
           manager->AddNtupleRow(4);
           return;
         }// end if drawIntObjOutDataFlag
+        else
+          return;
       }// end else
     }// end if exiting Interrogation Object
 
@@ -431,6 +435,8 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         manager->AddNtupleRow(6);
         return;
       }
+      else
+        return;
     }
 
 // *********************************************** Track Water Tank Interactions **************************************************** //
