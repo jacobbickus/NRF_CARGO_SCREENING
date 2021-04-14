@@ -106,8 +106,8 @@ G4MaterialPropertiesTable* MaterialProperties::SetWaterProperties()
   waterMPT->AddProperty("ABSLENGTH",photonEnergyAbs, absorption, nEntriesAbs);
   // Data from Onken et al "Time response of water-based liquid scintillator from X-ray excitation"
   // Assumption made that fast and slow components follow same distribution
-  waterMPT->AddProperty("FASTCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint); // Energy Distribution for prompt scintillation
-  waterMPT->AddProperty("SLOWCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint); // Energy distribution for decay scintillation
+  waterMPT->AddProperty("FASTCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint)->SetSpline(true); // Energy Distribution for prompt scintillation
+  waterMPT->AddProperty("SLOWCOMPONENT",photonEnergyScintillation, scintilD, nEntriesScint)->SetSpline(true); // Energy distribution for decay scintillation
 
   // Data from Caravaca et al. "Characterization of water-based liquid scintillator for Cherenkov and scintillation separation"
   waterMPT->AddConstProperty("SCINTILLATIONYIELD",108.0/MeV); // Light Yield Constant Number of photons/MeV
