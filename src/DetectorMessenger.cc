@@ -94,8 +94,8 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* DetectorAction)
 
         Cmdpcmat->SetCandidates("GaAsP Bialkali");
         CmdAttenOn->SetCandidates("On on Off off");
-        CmdAttenMat->SetCandidates("G4_Pb G4_Cu G4_Zn G4_Ag G4_Cd G4_Th G4_U G4_Au G4_W G4_Fe");
-        CmdAttenMat2->SetCandidates("G4_POLYETHYLENE G4_POLYPROPYLENE G4_POLYSTYRENE G4_POLYVINYL_CHLORIDE G4_POLYCARBONATE");
+        CmdAttenMat->SetCandidates("G4_Pb G4_Cu G4_Zn G4_Ag G4_Cd G4_Th G4_U G4_Au G4_W G4_Fe G4_POLYETHYLENE G4_POLYPROPYLENE G4_POLYSTYRENE G4_POLYVINYL_CHLORIDE G4_POLYCARBONATE");
+        CmdAttenMat2->SetCandidates("G4_Pb G4_Cu G4_Zn G4_Ag G4_Cd G4_Th G4_U G4_Au G4_W G4_Fe G4_POLYETHYLENE G4_POLYPROPYLENE G4_POLYSTYRENE G4_POLYVINYL_CHLORIDE G4_POLYCARBONATE");
         CmdVis->SetCandidates("True true False false");
         CmdVerbose->SetCandidates("True true False false On on Off off");
         CmdCheckOverlaps->SetCandidates("True true False false");
