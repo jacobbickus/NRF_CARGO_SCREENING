@@ -35,7 +35,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile;
 // boolean global variables
-G4bool bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -62,6 +62,7 @@ void PrintUsage()
   G4cerr << "Usage: " << G4endl;
   G4cerr << "mantis [-h help] Prints this Usage Screen" << G4endl
   << "[-a chosen_energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
+  << "[-c detTest=false Create Detector Response Fucntion]" << G4endl
   << "[-d debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program"
   << G4endl << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
   << "[-i inFile] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
@@ -120,6 +121,8 @@ int main(int argc,char **argv)
   G4String resonance_in = "false";
   resonanceTest = false;
   chosen_energy = -1.;
+  G4String detTest_in = "false";
+  detTest=false;
   G4String bremTest_in = "false";
   bremTest = false;
   SampleEnergyRangebool = false;
@@ -144,6 +147,7 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-a") chosen_energy = std::stod(argv[i+1]);
       else if (G4String(argv[i]) == "-s") seed = atoi(argv[i+1]);
       else if (G4String(argv[i]) == "-o") root_output_name = argv[i+1];
+      else if (G4String(argv[i]) == "-c") detTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-t") bremTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-r") resonance_in = argv[i+1];
       else if (G4String(argv[i]) == "-q") force_isotropic_in = argv[i+1];
@@ -162,149 +166,163 @@ int main(int argc,char **argv)
       }
   }
 
-        // Handle Output File
-        std::cout << "Output Filename: " << root_output_name << std::endl;
-        std::string RootOutputFile = (std::string)root_output_name;
-        if(RootOutputFile.find(".root")<RootOutputFile.length()) {
-                gOutName=(std::string)RootOutputFile.substr(0, RootOutputFile.find(".root"));
-        }
-        else gOutName=(std::string)root_output_name;
+  // Handle Output File
+  std::cout << "Output Filename: " << root_output_name << std::endl;
+  std::string RootOutputFile = (std::string)root_output_name;
+  if(RootOutputFile.find(".root")<RootOutputFile.length())
+    gOutName=(std::string)RootOutputFile.substr(0, RootOutputFile.find(".root"));
+  else gOutName=(std::string)root_output_name;
 
-        // Handle Debugging
-        if(debug_in == "True" || debug_in == "true")
-        {
-          std::cout << "Debugging mode set." << std::endl;
-          debug = true;
-        }
+  // Handle Debugging
+  if(debug_in == "True" || debug_in == "true")
+  {
+    std::cout << "Debugging mode set." << std::endl;
+    debug = true;
+  }
 
-        G4UImanager* UI = G4UImanager::GetUIpointer();
-        MySession* LoggedSession = new MySession;
+  G4UImanager* UI = G4UImanager::GetUIpointer();
+  MySession* LoggedSession = new MySession;
 
-        if(!ui && macro != "vis_save.mac")
-        {
-          output = true;
-          UI->SetCoutDestination(LoggedSession);
-        }
+  if(!ui && macro != "vis_save.mac")
+  {
+    output = true;
+    UI->SetCoutDestination(LoggedSession);
+  }
 
-        // Physics List Options
-        if(standalone_in == "True" || standalone_in == "true")
-        {
-          G4cout << "Standalone File Requested." << G4endl;
-          standalone = true;
-        }
-        if(verbose_in == "True" || verbose_in == "true")
-        {
-          G4cout << "NRF Verbose set to: " << verbose_in << G4endl;
-          NRF_Verbose = true;
-        }
-        if(addNRF_in == "False" || addNRF_in == "false")
-        {
-          G4cout << "NRF Physics turned OFF!" << G4endl;
-          addNRF = false;
-        }
-        if(force_isotropic_in == "False" || force_isotropic_in == "false")
-        {
-          G4cout << "NRF Force Isotropic turned OFF!" << G4endl;
-          force_isotropic = false;
-        }
-        if(printEvents_in == "True" || printEvents_in == "true")
-        {
-          G4cout << "Printing Events to std::cout" << G4endl;
-          printEvents = true;
-        }
+  // Physics List Options
+  if(standalone_in == "True" || standalone_in == "true")
+  {
+    G4cout << "Standalone File Requested." << G4endl;
+    standalone = true;
+  }
+  if(verbose_in == "True" || verbose_in == "true")
+  {
+    G4cout << "NRF Verbose set to: " << verbose_in << G4endl;
+    NRF_Verbose = true;
+  }
+  if(addNRF_in == "False" || addNRF_in == "false")
+  {
+    G4cout << "NRF Physics turned OFF!" << G4endl;
+    addNRF = false;
+  }
+  if(force_isotropic_in == "False" || force_isotropic_in == "false")
+  {
+    G4cout << "NRF Force Isotropic turned OFF!" << G4endl;
+    force_isotropic = false;
+  }
+  if(printEvents_in == "True" || printEvents_in == "true")
+  {
+    G4cout << "Printing Events to std::cout" << G4endl;
+    printEvents = true;
+  }
 
-        // Primary Generator Options
-        if(bremTest_in == "True" || bremTest_in == "true")
-        {
-          G4cout << "Conducting Brem Test!" << G4endl;
-          bremTest = true;
-        }
+  // Primary Generator Options
+  if(detTest_in == "True" || detTest_in == "true")
+  {
+    G4cout << "Conducting Detector Response Test" << G4endl;
+    detTest = true;
+  }
+  if(bremTest_in == "True" || bremTest_in == "true")
+  {
+    G4cout << "Conducting Brem Test!" << G4endl;
+    bremTest = true;
+  }
 
-        if(resonance_in == "True" || resonance_in == "true")
-        {
-          G4cout << "Completing Resonance Test!" << G4endl;
-          resonanceTest = true;
-        }
+  if(resonance_in == "True" || resonance_in == "true")
+  {
+    G4cout << "Completing Resonance Test!" << G4endl;
+    resonanceTest = true;
+  }
 
-        if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
-        {
-          G4cout << "Sampling Uniform Centered on " << chosen_energy
-          << " with normal width " << uniform_width << std::endl;
-          SampleEnergyRangebool = true;
-        }
+  if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
+  {
+    G4cout << "Sampling Uniform Centered on " << chosen_energy
+    << " with normal width " << uniform_width << std::endl;
+    SampleEnergyRangebool = true;
+  }
 
-        if(chosen_energy > 0)
-          inFile = "NO_INPUT_FILE";
+  if(chosen_energy > 0)
+    inFile = "NO_INPUT_FILE";
 
-        // Some User Error Checking
-        if(bremTest && resonanceTest)
-        {
-          G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
-          exit(1);
-        }
-        if(bremTest && chosen_energy < 0)
-        {
-          G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
-          exit(1);
-        }
+  // Some User Error Checking
+  if(bremTest && resonanceTest)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
+    exit(1);
+  }
+  if(bremTest && detTest)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot test Bremsstrahlung and Detector Response during the same run!" << G4endl;
+    exit(1);
+  }
+  if(detTest && resonanceTest)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot test Detector Response and Resonance Test!" << G4endl;
+    exit(1);
+  }
+  if(bremTest && chosen_energy < 0)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
+    exit(1);
+  }
 
-        if(SampleEnergyRangebool && chosen_energy < 0)
-        {
-          G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range without choosing uniform center!" << G4endl;
-          exit(1);
-        }
+  if(SampleEnergyRangebool && chosen_energy < 0)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range without choosing uniform center!" << G4endl;
+    exit(1);
+  }
 
-        if(SampleEnergyRangebool && uniform_width < 0)
-        {
-          G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range with a width < 0." << G4endl;
-          exit(1);
-        }
+  if(SampleEnergyRangebool && uniform_width < 0)
+  {
+    G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range with a width < 0." << G4endl;
+    exit(1);
+  }
 
-        G4cout << "Seed set to: " << seed << G4endl;
-        std::cout << "Seed set to: " << seed << std::endl;
+  G4cout << "Seed set to: " << seed << G4endl;
+  std::cout << "Seed set to: " << seed << std::endl;
 
-        // choose the Random engine
-        CLHEP::HepRandom::setTheEngine(new CLHEP::RanluxEngine);
-        CLHEP::HepRandom::setTheSeed(seed);
+  // choose the Random engine
+  CLHEP::HepRandom::setTheEngine(new CLHEP::RanluxEngine);
+  CLHEP::HepRandom::setTheSeed(seed);
 
-        // construct the default run manager
-        G4RunManager* runManager = new G4RunManager;
+  // construct the default run manager
+  G4RunManager* runManager = new G4RunManager;
 
-        // set mandatory initialization classes
-        ChopperSetup* chopper = new ChopperSetup();
-        Linac* linac = new Linac();
-        Collimator* collimator = new Collimator();
-        Cargo* cargo = new Cargo();
-        runManager->SetUserInitialization(new DetectorConstruction(chopper, linac, collimator, cargo));
-        runManager->SetUserInitialization(new PhysicsListNew(addNRF, use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
-        runManager->SetUserInitialization(new ActionInitialization());
+  // set mandatory initialization classes
+  ChopperSetup* chopper = new ChopperSetup();
+  Linac* linac = new Linac();
+  Collimator* collimator = new Collimator();
+  Cargo* cargo = new Cargo();
+  runManager->SetUserInitialization(new DetectorConstruction(chopper, linac, collimator, cargo));
+  runManager->SetUserInitialization(new PhysicsListNew(addNRF, use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
+  runManager->SetUserInitialization(new ActionInitialization());
 
 #ifdef G4VIS_USE
-        if(ui || macro == "vis_save.mac")
-        {
-                visManager = new G4VisExecutive();
-                visManager->Initialize();
-        }
+  if(ui || macro == "vis_save.mac")
+  {
+          visManager = new G4VisExecutive();
+          visManager->Initialize();
+  }
 #endif
-        //std::cout << "visManager Initialized" << std::endl;
-        if(!ui)
-        {
-                G4String command = "/control/execute ";
-                UI->ApplyCommand(command+macro);
-        }
-        else
-        {
-                // interactive mode
-                UI->ApplyCommand("/control/execute init_vis.mac");
-                ui->SessionStart();
-                delete ui;
-        }
-//std::cout << "Deleting visManager..." << std::endl;
+
+  if(!ui)
+  {
+    G4String command = "/control/execute ";
+    UI->ApplyCommand(command+macro);
+  }
+  else
+  {
+    // interactive mode
+    UI->ApplyCommand("/control/execute init_vis.mac");
+    ui->SessionStart();
+    delete ui;
+  }
+
 #ifdef G4VIS_USE
-        if(ui || macro == "vis_save.mac")
-        {
-                delete visManager;
-        }
+  if(ui || macro == "vis_save.mac")
+  {
+    delete visManager;
+  }
 #endif
 
   G4int stop_time = time(0);

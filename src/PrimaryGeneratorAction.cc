@@ -27,6 +27,7 @@
 extern G4long seed;
 extern G4String inFile;
 extern G4double chosen_energy;
+extern G4bool detTest;
 extern G4bool resonanceTest;
 extern G4bool bremTest;
 extern G4bool SampleEnergyRangebool;
@@ -55,14 +56,18 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
   }
+  else if(detTest)
+  {
+    fParticleGun->SetParticleDefinition(G4Gamma::Definition());
+    beamStart = 0.0;
+    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
+  }
   else
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
     beamStart = 135.9;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
-
-  //G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Beam Size set to: " << beam_size/(mm) << " mm" << G4endl;
 
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);

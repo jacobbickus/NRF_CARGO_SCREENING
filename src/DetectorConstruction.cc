@@ -25,6 +25,7 @@
 #include "DetectorConstruction.hh"
 
 extern G4bool bremTest;
+extern G4bool detTest;
 extern G4bool debug;
 
 DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator, Cargo* Cargo)
@@ -43,7 +44,7 @@ DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Linac* Linac, 
         // Messenger
         detectorM(NULL)
 {
-        detectorM = new DetectorMessenger(this);
+  detectorM = new DetectorMessenger(this);
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -121,25 +122,28 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   detInfo->setLinac_Size(linac_size);
   detInfo->setWaterSizeY(water_size_y);
 
-  chop->Construct(logicWorld, checkOverlaps);
-  // Set up Linac configuration if Brem Test
-
-  if(bremTest)
+  if(!detTest)
   {
-    linac->Construct(logicWorld, checkOverlaps);
+    chop->Construct(logicWorld, checkOverlaps);
+    // Set up Linac configuration if Brem Test
+
+    if(bremTest)
+    {
+      linac->Construct(logicWorld, checkOverlaps);
+    }
+
+    // ***************************************** End of Brem Test Materials ***************************************** //
+
+    collimator->Construct(logicWorld, checkOverlaps);
+    cargo->Construct(logicWorld, checkOverlaps);
+    cargo->CheckCargoSphereSize();
+
   }
-
-  // ***************************************** End of Brem Test Materials ***************************************** //
-
-  collimator->Construct(logicWorld, checkOverlaps);
-  cargo->Construct(logicWorld, checkOverlaps);
-  cargo->CheckCargoSphereSize();
 
 // ******************************************************** Begin Detector Construction *************************************************************** //
 
   // First Attenuation Layer
   // THIS IS THE MOTHER VOLUME INSIDE WORLD ALL OTHER DETECTOR VOLUMES ARE DAUGHTERS OF THIS VOLUME
-
   G4Box* solidAttenuator = new G4Box("Attenuator", water_size_x + attenThickness/2. + attenThickness2/2., water_size_y + attenThickness/2. + attenThickness2/2.,
                                      water_size_z + attenThickness/2. + attenThickness2/2.);
   G4LogicalVolume* logicAttenuator = new G4LogicalVolume(solidAttenuator, attenuator, "Attenuator");
@@ -166,12 +170,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4RotationMatrix* waterRot2 = new G4RotationMatrix;
   waterRot2->rotateY((180. + theAngle)*deg);
 
-  new G4PVPlacement(waterRot,
-                    G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
-                    "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
-  new G4PVPlacement(waterRot2,
-                    G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
-                    "Attenuator1Lay1R", logicWorld, false, 0, checkOverlaps);
+  if(detTest)
+  {
+    new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
+                      "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
+  }
+  else
+  {
+    new G4PVPlacement(waterRot,
+                      G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(waterRot2,
+                      G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1Lay1R", logicWorld, false, 0, checkOverlaps);
+  }
 
 // Option to add second layer of low Z attenuation material
 
@@ -193,19 +205,24 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4cout << "----------------------------------------------------------------------" << G4endl;
   if(plexiThickness != 0.18*mm)
   {
-          G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: " << plexiThickness << " mm" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: "
+    << plexiThickness << " mm" << G4endl;
   }
   else
   {
-          G4cout << G4endl << "DetectorConstruction::Construct -> Plexiglass Thickness set to default: " << plexiThickness << " mm" << G4endl;
+    G4cout << G4endl
+    << "DetectorConstruction::Construct -> Plexiglass Thickness set to default: "
+    << plexiThickness << " mm" << G4endl;
   }
   if(tapeThick != 0.01*cm)
   {
-          G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: " << tapeThick << " cm" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: "
+    << tapeThick << " cm" << G4endl;
   }
   else
   {
-          G4cout << "DetectorConstruction::Construct -> Optical Tape Wrap set to default: " << tapeThick << " cm" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Optical Tape Wrap set to default: "
+    << tapeThick << " cm" << G4endl;
   }
 
 // Make Teflon tape wrap
@@ -239,9 +256,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                 checkOverlaps); //overlaps checking
 
   // Conduct Final Tank Position Check
-  DefDetPositionConstraintUpper(container_z_pos/(m), water_size_z/(m), water_z_pos/(m));
-  DefDetPositionConstraintLeft(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
-  DefDetPositionConstraintRight(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
+  if(!detTest)
+  {
+    DefDetPositionConstraintUpper(container_z_pos/(m), water_size_z/(m), water_z_pos/(m));
+    DefDetPositionConstraintLeft(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
+    DefDetPositionConstraintRight(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
+  }
 
 // **************************************************** End of Water Tank Construction Setup ********************************************************* //
 
