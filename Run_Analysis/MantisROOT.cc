@@ -4098,6 +4098,7 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
 
   if(IntObjIn)
     fon->GetObject("IntObjIn",objIn);
+
   fon->GetObject("IntObjOut",objOut);
   fon->GetObject("Shielding",shield);
   fon->GetObject("Plexiglass",plexi);
@@ -4116,7 +4117,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   else
     nrf->Draw("Energy>>hnrf","","goff");
 
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << hnrf->Integral() << std::endl;
+  double errorNRF;
+  double integralNRF = hnrf->IntegralAndError(0,100,errorNRF);
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << integralNRF << " +- " << errorNRF << std::endl;
   TH1D *hin = new TH1D();
   TH1D *hin2 = new TH1D();
   if(IntObjIn)
@@ -4142,7 +4145,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
       hin->Sumw2();
     }
     hin->SetStats(0);
-    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin->Integral() << std::endl;
+    double errorIntObjIn;
+    double intObjInIntegral = hin->IntegralAndError(0,100,errorIntObjIn);
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << intObjInIntegral << " +- " << errorIntObjIn << std::endl;
     std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin->GetMean() << std::endl;
     std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2->GetMean() << std::endl;
   }
@@ -4161,7 +4166,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
     objOut->Draw("BeamEnergy>>hout2","","goff");
   }
 
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout->Integral() << std::endl;
+  double errorhout;
+  double integralhout = hout->IntegralAndError(0,100,errorhout);
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << integralhout << " +- " << errorhout << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Mean:                         " << hout->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Beam Energy Mean:             " << hout2->GetMean() << std::endl;
   shield->SetEstimate(-1);
@@ -4179,7 +4186,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
     hshield2->Sumw2();
   }
   hshield2->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield->Integral() << std::endl;
+  double errorhshield;
+  double integralhshield = hshield->IntegralAndError(0,100,errorhshield);
+  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << integralhshield << " +- " << errorhshield << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Shielding Mean:                         " << hshield->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Incident Shielding Mean: " << hshield2->GetMean() << std::endl;
   plexi->SetEstimate(-1);
@@ -4198,7 +4207,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   }
 
   hplexi->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi->Integral() << std::endl;
+  double errorhplexi;
+  double integralhplexi = hplexi->IntegralAndError(0,100,errorhplexi);
+  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << integralhplexi << " +- " << errorhplexi << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                             " << hplexi->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean:         " << hplexi2->GetMean() << std::endl;
   cher1->SetEstimate(-1);
@@ -4222,7 +4233,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   }
   hdet->SetStats(0);
   hdet2->SetStats(0);
-  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet->Integral() << std::endl;
+  double errorhdet;
+  double integralhdet = hdet->IntegralAndError(0,50,errorhdet);
+  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << integralhdet << " +- " << errorhdet << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:           " << hdet2->GetMean() << std::endl;
   e_tree1->SetEstimate(-1);
   TH1D* he_tree1 = new TH1D("he_tree1","NRF Optical Photons Detected",100,0.,e_tree1->GetMaximum("Energy"));
@@ -4238,8 +4251,11 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   else
     e_tree2->Draw("Energy>>he_tree2","","goff");
 
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << he_tree1->Integral() << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << he_tree2->Integral() << std::endl;
+  double errorhe_tree1, errorhe_tree2;
+  double integralhe_tree1 = he_tree1->IntegralAndError(0,100, errorhe_tree1);
+  double integralhe_tree2 = he_tree2->IntegralAndError(0,100, errorhe_tree2);
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << integralhe_tree1 << " +- " << errorhe_tree1 << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << integralhe_tree2 << " +- " << errorhe_tree2 << std::endl;
 
   // OFF FILE ANALYSIS
   TFile* foff = new TFile(offFile);
@@ -4267,7 +4283,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
     nrf_off->Draw("Energy>>hnrf_off","","goff");
 
   std::cout << std::endl << "MantisROOT::RunSummary -> " << offFile << " Summary:" << std::endl << std::endl;
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << hnrf_off->Integral() << std::endl;
+  double errorNRF_off;
+  double integralhnrf_off = hnrf_off->IntegralAndError(0,100,errorNRF_off);
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Entries:                            " << integralhnrf_off << " +- " << errorNRF_off << std::endl;
   TH1D *hin_off = new TH1D();
   TH1D *hin2_off = new TH1D();
   if(IntObjIn)
@@ -4294,7 +4312,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
     }
     hin_off->SetStats(0);
     hin_off->SetLineColor(kRed);
-    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << hin_off->Integral() << std::endl;
+    double errorhin_off;
+    double integralhin_off = hin_off->IntegralAndError(0,100,errorhin_off);
+    std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Entries:                       " << integralhin_off << " +- " << errorhin_off << std::endl;
     std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Mean:                          " << hin_off->GetMean() << std::endl;
     std::cout << "MantisROOT::RunSummary -> " << "* IntObjIn Beam Energy Mean:              " << hin2_off->GetMean() << std::endl;
   }
@@ -4313,7 +4333,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
     objOut_off->Draw("BeamEnergy>>hout2_off","","goff");
   }
 
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << hout_off->Integral() << std::endl;
+  double errorhout_off;
+  double integralhout_off = hout_off->IntegralAndError(0,100,errorhout_off);
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Entries:                      " << integralhout_off << " +- " << errorhout_off << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Mean:                         " << hout_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* IntObjOut Beam Energy Mean:             " << hout2_off->GetMean() << std::endl;
   shield_off->SetEstimate(-1);
@@ -4332,7 +4354,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   }
   hshield2_off->SetStats(0);
   hshield2_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << hshield_off->Integral() << std::endl;
+  double errorhshield_off;
+  double integralhshield_off = hshield_off->IntegralAndError(0,100, errorhshield_off);
+  std::cout << "MantisROOT::RunSummary -> " << "* Shielding Entries:                      " << integralhshield_off << " +- " << errorhshield_off << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Shielding Mean:                         " << hshield_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Incident Shielding Mean: " << hshield2_off->GetMean() << std::endl;
   plexi_off->SetEstimate(-1);
@@ -4351,7 +4375,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   }
   hplexi_off->SetStats(0);
   hplexi_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << hplexi_off->Integral() << std::endl;
+  double errorhplexi_off;
+  double integralhplexi_off = hplexi_off->IntegralAndError(0,100,errorhplexi_off);
+  std::cout << "MantisROOT::RunSummary -> " << "* Plexi Entries:                          " << integralhplexi_off << " +- " << errorhplexi_off << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Plexi Mean:                             " << hplexi_off->GetMean() << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Plexiglass Mean:         " << hplexi2_off->GetMean() << std::endl;
   cher1_off->SetEstimate(-1);
@@ -4377,7 +4403,9 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   hdet_off->SetLineColor(kRed);
   hdet2_off->SetStats(0);
   hdet2_off->SetLineColor(kRed);
-  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << hdet_off->Integral() << std::endl;
+  double errorhdet_off;
+  double integralhdet_off = hdet_off->IntegralAndError(0,50,errorhdet_off);
+  std::cout << "MantisROOT::RunSummary -> " << "* Detected Entries:                       " << integralhdet_off << " +- " << errorhdet_off << std::endl;
   std::cout << "MantisROOT::RunSummary -> " << "* Beam Energy of Detected Mean:           " << hdet2_off->GetMean() << std::endl;
   e_tree1_off->SetEstimate(-1);
   TH1D* he_tree1_off = new TH1D("he_tree1_off","NRF Optical Photons Detected",100,0.,e_tree1_off->GetMaximum("Energy"));
@@ -4386,8 +4414,6 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   else
     e_tree1_off->Draw("Energy>>he_tree1_off","","goff");
 
-  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << he_tree1_off->Integral() << std::endl;
-
   e_tree2_off->SetEstimate(-1);
   TH1D* he_tree2_off = new TH1D("he_tree2_off","IntObj NRF Optical Photons Detected",100,0.,e_tree2_off->GetMaximum("Energy"));
   if(weighted)
@@ -4395,7 +4421,13 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
   else
     e_tree2_off->Draw("Energy>>he_tree2_off","","goff");
 
-  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << he_tree2_off->Integral() << std::endl;
+
+  double errorhe_tree1_off, errorhe_tree2_off;
+  double integralhe_tree1_off = he_tree1_off->IntegralAndError(0,100, errorhe_tree1_off);
+  double integralhe_tree2_off = he_tree2_off->IntegralAndError(0,100, errorhe_tree2_off);
+
+  std::cout << "MantisROOT::RunSummary -> " << "* NRF Optical Photons Detected:           " << integralhe_tree1_off << " +- " << errorhe_tree1_off << std::endl;
+  std::cout << "MantisROOT::RunSummary -> " << "* IntObj NRF Optical Photons Detected:    " << integralhe_tree2_off << " +- " << errorhe_tree2_off << std::endl;
 
 
   // Z SCORE ANALYSIS
