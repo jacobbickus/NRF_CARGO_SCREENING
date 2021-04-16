@@ -170,7 +170,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   if(detTest)
   {
-    waterRot->rotateZ(180.*deg);
+    waterRot->rotateX(180.*deg);
     new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
                       "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
   }
