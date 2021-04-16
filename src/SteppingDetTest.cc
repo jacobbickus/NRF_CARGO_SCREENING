@@ -151,6 +151,10 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
         manager->FillNtupleDColumn(1,9, weight);
 
       manager->AddNtupleRow(1);
+      
+      if(trackID == 1)
+        kevent->SetIncidentEnergy(energy);
+      
       return;
     }
     // While in water keep track of cherenkov and pass number of cherenkov to EventAction
