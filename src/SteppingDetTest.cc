@@ -37,12 +37,8 @@ SteppingDetTest::SteppingAction(EventAction* event)
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
 }
-<<<<<<< HEAD
 
 SteppingDetTest::~SteppingDetTest()
-=======
-SteppingDetTest::~SteppingAction()
->>>>>>> 3b180bd7d7c081f09e6e6ae16ff629ca1ddf5873
 {}
 
 void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
