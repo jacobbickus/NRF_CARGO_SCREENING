@@ -56,8 +56,8 @@
 class SteppingDetTest: public G4UserSteppingAction
 {
 public:
-  SteppingAction(EventAction*);
-  virtual ~SteppingAction();
+  SteppingDetTest(EventAction*);
+  virtual ~SteppingDetTest();
 
   // method from the base class
   virtual void UserSteppingAction(const G4Step*);
