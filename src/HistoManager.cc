@@ -361,17 +361,17 @@ void HistoManager::Book()
     
       tuple_counter++;
       
-      if(debug)
-        G4cout << "HistoManager::Book -> TOTAL NTUPLES: " << tuple_counter << G4endl;
-      
     }
-
   }
 
   fFactoryOn = true;
 if(debug)
   std::cout << "HistoManager::Book() --> Complete!" << std::endl;
-}
+  
+if(debug)
+  G4cout << "HistoManager::Book -> TOTAL NTUPLES: " << tuple_counter << G4endl;
+  
+}// end of HistoManager::Book 
 
 void HistoManager::finish()
 {
