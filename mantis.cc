@@ -158,79 +158,79 @@ int main(int argc,char **argv)
 
       if      (G4String(input) == "-h") PrintUsage();
       else if (G4String(input) == "--help") PrintUsage();
-      else if (G4String(argv[i]) == "--macro") macro = argv[i+1];
-      else if (G4String(argv[i]) == "--energy") chosen_energy = std::stod(argv[i+1]);
-      else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
-      else if (G4String(argv[i]) == "--output_filename") root_output_name = argv[i+1];
-      else if (G4String(argv[i]) == "--detector_response_input") ResponseFunction_in = argv[i+1];
-      else if (G4String(argv[i]) == "-r")
+      else if (G4String(input) == "--macro") macro = argv[i+1];
+      else if (G4String(input) == "--energy") chosen_energy = std::stod(argv[i+1]);
+      else if (G4String(input) == "--seed") seed = atoi(argv[i+1]);
+      else if (G4String(input) == "--output_filename") root_output_name = argv[i+1];
+      else if (G4String(input) == "--detector_response_input") ResponseFunction_in = argv[i+1];
+      else if (G4String(input) == "-r")
       {
         ResponseFunction = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--detector_response_file") response_function_file = argv[i+1];
-      else if (G4String(argv[i]) == "--detector_response_test") detTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t1")
+      else if (G4String(input) == "--detector_response_file") response_function_file = argv[i+1];
+      else if (G4String(input) == "--detector_response_test") detTest_in = argv[i+1];
+      else if (G4String(input) == "-t1")
       {
         detTest = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--brem_test") bremTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t2")
+      else if (G4String(input) == "--brem_test") bremTest_in = argv[i+1];
+      else if (G4String(input) == "-t2")
       {
         bremTest = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--resonance_test") resonance_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t3")
+      else if (G4String(input) == "--resonance_test") resonance_in = argv[i+1];
+      else if (G4String(input) == "-t3")
       {
         resonanceTest = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--force_isotropic") force_isotropic_in = argv[i+1];
-      else if (G4String(argv[i]) == "-i")
+      else if (G4String(input) == "--force_isotropic") force_isotropic_in = argv[i+1];
+      else if (G4String(input) == "-i")
       {
         force_isotropic = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--print_standalone_data") standalone_in = argv[i+1];
-      else if (G4String(argv[i]) == "-s")
+      else if (G4String(input) == "--print_standalone_data") standalone_in = argv[i+1];
+      else if (G4String(input) == "-s")
       {
         standalone = true;
         i = i-1;
       }
-      else if (G4String(argv[i]) == "--verbose") verbose_in = argv[i+1];
-      else if (G4String(argv[i]) == "-v")
+      else if (G4String(input) == "--verbose") verbose_in = argv[i+1];
+      else if (G4String(input) == "-v")
       {
         NRF_Verbose = true;
         i =i-1;
       }
-      else if (G4String(argv[i]) == "--nrf") addNRF_in = argv[i+1];
-      else if (G4String(argv[i]) == "-n")
+      else if (G4String(input) == "--nrf") addNRF_in = argv[i+1];
+      else if (G4String(input) == "-n")
       {
         addNRF = true;
         i=i-1;
       }
-      else if (G4String(argv[i]) == "--file_to_sample") inFile = argv[i+1];
-      else if (G4String(argv[i]) == "--debug") debug_in = argv[i+1];
-      else if (G4String(argv[i]) == "-d")
+      else if (G4String(input) == "--file_to_sample") inFile = argv[i+1];
+      else if (G4String(input) == "--debug") debug_in = argv[i+1];
+      else if (G4String(input) == "-d")
       {
         debug = true;
         i=i-1;
       }
-      else if (G4String(argv[i]) == "--print_events") printEvents_in = argv[i+1];
-      else if (G4String(argv[i]) == "-p")
+      else if (G4String(input) == "--print_events") printEvents_in = argv[i+1];
+      else if (G4String(input) == "-p")
       {
         printEvents = true;
         i=i-1;
       }
-      else if (G4String(argv[i]) == "--sample_energy_range") SampleEnergyRange_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t4")
+      else if (G4String(input) == "--sample_energy_range") SampleEnergyRange_in = argv[i+1];
+      else if (G4String(input) == "-t4")
       {
         SampleEnergyRangebool = true;
         i=i-1;
       }
-      else if (G4String(argv[i]) == "--uniform_width") uniform_width = std::stod(argv[i+1]);
+      else if (G4String(input) == "--uniform_width") uniform_width = std::stod(argv[i+1]);
       else
       {
         std::cerr << "FATAL ERROR: " << std::endl << "User Inputs: " << std::endl;
