@@ -296,10 +296,10 @@ int main(int argc,char **argv)
 
   // Primary Generator Options
   if(ResponseFunction_in == "True" || ResponseFunction_in == "true")
-  {
-    G4cout << "Conducting Response Function Run." << G4endl;
     ResponseFunction = true;
-  }
+  if(ResponseFunction)
+    G4cout << "Conducting Response Function Run." << G4endl;
+    
   if(detTest_in == "True" || detTest_in == "true")
   {
     G4cout << "Conducting Detector Response Test" << G4endl;
