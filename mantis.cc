@@ -180,6 +180,12 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "--Uniform_Width") uniform_width = std::stod(argv[i+1]);
       else
       {
+        std::cerr << "FATAL ERROR: " << std::endl << "User Inputs: " << std::endl;
+        for(G4int i=1;i<argc;i=i+2)
+        {
+          std::cerr << argv[i] << std::endl;
+        }
+        std::cerr << std::endl << "USAGE HELP: " << std::endl;
         PrintUsage();
         return 1;
       }
