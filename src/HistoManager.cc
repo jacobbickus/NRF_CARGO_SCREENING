@@ -29,7 +29,7 @@ extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool debug;
 extern G4String inFile;
-extern G4bool ResponseFunctionTest;
+extern G4bool ResponseFunction;
 
 HistoManager::HistoManager() : fFactoryOn(false), WEIGHTED(false)
 {

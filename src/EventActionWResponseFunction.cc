@@ -98,6 +98,7 @@ void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
                 << std::setprecision(6) << std::flush;
     }
 
+    incident_energy = 0.;
 
     if(debug)
         std::cout << "EventActionWResponseFunction::BeginOfEventActionWResponseFunction -> Ending" << std::endl;

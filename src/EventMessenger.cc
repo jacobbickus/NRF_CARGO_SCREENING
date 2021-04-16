@@ -10,11 +10,25 @@ EventMessenger::EventMessenger(EventAction* EventAction)
   Cmd->SetGuidance("Choose Desired eventInfoFreq");
   Cmd->SetParameterName("eventInfo",false);
   Cmd->SetRange("eventInfo > 0 && eventInfo < 100000000");
+  Cmd2 = new G4UIcmdWithADouble("/mantisevent/NA",this);
+}
+
+EventMessenger::EventMessenger(EventActionWResponseFunction* EventAction)
+        : EventAWResponse(EventAction)
+{
+  myDir = new G4UIdirectory("/mantisevent/");
+  myDir->SetGuidance("Event Info Commands");
+  Cmd = new G4UIcmdWithADouble("/mantisevent/NA",this);
+  Cmd2 = new G4UIcmdWithADouble("/mantisevent/eventInfoFreq",this);
+  Cmd2->SetGuidance("Choose Desired eventInfoFreq");
+  Cmd2->SetParameterName("eventInfo",false);
+  Cmd2->SetRange("eventInfo > 0 && eventInfo < 100000000");
 }
 
 EventMessenger::~EventMessenger()
 {
   delete Cmd;
+  delete Cmd2;
 }
 
 
@@ -24,6 +38,12 @@ void EventMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   {
     G4double theCommand = Cmd->GetNewDoubleValue(newValue);
     EventA->SetEventInfoFreq((int)theCommand);
+    G4cout << "EventInfo Frequency set to: " << theCommand << G4endl;
+  }
+  else if(command == Cmd2)
+  {
+    G4double theCommand = Cmd2->GetNewDoubleValue(newValue);
+    EventAWResponse->SetEventInfoFreq((int)theCommand);
     G4cout << "EventInfo Frequency set to: " << theCommand << G4endl;
   }
 }

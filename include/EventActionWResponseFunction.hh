@@ -60,6 +60,7 @@ G4int eventInfoFreq, runID;
 G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
 G4bool WEIGHTED;
 EventMessenger* eventM;
+G4double incident_energy;
 
 };
 
