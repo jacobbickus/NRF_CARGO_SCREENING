@@ -70,7 +70,7 @@ public:
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
-    void CreateDetectorResponseFunction(const char* filename);
+    void CreateDetectorResponseFunction(const char*, const char*);
 
 private:
 
@@ -268,6 +268,8 @@ private:
     void Show_CheckIntObjRegion_Description();
     void Show_CreateOptPerEnergy();
     void Show_CreateOptPerEnergy_Description();
+    void Show_CreateDetectorResponseFunction();
+    void Show_CreateDetectorResponseFunction_Description();
 
     double hc = 6.62607004e-34*299792458;
 
@@ -345,6 +347,10 @@ void MantisROOT::Help()
 
   Show_CopyTrees();
   Show_CopyTrees_Description();
+  std::cout << std::endl;
+
+  Show_CreateDetectorResponseFunction();
+  Show_CreateDetectorResponseFunction_Description();
   std::cout << std::endl;
 
   Show_CreateDetEfficiencyCurve();
@@ -1105,6 +1111,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_ChopperWeightandCost();
     Show_CombineFiles();
     Show_CopyTrees();
+    Show_CreateDetectorResponseFunction();
     Show_CreateDetEfficiencyCurve();
     Show_CreateOptPerEnergy();
     Show_CreateScintillationDistribution();
@@ -1180,6 +1187,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CreateOptPerEnergy();
     if(description)
       Show_CreateOptPerEnergy_Description();
+  }
+  else if(!name.compare("CreateDetectorResponseFunction"))
+  {
+    Show_CreateDetectorResponseFunction();
+    if(description)
+      Show_CreateDetectorResponseFunction_Description();
   }
   else if(!name.compare("CreateTKDE"))
   {
@@ -4799,6 +4812,16 @@ void MantisROOT::Show_Sampling_Description()
   << std::endl << "would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content"
   << std::endl << "the importance sampling distribution energies below 1.5 MeV would have importances 1/1000 of the NRF resonance energies."
   << std::endl;
+}
+
+void MantisROOT::Show_CreateDetectorResponseFunction()
+{
+  std::cout << "void CreateDetectorResponseFunction(const char* filename, const char* outfilename)" << std::endl;
+}
+
+void MantisROOT::Show_CreateDetectorResponseFunction_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Creates Detector Response Function for Detector Response runs." << std::endl;
 }
 
 void MantisROOT::Show_SimpleSampling()
