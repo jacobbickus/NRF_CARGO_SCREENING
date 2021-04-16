@@ -240,27 +240,26 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
           theStatus = opProc->GetStatus();
           if (theStatus == Detection)
           {
-              procCount = "Det";
-              manager->FillNtupleIColumn(6,0,eventID);
-              manager->FillNtupleDColumn(6,1, theParticle->GetKineticEnergy()/(MeV));
-              manager->FillNtupleDColumn(6,2, beamEnergy);
-              manager->FillNtupleDColumn(6,3, loc.x()/(cm));
-              manager->FillNtupleDColumn(6,4, loc.y()/(cm));
-              G4String creatorProcess;
+            manager->FillNtupleIColumn(6,0,eventID);
+            manager->FillNtupleDColumn(6,1, theParticle->GetKineticEnergy()/(MeV));
+            manager->FillNtupleDColumn(6,2, beamEnergy);
+            manager->FillNtupleDColumn(6,3, loc.x()/(cm));
+            manager->FillNtupleDColumn(6,4, loc.y()/(cm));
+            G4String creatorProcess;
 
-              if(theTrack->GetCreatorProcess() !=0)
-                  creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
-              else
-                  creatorProcess = "Brem";
+            if(theTrack->GetCreatorProcess() !=0)
+                creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
+            else
+                creatorProcess = "Brem";
 
-              manager->FillNtupleSColumn(6,5, creatorProcess);
-              manager->FillNtupleDColumn(6,6, theTrack->GetGlobalTime()); // time units is nanoseconds
-              manager->FillNtupleIColumn(6,7, seed);
+            manager->FillNtupleSColumn(6,5, creatorProcess);
+            manager->FillNtupleDColumn(6,6, theTrack->GetGlobalTime()); // time units is nanoseconds
+            manager->FillNtupleIColumn(6,7, seed);
 
-              if(WEIGHTED)
-                manager->FillNtupleDColumn(6,8, weight);
+            if(WEIGHTED)
+              manager->FillNtupleDColumn(6,8, weight);
 
-              manager->AddNtupleRow(6);
+            manager->AddNtupleRow(6);
           } // for if status == Detection
         } // for if opProc
       } // for for loop
