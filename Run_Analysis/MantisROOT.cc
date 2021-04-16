@@ -2729,8 +2729,9 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
 void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename)
 {
   CheckFile(filename);
-  fin = TFile::Open(filename);
+  TFile* fin = TFile::Open(filename);
   fin->cd();
+  TTree* tdet_response;
   tdet_response = (TTree*) fin->Get("DetReponse");
   tdet_response->SetEstimate(-1);
 
