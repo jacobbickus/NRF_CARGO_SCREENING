@@ -160,9 +160,9 @@ int main(int argc,char **argv)
   for (G4int i=1; i<argc; i=i+2)
   {
     //std::cout << i << std::endl;
-
-      if      (MyLower(G4String(argv[i])) == "-h") PrintUsage();
-      else if (MyLower(G4String(argv[i])) == "--help") PrintUsage();
+      MyLower(std::string(argv[i]));
+      if      (G4String(argv[i]) == "-h") PrintUsage();
+      else if (G4String(argv[i]) == "--help") PrintUsage();
       else if (G4String(argv[i]) == "--macro") macro = argv[i+1];
       else if (G4String(argv[i]) == "--energy") chosen_energy = std::stod(argv[i+1]);
       else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
