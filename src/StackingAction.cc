@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "StackingAction.hh"
-
+extern G4bool detTest;
 
 StackingAction::StackingAction()
 {
