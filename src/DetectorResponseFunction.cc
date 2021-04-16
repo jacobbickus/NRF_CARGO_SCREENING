@@ -36,6 +36,7 @@ DetectorResponseFunction::DetectorResponseFunction()
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
   tdet_scintillation_response = (TProfile*) fin->Get("ScintillationResponse");
   tdet_cherenkov_response = (TProfile*) fin->Get("CherenkovResponse");
+  G4cout << "DetectorResponseFunction::DetectorResponseFunction -> Response Functions Obtained." << G4endl;
 }
 
 DetectorResponseFunction::~DetectorResponseFunction()
