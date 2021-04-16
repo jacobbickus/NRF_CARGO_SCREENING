@@ -157,19 +157,27 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-r")
       {
         ResponseFunction = true;
-        i++;
+        i = i+2;
       }
       else if (G4String(argv[i]) == "--Detector_Response_File") response_function_file = argv[i+1];
       else if (G4String(argv[i]) == "--Detector_Response_Test") detTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-t1")
       {
         detTest = true;
-        i++;
+        i = i+2;
       }
       else if (G4String(argv[i]) == "--Brem_Test") bremTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t2") bremTest = true;
+      else if (G4String(argv[i]) == "-t2")
+      {
+        bremTest = true;
+        i = i+2;
+      }
       else if (G4String(argv[i]) == "--Resonance_Test") resonance_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t3") resonanceTest = true;
+      else if (G4String(argv[i]) == "-t3")
+      {
+        resonanceTest = true;
+        i = i+2;
+      }
       else if (G4String(argv[i]) == "--Force_Isotropic") force_isotropic_in = argv[i+1];
       else if (G4String(argv[i]) == "-i") force_isotropic = true;
       else if (G4String(argv[i]) == "--Print_Standalone_Data") standalone_in = argv[i+1];
