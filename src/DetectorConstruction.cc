@@ -170,7 +170,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   if(detTest)
   {
-    waterRot->rotateX(180.*deg);
     new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
                       "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
   }
@@ -309,8 +308,24 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     PMT_y_posv.push_back(0);
   }
 
-  for(G4int k=0;k<nPMT;++k)
+  if(detTest)
   {
+    for(G4int k=0;k<nPMT;++k)
+    {
+      new G4PVPlacement(0,
+                        G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
+                        logicPMT,
+                        "PMT",
+                        logicWater,
+                        false,
+                        k,
+                        checkOverlaps);
+    }      
+  }
+  else
+  {
+    for(G4int k=0;k<nPMT;++k)
+    {
       new G4PVPlacement(0,
                         G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
                         logicPMT,
@@ -319,6 +334,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         false,
                         k,
                         checkOverlaps);
+    }     
   }
 
 // **************************************************** Construct Photocathode ****************************************************** //
