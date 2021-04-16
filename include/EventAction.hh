@@ -57,13 +57,18 @@ void CherenkovEnergy(G4double energy){cherenkov_energyv.push_back(energy);}
 void ScintillationAddSecondary(){s_secondaries++;}
 void CherenkovAddSecondary(){c_secondaries++;}
 void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
+void AddDetectedScintillation(){s_detected++;}
+void AddDetectedCherenkov(){c_detected++;}
+void AddDetected(){number_detected++;}
+void SetIncidentEnergy(G4double e){incident_energy = e;}
 
 private:
 G4int eventInfoFreq, runID;
 G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
 G4bool WEIGHTED;
 EventMessenger* eventM;
-G4int c_secondaries, s_secondaries;
+G4int c_secondaries, s_secondaries, s_detected, c_detected, number_detected;
+G4double incident_energy;
 std::vector<double> cherenkov_energyv, scintillation_energyv;
 };
 
