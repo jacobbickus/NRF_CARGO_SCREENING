@@ -101,7 +101,7 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
     }
 
     // Reset values 
-    num_detected = 0;
+    number_detected = 0;
     s_detected = 0;
     c_detected = 0;
     incident_energy = 0.;
