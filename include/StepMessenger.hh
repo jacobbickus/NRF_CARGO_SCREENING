@@ -19,6 +19,7 @@ class StepMessenger: public G4UImessenger
 {
 public:
   StepMessenger(SteppingAction*);
+  StepMessenger(SteppingWResponseFunction*);
   ~StepMessenger();
 
   void SetNewValue(G4UIcommand*, G4String);
