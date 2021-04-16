@@ -178,16 +178,16 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "--Print_Standalone_Data") standalone_in = argv[i+1];
       else if (G4String(argv[i]) == "-s") standalone = true;
       else if (G4String(argv[i]) == "--Verbose") verbose_in = argv[i+1];
-      else if (G4String(argv[i]) == "-v") Verbose = true;
+      else if (G4String(argv[i]) == "-v") NRF_Verbose = true;
       else if (G4String(argv[i]) == "--NRF") addNRF_in = argv[i+1];
       else if (G4String(argv[i]) == "-n") addNRF = true;
       else if (G4String(argv[i]) == "--File_To_Sample") inFile = argv[i+1];
       else if (G4String(argv[i]) == "--Debug") debug_in = argv[i+1];
-      else if (G4String(argv[i]) == "-d") Debug = true;
+      else if (G4String(argv[i]) == "-d") debug = true;
       else if (G4String(argv[i]) == "--Print_Events") printEvents_in = argv[i+1];
       else if (G4String(argv[i]) == "-p") printEvents = true;
       else if (G4String(argv[i]) == "--Sample_Energy_Range") SampleEnergyRange_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t4") SampleEnergyRange = true;
+      else if (G4String(argv[i]) == "-t4") SampleEnergyRangebool = true;
       else if (G4String(argv[i]) == "--Uniform_Width") uniform_width = std::stod(argv[i+1]);
       else
       {
