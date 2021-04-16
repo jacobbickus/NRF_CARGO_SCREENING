@@ -340,7 +340,30 @@ void HistoManager::Book()
       G4cout << "HistoManager::Book -> Ntuple Detected Information: " << tuple_counter << G4endl;
     
     tuple_counter++;
-
+    
+    // Ntuple ID 7 for DetTest 
+    if(detTest)
+    {
+      manager->CreateNtuple("DetResponse","Detector Response Function");
+      manager->CreateNtupleIColumn("EventID");
+      manager->CreateNtupleDColumn("IncidentEnergy");
+      manager->CreateNtupleIColumn("NumPE");
+      manager->CreateNtupleIColumn("NumScintillation");
+      manager->CreateNtupleIColumn("NumCherenkov");
+      manager->CreateNtupleIColumn("Seed");
+      
+      if(WEIGHTED)
+        manager->CreateNtupleDColumn("Weight");
+      
+      manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Detector Response Function: " << tuple_counter << G4endl;
+      
+      tuple_counter++;
+      
+    }
+    
     if(!detTest)
     {
       // Create ID 13 Ntuple for Detector Process Information
