@@ -29,6 +29,7 @@ extern G4bool printEvents;
 extern G4bool bremTest;
 extern G4bool detTest;
 extern G4String inFile;
+extern G4long seed;
 
 EventAction::EventAction()
 :eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
@@ -100,6 +101,10 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
     }
 
     // Reset values 
+    num_detected = 0;
+    s_detected = 0;
+    c_detected = 0;
+    incident_energy = 0.;
     s_secondaries = 0;
     c_secondaries = 0;
     scintillation_energyv.clear();
@@ -117,6 +122,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double weight = info->GetWeight();
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
+  
     // Deal With Scintillation per Event
     if(s_secondaries > 0)
     {
@@ -147,6 +153,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
         manager->AddNtupleRow(8);
       }
     }
+  
     // Deal With Cherenkov per Event
     if(c_secondaries > 0)
     {
@@ -178,6 +185,23 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       }
     }
 
+    // Deal with Detected per Event 
+    if(detTest)
+    {
+      manager->FillNtupleIColumn(7,0, anEvent->GetEventID());
+      manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
+      manager->FillNtupleIColumn(7,2, number_detected);
+      manager->FillNtupleIColumn(7,3, s_detected);
+      manager->FillNtupleIColumn(7,4, c_detected);
+      manager->FillNtupleIColumn(7,5, seed);
+      
+      if(WEIGHTED)
+        manager->FillNtupleDColumn(7,6, weight);
+      
+      manager->AddNtupleRow(7);
+      
+    }
+  
     if(debug)
         std::cout << "EventAction::EndOfEventAction() --> Ending!" << std::endl;
 }
