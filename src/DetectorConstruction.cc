@@ -166,17 +166,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double water_x_pos = tan(myangle)*(container_z_pos - water_z_pos);
   G4double detDistance = water_x_pos/sin(myangle) + water_size_z;
   G4RotationMatrix* waterRot = new G4RotationMatrix;
-  waterRot->rotateY((180. - theAngle)*deg);
   G4RotationMatrix* waterRot2 = new G4RotationMatrix;
-  waterRot2->rotateY((180. + theAngle)*deg);
 
   if(detTest)
   {
+    waterRot->rotateY(180.*deg);
     new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
                       "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
   }
   else
   {
+    waterRot->rotateY((180. - theAngle)*deg);
+    waterRot2->rotateY((180. + theAngle)*deg);
     new G4PVPlacement(waterRot,
                       G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
                       "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
