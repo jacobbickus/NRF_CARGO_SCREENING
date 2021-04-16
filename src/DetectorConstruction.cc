@@ -90,6 +90,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4double world_size_x = 2.5*m;
   G4double world_size_z = 4.5*m;
+        
+  if(detTest)
+  {
+   world_size_x = 1.*m;
+   world_size_z = 1.5*m;
+  }
 
   G4Box* solidWorld = new G4Box("World", world_size_x, world_size_x, world_size_z);
 
