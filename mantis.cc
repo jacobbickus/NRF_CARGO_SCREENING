@@ -61,9 +61,9 @@ void PrintUsage()
 {
   G4cerr << "Usage: " << G4endl;
   G4cerr << "mantis [-h --help]                              Prints this Usage Screen" << G4endl
-  << "      [--macro=mantis.in]                              Macro File to be read for user input options -> Required!" << G4endl
+  << "      [--Macro=mantis.in]                              Macro File to be read for user input options -> Required!" << G4endl
   << "      [--File_To_Sample=brems_distributions.root]      Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
-  << "      [--seed=1]                                       Simulation Seed." << G4endl
+  << "      [--Seed=1]                                       Simulation Seed." << G4endl
   << "      [--Output_Filename=test.root]                    Data will be written to this file." << G4endl
   << "      [--Energy=-1.]                                   Sets the energy of the primary particle to the user's value in MeV" << G4endl
   << "      [--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << G4endl
@@ -148,12 +148,12 @@ int main(int argc,char **argv)
   for (G4int i=1; i<argc; i=i+2)
   {
     std::cout << i << std::endl;
-    
+
       if      (G4String(argv[i]) == "-h") PrintUsage();
-      else if (G4String(argv[i]) == "--help") PrintUsage();
+      else if (G4String(argv[i]) == "--Help") PrintUsage();
       else if (G4String(argv[i]) == "--Macro") macro = argv[i+1];
       else if (G4String(argv[i]) == "--Energy") chosen_energy = std::stod(argv[i+1]);
-      else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
+      else if (G4String(argv[i]) == "--Seed") seed = atoi(argv[i+1]);
       else if (G4String(argv[i]) == "--Output_Filename") root_output_name = argv[i+1];
       else if (G4String(argv[i]) == "--Detector_Response_Input") ResponseFunction_in = argv[i+1];
       else if (G4String(argv[i]) == "-r")
@@ -203,7 +203,7 @@ int main(int argc,char **argv)
       else
       {
         std::cerr << "FATAL ERROR: " << std::endl << "User Inputs: " << std::endl;
-        for(G4int i=1;i<argc;i=i+2)
+        for(G4int i=1;i<argc;i++)
         {
           std::cerr << argv[i] << std::endl;
         }
