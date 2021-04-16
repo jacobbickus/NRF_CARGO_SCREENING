@@ -254,7 +254,7 @@ void HistoManager::Book()
 
     // Create ID 7 Ntuple for Incident Water Tank Data
     // Only Run with smaller runs this ntuple can get quite large
-    if(!detTest && !ResponseFunctionTest)
+    if(!detTest && !ResponseFunction)
     {
       manager->CreateNtuple("Water","Incident Water Tank Data");
       manager->CreateNtupleIColumn("EventID");

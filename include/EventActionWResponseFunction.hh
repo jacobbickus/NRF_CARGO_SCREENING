@@ -53,6 +53,7 @@ public:
 void BeginOfEventAction(const G4Event*);
 void EndOfEventAction(const G4Event*);
 
+void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
 void SetIncidentEnergy(G4double e){incident_energy = e;}
 
 private:

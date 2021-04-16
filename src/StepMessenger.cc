@@ -24,9 +24,23 @@
 
 #include "StepMessenger.hh"
 
+extern G4bool ResponseFunction;
 
 StepMessenger::StepMessenger(SteppingAction* stepAction)
         : stepA(stepAction)
+{
+  myDir = new G4UIdirectory("/output/");
+  myDir->SetGuidance("Output Commands");
+  Cmd = new G4UIcmdWithAString("/output/myoutput",this);
+  Cmd->SetGuidance("Choose Desired Outputs");
+  Cmd->SetGuidance("Choice: ChopIncData, ChopOutData, NRFData, IntObjInData, IntObjOutData, ShieldingData, PlexiData, WaterIncData, ScintillationData, ScintillationData2, CherenkovData, CherenkovData2, DetData, none (default)");
+  Cmd->SetParameterName("choice",false);
+  Cmd->SetDefaultValue("none");
+  Cmd->SetCandidates("ChopIncData ChopOutData NRFData IntObjInData IntObjOutData ShieldingData PlexiData WaterIncData ScintillationData ScintillationData2 CherenkovData CherenkovData2 DetData none");
+}
+
+StepMessenger::StepMessenger(SteppingWResponseFunction* stepAction)
+: stepAWResponseFunction(stepAction)
 {
   myDir = new G4UIdirectory("/output/");
   myDir->SetGuidance("Output Commands");
@@ -51,68 +65,120 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     G4String theCommand = newValue;
     if(theCommand == "ChopIncData")
     {
-            stepA->SetChopperIncDataFlag(1);
-            G4cout << G4endl << "User Selected Chopper Incident Data." << G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetChopperIncDataFlag(1);
+      else
+        stepA->SetChopperIncDataFlag(1);
+
+      G4cout << G4endl << "User Selected Chopper Incident Data." << G4endl;
     }
     else if(theCommand == "ChopOutData")
     {
-            stepA->SetChopperOutDataFlag(1);
-            G4cout << G4endl << "User Selected Chopper Emission Data." << G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetChopperOutDataFlag(1);
+      else
+        stepA->SetChopperOutDataFlag(1);
+
+      G4cout << G4endl << "User Selected Chopper Emission Data." << G4endl;
     }
     else if(theCommand == "NRFData")
     {
-            stepA->SetNRFDataFlag(1);
-            G4cout << G4endl << "User Selected NRF Data." << G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetNRFDataFlag(1);
+      else
+        stepA->SetNRFDataFlag(1);
+
+      G4cout << G4endl << "User Selected NRF Data." << G4endl;
     }
     else if(theCommand == "IntObjInData")
     {
-            stepA->SetIntObjInDataFlag(1);
-            G4cout << G4endl << "User Selected Interrogation Object Incident Data." << G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetIntObjInDataFlag(1);
+      else
+        stepA->SetIntObjInDataFlag(1);
+
+      G4cout << G4endl << "User Selected Interrogation Object Incident Data." << G4endl;
     }
     else if(theCommand == "IntObjOutData")
     {
-      stepA->SetIntObjOutDataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetIntObjOutDataFlag(1);
+      else
+        stepA->SetIntObjOutDataFlag(1);
+
       G4cout << G4endl << "User Selected Interrogation Object Emission Data." << G4endl;
     }
     else if(theCommand == "ShieldingData")
     {
-      stepA->SetShieldingIncDataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetShieldingIncDataFlag(1);
+      else
+        stepA->SetShieldingIncDataFlag(1);
+
       G4cout << G4endl << "User Selected Incident Shielding Data." << G4endl;
     }
     else if(theCommand == "PlexiData")
     {
-      stepA->SetPlexiIncDataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetPlexiIncDataFlag(1);
+      else
+        stepA->SetPlexiIncDataFlag(1);
+
       G4cout << G4endl << "User Selected Incident Plexiglass Data." << G4endl;
     }
     else if(theCommand == "WaterIncData")
     {
-            stepA->SetWaterIncDataFlag(1);
-            G4cout << G4endl << "User Selected Incident Water Data." <<G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetWaterIncDataFlag(1);
+      else
+        stepA->SetWaterIncDataFlag(1);
+
+      G4cout << G4endl << "User Selected Incident Water Data." <<G4endl;
     }
     else if(theCommand == "ScintillationData")
     {
-      stepA->SetScintillationDataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetScintillationDataFlag(1);
+      else
+        stepA->SetScintillationDataFlag(1);
+
       G4cout << G4endl << "User Selected Scintillation Data." << G4endl;
     }
     else if(theCommand == "ScintillationData2")
     {
-      stepA->SetScintillation2DataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetScintillation2DataFlag(1);
+      else
+        stepA->SetScintillation2DataFlag(1);
+
       G4cout << G4endl << "User Selected Scintillation2 Data." << G4endl;
     }
     else if(theCommand == "CherenkovData")
     {
-            stepA->SetCherenkovDataFlag(1);
-            G4cout << G4endl << "User Selected Cherenkov Data." <<G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetCherenkovDataFlag(1);
+      else
+        stepA->SetCherenkovDataFlag(1);
+
+      G4cout << G4endl << "User Selected Cherenkov Data." <<G4endl;
     }
     else if(theCommand == "CherenkovData2")
     {
-      stepA->SetCherenkov2DataFlag(1);
+      if(ResponseFunction)
+        stepAWResponseFunction->SetCherenkov2DataFlag(1);
+      else
+        stepA->SetCherenkov2DataFlag(1);
+
       G4cout << G4endl << "User Selected Cherenkov2 Data." << G4endl;
     }
     else if(theCommand == "DetData")
     {
-            stepA->SetDetDataFlag(1);
-            G4cout << G4endl << "User Selected Detected Data."<<G4endl;
+      if(ResponseFunction)
+        stepAWResponseFunction->SetDetDataFlag(1);
+      else
+        stepA->SetDetDataFlag(1);
+
+      G4cout << G4endl << "User Selected Detected Data."<<G4endl;
     }
     else if(theCommand == "none")
     {
