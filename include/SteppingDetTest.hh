@@ -53,7 +53,7 @@
 #include "G4ParticleGun.hh"
 #include "G4SystemOfUnits.hh"
 
-class SteppingDetTest : public UserSteppingAction
+class SteppingDetTest: public G4UserSteppingAction
 {
 public:
   SteppingDetTest(EventAction*);

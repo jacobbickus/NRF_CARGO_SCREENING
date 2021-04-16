@@ -37,6 +37,7 @@ SteppingDetTest::SteppingDetTest(EventAction* event)
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
 }
+
 SteppingDetTest::~SteppingDetTest()
 {}
 
