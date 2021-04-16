@@ -61,26 +61,37 @@ void PrintUsage()
 {
   G4cerr << "Usage: " << G4endl;
   G4cerr << "mantis [-h help] Prints this Usage Screen" << G4endl
-  << "[-a chosen_energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
-  << "[-c detTest=false Create Detector Response Fucntion]" << G4endl
-  << "[-debug debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
-  << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
-  << "[-g ResponseFunctionRun] Runs Mantis Simulation with Detector Response Function Input" << G4endl
-  << "[-j ResponseFunctionInput] Input File with Detector Response Function TProfile" << G4endl
-  << "[-i inFile] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
-  << "No importance sampling weighting will be done if the -i input is passed." << G4endl
-  << "The Default input file name is brems_distributions.root which should contain an importance sampling distribution " << G4endl
-  << "[-m macro=mantis.in] Macro File to be read for user input options -> Required!" << G4endl
-  << "[-n addNRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
-  << "[-o output_name] Data will be written to this file." << G4endl
-  << "[-p standalone=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
-  << "[-q force_isotropic=true] Forces nrf isotropic emission." << G4endl
-  << "[-r resonance_test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
-  << "[-s seed=1] Simulation Seed." << G4endl
-  << "[-t bremTest=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
-  << "[-u SampleEnergyRange=false] Samples from a normal distribution centered on user's energy." << G4endl
-  << "[-w uniform_width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true." << G4endl
-  <<  "[-v NRF_Verbose=false] Sets NRF Physics Verbosity" << G4endl << G4endl;
+  << "[--macro=mantis.in] Macro File to be read for user input options -> Required!" << G4endl
+  << "[--File_To_Sample=brems_distributions.root] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
+  << "[--seed=1] Simulation Seed." << G4endl
+  << "[--Output_Filename=test.root] Data will be written to this file." << G4endl
+  << "[--Energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
+  << "[--Debug=false] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
+  << "[-d]" << G4endl
+  << "[--Force_Isotropic=true] Forces nrf isotropic emission." << G4endl
+  << "[-i]" << G4endl
+  << "[--NRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
+  << "[-n]" << G4endl
+  << "[--Print_Events=false]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
+  << "[-p]" << G4endl
+  << "[--Detector_Response_Input=false] Runs Mantis Simulation with Detector Response Function Input" << G4endl
+  << "[-r]" << G4endl
+  << "[--Print_Standalone_Data=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
+  << "[-s]" << G4endl
+  << "[--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << G4endl
+  << "[--Verbose=false] Sets NRF Physics Verbosity" << G4endl
+  << "[-v]" << G4endl
+  << G4endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test" << G4endl << G4endl
+  << "[--Detector_Response_Test=false] Create Detector Response Function" << G4endl
+  << "[-t1]" << G4endl
+  << "[--Brem_Test=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
+  << "[-t2]" << G4endl
+  << "[--Resonance_Test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
+  << "[-t3]" << G4endl
+  << "[--Sample_Energy_Range=false] Samples from a normal distribution centered on user's energy." << G4endl
+  << "[-t4]" << G4endl
+  << "[--Uniform_Width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true." << G4endl
+  << G4endl;
   exit(1);
 }
 }
@@ -148,24 +159,36 @@ int main(int argc,char **argv)
   for (G4int i=1; i<argc; i=i+2)
   {
       if      (G4String(argv[i]) == "-h") PrintUsage();
-      else if (G4String(argv[i]) == "-m") macro = argv[i+1];
-      else if (G4String(argv[i]) == "-a") chosen_energy = std::stod(argv[i+1]);
-      else if (G4String(argv[i]) == "-s") seed = atoi(argv[i+1]);
-      else if (G4String(argv[i]) == "-o") root_output_name = argv[i+1];
-      else if (G4String(argv[i]) == "-g") ResponseFunction_in = argv[i+1];
-      else if (G4String(argv[i]) == "-j") response_function_file = argv[i+1];
-      else if (G4String(argv[i]) == "-c") detTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t") bremTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-r") resonance_in = argv[i+1];
-      else if (G4String(argv[i]) == "-q") force_isotropic_in = argv[i+1];
-      else if (G4String(argv[i]) == "-p") standalone_in = argv[i+1];
-      else if (G4String(argv[i]) == "-v") verbose_in = argv[i+1];
-      else if (G4String(argv[i]) == "-n") addNRF_in = argv[i+1];
-      else if (G4String(argv[i]) == "-i") inFile = argv[i+1];
-      else if (G4String(argv[i]) == "-debug") debug_in = argv[i+1];
-      else if (G4String(argv[i]) == "-f") printEvents_in = argv[i+1];
-      else if (G4String(argv[i]) == "-u") SampleEnergyRange_in = argv[i+1];
-      else if (G4String(argv[i]) == "-w") uniform_width = std::stod(argv[i+1]);
+      else if (G4String(argv[i]) == "--help") PrintUsage();
+      else if (G4String(argv[i]) == "--Macro") macro = argv[i+1];
+      else if (G4String(argv[i]) == "--Energy") chosen_energy = std::stod(argv[i+1]);
+      else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
+      else if (G4String(argv[i]) == "--Output_Filename") root_output_name = argv[i+1];
+      else if (G4String(argv[i]) == "--Detector_Response_Input") ResponseFunction_in = argv[i+1];
+      else if (G4String(argv[i]) == "-r") ResponseFunction = true;
+      else if (G4String(argv[i]) == "--Detector_Response_File") response_function_file = argv[i+1];
+      else if (G4String(argv[i]) == "--Detector_Response_Test") detTest_in = argv[i+1];
+      else if (G4String(argv[i]) == "-t1") detTest = true;
+      else if (G4String(argv[i]) == "--Brem_Test") bremTest_in = argv[i+1];
+      else if (G4String(argv[i]) == "-t2") bremTest = true;
+      else if (G4String(argv[i]) == "--Resonance_Test") resonance_in = argv[i+1];
+      else if (G4String(argv[i]) == "-t3") resonanceTest = true;
+      else if (G4String(argv[i]) == "--Force_Isotropic") force_isotropic_in = argv[i+1];
+      else if (G4String(argv[i]) == "-i") force_isotropic = true;
+      else if (G4String(argv[i]) == "--Print_Standalone_Data") standalone_in = argv[i+1];
+      else if (G4String(argv[i]) == "-s") standalone = true;
+      else if (G4String(argv[i]) == "--Verbose") verbose_in = argv[i+1];
+      else if (G4String(argv[i]) == "-v") Verbose = true;
+      else if (G4String(argv[i]) == "--NRF") addNRF_in = argv[i+1];
+      else if (G4String(argv[i]) == "-n") addNRF = true;
+      else if (G4String(argv[i]) == "--File_To_Sample") inFile = argv[i+1];
+      else if (G4String(argv[i]) == "--Debug") debug_in = argv[i+1];
+      else if (G4String(argv[i]) == "-d") Debug = true;
+      else if (G4String(argv[i]) == "--Print_Events") printEvents_in = argv[i+1];
+      else if (G4String(argv[i]) == "-p") printEvents = true;
+      else if (G4String(argv[i]) == "--Sample_Energy_Range") SampleEnergyRange_in = argv[i+1];
+      else if (G4String(argv[i]) == "-t4") SampleEnergyRange = true;
+      else if (G4String(argv[i]) == "--Uniform_Width") uniform_width = std::stod(argv[i+1]);
       else
       {
         PrintUsage();
