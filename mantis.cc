@@ -33,9 +33,9 @@ G4VisManager* visManager;
 G4long seed;
 G4bool output;
 // String global variables
-G4String macro, root_output_name, gOutName, inFile;
+G4String macro, root_output_name, gOutName, inFile, response_function_file;
 // boolean global variables
-G4bool detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool ResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -63,8 +63,10 @@ void PrintUsage()
   G4cerr << "mantis [-h help] Prints this Usage Screen" << G4endl
   << "[-a chosen_energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
   << "[-c detTest=false Create Detector Response Fucntion]" << G4endl
-  << "[-d debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program"
-  << G4endl << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
+  << "[-d debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
+  << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
+  << "[-g ResponseFunctionRun] Runs Mantis Simulation with Detector Response Function Input" << G4endl
+  << "[-j ResponseFunctionInput] Input File with Detector Response Function TProfile" << G4endl
   << "[-i inFile] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
   << "No importance sampling weighting will be done if the -i input is passed." << G4endl
   << "The Default input file name is brems_distributions.root which should contain an importance sampling distribution " << G4endl
@@ -115,12 +117,15 @@ int main(int argc,char **argv)
   macro = "mantis.in";
   seed = 1;
   inFile = "brems_distributions.root";
+  response_function_file = "DetectorResponse.root";
   G4String debug_in = "false";
   debug = false;
   // Primary Generator Defaults
   G4String resonance_in = "false";
   resonanceTest = false;
   chosen_energy = -1.;
+  G4String ResponseFunction_in = "false";
+  ResponseFunction = false;
   G4String detTest_in = "false";
   detTest=false;
   G4String bremTest_in = "false";
@@ -147,6 +152,8 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-a") chosen_energy = std::stod(argv[i+1]);
       else if (G4String(argv[i]) == "-s") seed = atoi(argv[i+1]);
       else if (G4String(argv[i]) == "-o") root_output_name = argv[i+1];
+      else if (G4String(argv[i]) == "-g") ResponseFunction_in = argv[i+1];
+      else if (G4String(argv[i]) == "-j") response_function_file = argv[i+1];
       else if (G4String(argv[i]) == "-c") detTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-t") bremTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-r") resonance_in = argv[i+1];
@@ -217,6 +224,11 @@ int main(int argc,char **argv)
   }
 
   // Primary Generator Options
+  if(ResponseFunction_in == "True" || ResponseFunction_in == "true")
+  {
+    G4cout << "Conducting Response Function Run." << G4endl;
+    ResponseFunction = true;
+  }
   if(detTest_in == "True" || detTest_in == "true")
   {
     G4cout << "Conducting Detector Response Test" << G4endl;

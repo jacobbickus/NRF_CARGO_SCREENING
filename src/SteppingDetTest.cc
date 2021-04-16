@@ -26,16 +26,13 @@
 
 extern G4bool output;
 extern G4bool debug;
-extern G4String inFile;
 extern G4long seed;
 
 
 SteppingDetTest::SteppingDetTest(EventAction* event)
-: G4UserSteppingAction(), kevent(event), WEIGHTED(false)
+: G4UserSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
-  if(!inFile.compare("brems_distributions.root"))
-    WEIGHTED = true;
 }
 
 SteppingDetTest::~SteppingDetTest()
@@ -64,9 +61,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
     eventInformation* info =
               (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double beamEnergy = info->GetBeamEnergy()/(MeV);
-
-    if(WEIGHTED)
-      weight = info->GetWeight();
 
     G4String nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
     G4String previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
@@ -113,8 +107,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
       manager->FillNtupleDColumn(0,4, beamEnergy);
       manager->FillNtupleDColumn(0,5, theTrack->GetGlobalTime());
       manager->FillNtupleSColumn(0,6, CPName);
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(0,7, weight);
 
       manager->AddNtupleRow(0);
       return;
@@ -147,14 +139,12 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
       manager->FillNtupleDColumn(1,6, theta);
       manager->FillNtupleDColumn(1,7, phi);
       manager->FillNtupleSColumn(1,8, CPName);
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(1,9, weight);
 
       manager->AddNtupleRow(1);
-      
+
       if(trackID == 1)
         kevent->SetIncidentEnergy(energy);
-      
+
       return;
     }
     // While in water keep track of cherenkov and pass number of cherenkov to EventAction
@@ -182,8 +172,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
                   G4double theta_scint = std::asin(std::sqrt(std::pow(p_scint.x(),2)+std::pow(p_scint.y(),2))/p_scint.mag());
                   manager->FillNtupleDColumn(3,2, phi_scint);
                   manager->FillNtupleDColumn(3,3, theta_scint);
-                  if(WEIGHTED)
-                    manager->FillNtupleDColumn(3,4, weight);
 
                   manager->AddNtupleRow(3);
                   krun->AddScintillationEnergy(secondaries->at(i)->GetKineticEnergy());
@@ -200,9 +188,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
                   G4ThreeVector p_cher = secondaries->at(i)->GetMomentum();
                   G4double phi_cher = std::asin(p_cher.y()/p_cher.mag());
                   manager->FillNtupleDColumn(5,2,phi_cher);
-
-                  if(WEIGHTED)
-                    manager->FillNtupleDColumn(5,3, weight);
 
                   manager->AddNtupleRow(5);
 
@@ -243,7 +228,7 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
         {
           theStatus = opProc->GetStatus();
           if (theStatus == Detection)
-          { 
+          {
             manager->FillNtupleIColumn(6,0,eventID);
             manager->FillNtupleDColumn(6,1, theParticle->GetKineticEnergy()/(MeV));
             manager->FillNtupleDColumn(6,2, beamEnergy);
@@ -260,17 +245,14 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
             manager->FillNtupleDColumn(6,6, theTrack->GetGlobalTime()); // time units is nanoseconds
             manager->FillNtupleIColumn(6,7, seed);
 
-            if(WEIGHTED)
-              manager->FillNtupleDColumn(6,8, weight);
-
             manager->AddNtupleRow(6);
-            
+
             kevent->AddDetected();
             if(creatorProcess == "Scintillation")
               kevent->AddDetectedScintillation();
             else if(creatorProcess == "Cerenkov")
               kevent->AddDetectedCherenkov();
-            
+
           } // for if status == Detection
         } // for if opProc
       } // for for loop

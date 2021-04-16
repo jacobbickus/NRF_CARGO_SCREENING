@@ -22,47 +22,53 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef DetectorResponseFunction_h
-#define DetectorResponseFunction_h 1
+#ifndef EventActionWResponseFunction_h
+#define EventActionWResponseFunction_h 1
 
-#include "G4SystemOfUnits.hh"
+#include "G4UserEventAction.hh"
 #include "globals.hh"
 #include "G4Types.hh"
+#include "G4EventManager.hh"
+#include "eventInformation.hh"
+#include "HistoManager.hh"
+#include "G4RunManager.hh"
+#include "G4Event.hh"
 #include "G4ios.hh"
+#include "G4UImanager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4Run.hh"
+#include "EventMessenger.hh"
+#include "DetectorResponseFunction.hh"
 
-#include "TFile.h"
-#include "TROOT.h"
-#include "TSystem.h"
-#include "TMath.h"
-#include "TProfile.h"
+class G4Event;
+class EventMessenger;
 
-class DetectorResponseFunction
+class EventActionWResponseFunction : public G4UserEventAction
 {
-  static DetectorResponseFunction *instance;
-
-  DetectorResponseFunction();
 public:
+EventActionWResponseFunction();
+~EventActionWResponseFunction();
 
-  static DetectorResponseFunction *Instance()
-  {
-    if(!instance)
-    {
-      instance = new DetectorResponseFunction;
-    }
-    return instance;
-  }
+public:
+void BeginOfEventAction(const G4Event*);
+void EndOfEventAction(const G4Event*);
 
-  ~DetectorResponseFunction();
-
-  void CheckFile(const char*);
-  G4double GetDetectorPhotoelectrons(G4double);
-  G4double GetScintillationResponse(G4double);
-  G4double GetCherenkovResponse(G4double);
+void ScintillationEnergy(G4double energy){scintillation_energyv.push_back(energy);}
+void CherenkovEnergy(G4double energy){cherenkov_energyv.push_back(energy);}
+void ScintillationAddSecondary(){s_secondaries++;}
+void CherenkovAddSecondary(){c_secondaries++;}
+void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
+void AddDetectedScintillation(){s_detected++;}
+void AddDetectedCherenkov(){c_detected++;}
+void AddDetected(){number_detected++;}
+void SetIncidentEnergy(G4double e){incident_energy = e;}
 
 private:
-  TProfile* tdet_response;
-  TProfile* tdet_scintillation_response;
-  TProfile* tdet_cherenkov_response;
+G4int eventInfoFreq, runID;
+G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
+G4bool WEIGHTED;
+EventMessenger* eventM;
+
 };
 
 #endif

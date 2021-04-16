@@ -70,6 +70,7 @@ public:
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
+    void CreateDetectorResponseFunction(const char* filename);
 
 private:
 
@@ -2710,6 +2711,34 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
   hSample->Write();
   std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to brems_distributions.root" << std::endl;
   fout->Close();
+}
+
+void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename)
+{
+  CheckFile(filename);
+  fin = TFile::Open(filename);
+  fin->cd();
+  tdet_response = (TTree*) fin->Get("DetReponse");
+  tdet_response->SetEstimate(-1);
+
+  double maxE = tdet_response->GetMaximum("IncidentEnergy");
+  int x_bins = maxE/10e-3; // set bin width to 10 keV
+
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
+  TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
+  tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Created." << std::endl;
+  TCanvas* c1 = new TCanvas("c1","Detector Response Function",600,400);
+  c1->cd();
+  DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+  DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+  DetectorResponse->Draw();
+
+  TFile* fout = new TFile(outfilename,"RECREATE");
+  fout->cd();
+  DetectorResponse->Write();
+  fout->Close();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
 }
 
 TGraph* MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE)

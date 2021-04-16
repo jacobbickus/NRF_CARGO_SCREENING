@@ -29,6 +29,7 @@ extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool debug;
 extern G4String inFile;
+extern G4bool ResponseFunctionTest;
 
 HistoManager::HistoManager() : fFactoryOn(false), WEIGHTED(false)
 {
@@ -63,15 +64,15 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleDColumn("X");
     manager->CreateNtupleDColumn("Y");
-    
+
     if(WEIGHTED)
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
-    
+
     if(debug)
       G4cout << "HistoManager::Book -> Ntuple Incident Chopper Data Number: " << tuple_counter << G4endl;
- 
+
     tuple_counter++;
   }
 
@@ -85,12 +86,12 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Phi");
 
     manager->FinishNtuple();
-    
+
     if(debug)
       G4cout << "HistoManager::Book -> Ntuple Brem Radiator Emission Number: " << tuple_counter << G4endl;
-    
+
     tuple_counter++;
-    
+
 
     // Create ID 2 Ntuple for Brem Backing Emission
     manager->CreateNtuple("Backing","Bremsstrahlung Beam from Backing");
@@ -99,10 +100,10 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
     manager->FinishNtuple();
-    
+
     if(debug)
       G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
-    
+
     tuple_counter++;
   }
 
@@ -121,10 +122,10 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
         G4cout << "HistoManager::Book -> Ntuple Chopper Emission: " << tuple_counter << G4endl;
-    
+
       tuple_counter++;
 
       // Create ID 2 Ntuple for NRF Materials
@@ -141,10 +142,10 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
         G4cout << "HistoManager::Book -> Ntuple NRF: " << tuple_counter << G4endl;
-    
+
       tuple_counter++;
 
       // Create ID 3 NTuple for Incident Interrogation Object Information
@@ -163,10 +164,10 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
         G4cout << "HistoManager::Book -> Ntuple Incident Interrogation Object: " << tuple_counter << G4endl;
-    
+
       tuple_counter++;
 
       // Create ID 4 Ntuple for IntObj Emission Data
@@ -185,13 +186,13 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
         G4cout << "HistoManager::Book -> Ntuple Interrogation Object Emission: " << tuple_counter << G4endl;
-    
+
       tuple_counter++;
     }
-       
+
     // Create ID 5/0 Ntuple for Incident Shielding Layer Data
     manager->CreateNtuple("Shielding","Incident Outer Shielding Layer");
     manager->CreateNtupleIColumn("EventID");
@@ -206,10 +207,10 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
-    
+
     if(debug)
       G4cout << "HistoManager::Book -> Ntuple Shielding: " << tuple_counter << G4endl;
-    
+
     tuple_counter++;
 
     // Create ID 6/1 Ntuple for Incident Plexiglass Layer (Prior to Water)
@@ -228,15 +229,32 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
-    
+
     if(debug)
       G4cout << "HistoManager::Book -> Ntuple Plexiglass: " << tuple_counter << G4endl;
-    
+
     tuple_counter++;
+
+    if(ResponseFunction)
+    {
+      // Create ID 7 Ntuple for WResponseFunction Run
+      manager->CreateNtuple("DetInfo","Estimation of Detected Counts from Response Function");
+      manager->CreateNtupleIColumn("EventID");
+      manager->CreateNtupleDColumn("IncidentEnergy");
+      manager->CreateNtupleDColumn("BeamEnergy");
+      manager->CreateNtupleDColumn("NumPE");
+      manager->CreateNtupleDColumn("NumScintillation");
+      manager->CreateNtupleDColumn("NumCherenkov");
+
+      if(WEIGHTED)
+        manager->CreateNtupleDColumn("Weight");
+
+      manager->FinishNtuple();
+    }
 
     // Create ID 7 Ntuple for Incident Water Tank Data
     // Only Run with smaller runs this ntuple can get quite large
-    if(!detTest)
+    if(!detTest && !ResponseFunctionTest)
     {
       manager->CreateNtuple("Water","Incident Water Tank Data");
       manager->CreateNtupleIColumn("EventID");
@@ -248,153 +266,154 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
         G4cout << "HistoManager::Book -> Ntuple Incident Water Tank: " << tuple_counter << G4endl;
-    
+
       tuple_counter++;
     }
 
-    // Create ID 8/2 Ntuple for scinitllation in water per EVENT
-    manager->CreateNtuple("Scintillation","Scintillation per Event Water Data");
-    manager->CreateNtupleIColumn("EventID");
-    manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleIColumn("NumSecondaries");
-
-    if(WEIGHTED)
-      manager->CreateNtupleDColumn("Weight");
-
-    manager->FinishNtuple();
-    
-    if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Scintillation Per Event Water Data: " << tuple_counter << G4endl;
-    
-    tuple_counter++;
-
-    // Create ID 9/3 Ntuple for Scintillation in water tracking
-    manager->CreateNtuple("Scintillation2","Scintillation in Water Optical Photon Data");
-    manager->CreateNtupleIColumn("EventID");
-    manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleDColumn("Phi");
-    manager->CreateNtupleDColumn("Theta");
-
-    if(WEIGHTED)
-      manager->CreateNtupleDColumn("Weight");
-
-    manager->FinishNtuple();
-    
-    if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Scintillation in Water Optical Photon Data: " << tuple_counter << G4endl;
-    
-    tuple_counter++;
-
-    // Create ID 10/4 Ntuple for cherenkov in water per EVENT
-    manager->CreateNtuple("Cherenkov","Cherenkov per Event Water Data");
-    manager->CreateNtupleIColumn("EventID");
-    manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleIColumn("NumSecondaries");
-
-    if(WEIGHTED)
-      manager->CreateNtupleDColumn("Weight");
-
-    manager->FinishNtuple();
-
-    if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Cherenkov Per Event Water Data: " << tuple_counter << G4endl;
-    
-    tuple_counter++;
-    
-    // Create ID 11/5 Ntuple for Cherenkov in water tracking optical photons
-    manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
-    manager->CreateNtupleIColumn("EventID");
-    manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleDColumn("Phi");
-
-    if(WEIGHTED)
-      manager->CreateNtupleDColumn("Weight");
-
-    manager->FinishNtuple();
-    
-    if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Cherenkov in Water Optical Photon Data: " << tuple_counter << G4endl;
-    
-    tuple_counter++;
-
-    // Create ID 12/6 Ntuple for Detected Information
-    manager->CreateNtuple("DetInfo","Detected Information");
-    manager->CreateNtupleIColumn("EventID");
-    manager->CreateNtupleDColumn("Energy");
-    manager->CreateNtupleDColumn("BeamEnergy");
-    manager->CreateNtupleDColumn("X");
-    manager->CreateNtupleDColumn("Y");
-    manager->CreateNtupleSColumn("CreatorProcess");
-    manager->CreateNtupleDColumn("Time");
-    manager->CreateNtupleIColumn("Seed");
-
-    if(WEIGHTED)
-      manager->CreateNtupleDColumn("Weight");
-
-    manager->FinishNtuple();
-    
-    if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Detected Information: " << tuple_counter << G4endl;
-    
-    tuple_counter++;
-    
-    // Ntuple ID 7 for DetTest 
-    if(detTest)
+    if(!ResponseFunctionTest)
     {
-      manager->CreateNtuple("DetResponse","Detector Response Function");
+      // Create ID 8/2 Ntuple for scinitllation in water per EVENT
+      manager->CreateNtuple("Scintillation","Scintillation per Event Water Data");
       manager->CreateNtupleIColumn("EventID");
-      manager->CreateNtupleDColumn("IncidentEnergy");
-      manager->CreateNtupleIColumn("NumPE");
-      manager->CreateNtupleIColumn("NumScintillation");
-      manager->CreateNtupleIColumn("NumCherenkov");
-      manager->CreateNtupleIColumn("Seed");
-      
+      manager->CreateNtupleDColumn("Energy");
+      manager->CreateNtupleIColumn("NumSecondaries");
+
       if(WEIGHTED)
         manager->CreateNtupleDColumn("Weight");
-      
+
       manager->FinishNtuple();
-      
+
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Detector Response Function: " << tuple_counter << G4endl;
-      
+        G4cout << "HistoManager::Book -> Ntuple Scintillation Per Event Water Data: " << tuple_counter << G4endl;
+
       tuple_counter++;
-      
-    }
-    
-    if(!detTest)
-    {
-      // Create ID 13 Ntuple for Detector Process Information
-      manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
+
+      // Create ID 9/3 Ntuple for Scintillation in water tracking
+      manager->CreateNtuple("Scintillation2","Scintillation in Water Optical Photon Data");
+      manager->CreateNtupleIColumn("EventID");
+      manager->CreateNtupleDColumn("Energy");
+      manager->CreateNtupleDColumn("Phi");
+      manager->CreateNtupleDColumn("Theta");
+
+      if(WEIGHTED)
+        manager->CreateNtupleDColumn("Weight");
+
+      manager->FinishNtuple();
+
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Scintillation in Water Optical Photon Data: " << tuple_counter << G4endl;
+
+      tuple_counter++;
+
+      // Create ID 10/4 Ntuple for cherenkov in water per EVENT
+      manager->CreateNtuple("Cherenkov","Cherenkov per Event Water Data");
+      manager->CreateNtupleIColumn("EventID");
+      manager->CreateNtupleDColumn("Energy");
+      manager->CreateNtupleIColumn("NumSecondaries");
+
+      if(WEIGHTED)
+        manager->CreateNtupleDColumn("Weight");
+
+      manager->FinishNtuple();
+
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Cherenkov Per Event Water Data: " << tuple_counter << G4endl;
+
+      tuple_counter++;
+
+      // Create ID 11/5 Ntuple for Cherenkov in water tracking optical photons
+      manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
+      manager->CreateNtupleIColumn("EventID");
+      manager->CreateNtupleDColumn("Energy");
+      manager->CreateNtupleDColumn("Phi");
+
+      if(WEIGHTED)
+        manager->CreateNtupleDColumn("Weight");
+
+      manager->FinishNtuple();
+
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Cherenkov in Water Optical Photon Data: " << tuple_counter << G4endl;
+
+      tuple_counter++;
+
+      // Create ID 12/6 Ntuple for Detected Information
+      manager->CreateNtuple("DetInfo","Detected Information");
       manager->CreateNtupleIColumn("EventID");
       manager->CreateNtupleDColumn("Energy");
       manager->CreateNtupleDColumn("BeamEnergy");
-      manager->CreateNtupleSColumn("DetProcess");
+      manager->CreateNtupleDColumn("X");
+      manager->CreateNtupleDColumn("Y");
+      manager->CreateNtupleSColumn("CreatorProcess");
+      manager->CreateNtupleDColumn("Time");
       manager->CreateNtupleIColumn("Seed");
 
       if(WEIGHTED)
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
-      
+
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Incident Detector Process Information: " << tuple_counter << G4endl;
-    
+        G4cout << "HistoManager::Book -> Ntuple Detected Information: " << tuple_counter << G4endl;
+
       tuple_counter++;
-      
+
+      // Ntuple ID 7 for DetTest
+      if(detTest)
+      {
+        manager->CreateNtuple("DetResponse","Detector Response Function");
+        manager->CreateNtupleIColumn("EventID");
+        manager->CreateNtupleDColumn("IncidentEnergy");
+        manager->CreateNtupleIColumn("NumPE");
+        manager->CreateNtupleIColumn("NumScintillation");
+        manager->CreateNtupleIColumn("NumCherenkov");
+        manager->CreateNtupleIColumn("Seed");
+
+        manager->FinishNtuple();
+
+        if(debug)
+          G4cout << "HistoManager::Book -> Ntuple Detector Response Function: " << tuple_counter << G4endl;
+
+        tuple_counter++;
+
+      }
+
+      if(!detTest)
+      {
+        // Create ID 13 Ntuple for Detector Process Information
+        manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
+        manager->CreateNtupleIColumn("EventID");
+        manager->CreateNtupleDColumn("Energy");
+        manager->CreateNtupleDColumn("BeamEnergy");
+        manager->CreateNtupleSColumn("DetProcess");
+        manager->CreateNtupleIColumn("Seed");
+
+        if(WEIGHTED)
+          manager->CreateNtupleDColumn("Weight");
+
+        manager->FinishNtuple();
+
+        if(debug)
+          G4cout << "HistoManager::Book -> Ntuple Incident Detector Process Information: " << tuple_counter << G4endl;
+
+        tuple_counter++;
+      }
+
     }
   }
 
   fFactoryOn = true;
-if(debug)
-  std::cout << "HistoManager::Book() --> Complete!" << std::endl;
-  
-if(debug)
-  G4cout << "HistoManager::Book -> TOTAL NTUPLES: " << tuple_counter << G4endl;
-  
-}// end of HistoManager::Book 
+
+  if(debug)
+    std::cout << "HistoManager::Book() --> Complete!" << std::endl;
+
+  if(debug)
+    G4cout << "HistoManager::Book -> TOTAL NTUPLES: " << tuple_counter << G4endl;
+
+}// end of HistoManager::Book
 
 void HistoManager::finish()
 {

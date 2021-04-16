@@ -1,0 +1,134 @@
+//
+// ********************************************************************
+// * DISCLAIMER                                                       *
+// *                                                                  *
+// * Neither the authors of this software system, nor their employing *
+// * institutes,nor the agencies providing financial support for this *
+// * work  make  any representation or  warranty, express or implied, *
+// * regarding  this  software system or assume any liability for its *
+// * use.                                                             *
+// *                                                                  *
+// * By copying,  distributing  or modifying the Program (or any work *
+// * based  on  the Program)  you indicate  your  acceptance of  this *
+// * statement, and all its terms.                                    *
+// ********************************************************************
+//
+//
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Author:
+// Jacob E Bickus, 2021
+// MIT, NSE
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+///////////////////////////////////////////////////////////////////////////////
+
+#include "EventActionWResponseFunction.hh"
+#include <ctime>
+
+extern G4bool debug;
+extern G4bool printEvents;
+extern G4String inFile;
+extern G4long seed;
+
+EventActionWResponseFunction::EventActionWResponseFunction()
+:eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
+totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
+{
+  eventM = new EventMessenger(this);
+  if(!inFile.compare("brems_distributions.root"))
+    WEIGHTED = true;
+}
+
+EventActionWResponseFunction::~EventActionWResponseFunction()
+{
+  delete eventM;
+}
+
+void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
+{
+    if(debug)
+        std::cout << "EventActionWResponseFunction::BeginOfEventAction -> Beginning" << std::endl;
+
+    G4int event = anEvent->GetEventID();
+    if(event == 0)
+    {
+      std::cout << "Tracking Events... " << std::endl;
+      G4cout << "Tracking Events: " << G4endl;
+      totalEventsToRun = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
+    }
+    else if(event % eventInfoFreq == 0)
+    {
+      G4RunManager *runMgr = G4RunManager::GetRunManager();
+      if(runMgr->GetCurrentRun()->GetRunID()!=runID)
+      {
+        prevRunTime = clock()*1.0/CLOCKS_PER_SEC;
+        runID++;
+      }
+
+      // Calculate the rate [particles tracked / s] and the estimated
+      // time to completion of the present run [m,s]
+      runTime = clock()*1.0/CLOCKS_PER_SEC - prevRunTime;
+      eventsPerSec = event*1.0/runTime;  // [s]
+      timeToFinish = (totalEventsToRun-event)/eventsPerSec; // [s]
+
+      // Output the event variables in scientific notation using
+      // std::stringstreams to avoid screwing up G4cout formatting
+      std::stringstream eventSS;
+      eventSS.precision(3);
+      eventSS << std::scientific << (double)event;
+      std::stringstream tEventSS;
+      tEventSS.precision(3);
+      tEventSS << std::scientific << totalEventsToRun;
+      if(printEvents)
+      {
+        std::cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
+                  << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
+                  << std::setprecision(2) << "Time2Finish ["
+                  << ((int)timeToFinish)/3600  << "h "
+                  << ((int)timeToFinish%3600)/60 << "m "
+                  << ((int)timeToFinish%3600)%60 << "s]"
+                  << std::setprecision(6) << std::flush;
+      }
+
+      G4cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
+                << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
+                << std::setprecision(2) << "Time2Finish ["
+                << ((int)timeToFinish)/3600  << "h "
+                << ((int)timeToFinish%3600)/60 << "m "
+                << ((int)timeToFinish%3600)%60 << "s]"
+                << std::setprecision(6) << std::flush;
+    }
+
+
+    if(debug)
+        std::cout << "EventActionWResponseFunction::BeginOfEventActionWResponseFunction -> Ending" << std::endl;
+}
+
+void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
+{
+    if(debug)
+        std::cout << "EventActionWResponseFunction::EndOfEventActionWResponseFunction -> Beginning" << std::endl;
+
+    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    G4double beam_energy = info->GetBeamEnergy();
+    G4double weight = info->GetWeight();
+    DetectorResponseFunction *r_function = DetectorResponseFunction::Instance();
+    G4double numPE = r_function->GetDetectorPhotoelectrons(incident_energy);
+    G4double numScint = r_function->GetScintillationResponse(incident_energy);
+    G4double numCher = r_function->GetCherenkovResponse(incident_energy);
+
+    G4AnalysisManager* manager = G4AnalysisManager::Instance();
+    manager->FillNtupleIColumn(7,0,anEvent->GetEventID());
+    manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
+    manager->FillNtupleDColumn(7,2, beam_energy);
+    manager->FillNtupleDColumn(7,3, numPE);
+    manager->FillNtupleDColumn(7,4, numScint);
+    manager->FillNtupleDColumn(7,5, numCher);
+
+    if(WEIGHTED)
+      manager->FillNtupleDColumn(7,6, weight);
+
+    manager->AddNtupleRow(7);
+
+    if(debug)
+        std::cout << "EventActionWResponseFunction::EndOfEventActionWResponseFunction() --> Ending!" << std::endl;
+}
