@@ -30,14 +30,14 @@ extern G4String inFile;
 extern G4long seed;
 
 
-SteppingDetTest::SteppingDetTest(EventAction* event)
+SteppingDetTest::SteppingAction(EventAction* event)
 : G4UserSteppingAction()
 {
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
 }
-SteppingDetTest::~SteppingDetTest()
+SteppingDetTest::~SteppingAction()
 {}
 
 void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
