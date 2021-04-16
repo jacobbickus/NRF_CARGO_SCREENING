@@ -10,6 +10,7 @@
 #include "G4UIdirectory.hh"
 
 class SteppingAction;
+class SteppingWResponseFunction;
 class G4UIcmdWithAString;
 class G4UIdirectory;
 
