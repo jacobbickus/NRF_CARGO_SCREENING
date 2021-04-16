@@ -123,7 +123,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple Chopper Emission: " << tuple_counter << G4endl;
     
       tuple_counter++;
 
@@ -143,7 +143,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple NRF: " << tuple_counter << G4endl;
     
       tuple_counter++;
 
@@ -165,7 +165,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple Incident Interrogation Object: " << tuple_counter << G4endl;
     
       tuple_counter++;
 
@@ -187,7 +187,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple Interrogation Object Emission: " << tuple_counter << G4endl;
     
       tuple_counter++;
     }
@@ -208,7 +208,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Shielding: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -230,7 +230,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Plexiglass: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -250,7 +250,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple Incident Water Tank: " << tuple_counter << G4endl;
     
       tuple_counter++;
     }
@@ -267,7 +267,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Scintillation Per Event Water Data: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -284,7 +284,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Scintillation in Water Optical Photon Data: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -300,7 +300,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
 
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Cherenkov Per Event Water Data: " << tuple_counter << G4endl;
     
     tuple_counter++;
     
@@ -316,7 +316,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Cherenkov in Water Optical Photon Data: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -337,7 +337,7 @@ void HistoManager::Book()
     manager->FinishNtuple();
     
     if(debug)
-      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+      G4cout << "HistoManager::Book -> Ntuple Detected Information: " << tuple_counter << G4endl;
     
     tuple_counter++;
 
@@ -357,7 +357,7 @@ void HistoManager::Book()
       manager->FinishNtuple();
       
       if(debug)
-        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+        G4cout << "HistoManager::Book -> Ntuple Incident Detector Process Information: " << tuple_counter << G4endl;
     
       tuple_counter++;
       
