@@ -28,6 +28,7 @@ extern G4bool output;
 extern G4bool debug;
 
 SteppingBremTest::SteppingBremTest(EventAction* event)
+: G4UserSteppingAction()
 {}
 SteppingBremTest::~SteppingBremTest()
 {}
