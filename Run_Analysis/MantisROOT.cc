@@ -2732,7 +2732,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   TFile* fin = TFile::Open(filename);
   fin->cd();
   TTree* tdet_response;
-  tdet_response = (TTree*) fin->Get("DetReponse");
+  tdet_response = (TTree*) fin->Get("DetResponse");
   tdet_response->SetEstimate(-1);
 
   double maxE = tdet_response->GetMaximum("IncidentEnergy");
