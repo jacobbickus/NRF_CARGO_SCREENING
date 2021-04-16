@@ -64,6 +64,7 @@ public:
   virtual void UserSteppingAction(const G4Step*);
 private:
   G4bool WEIGHTED;
+  EventAction* kevent;
   G4OpBoundaryProcessStatus fExpectedNextStatus;
   G4double weight;
 
