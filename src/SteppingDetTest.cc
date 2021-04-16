@@ -71,6 +71,8 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
     G4String nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
     G4String previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
 
+    RunInformation* krun = RunInformation::Instance();
+
     // Run Time Cut
     if(theTrack->GetGlobalTime() > 250) // cut placed on particles time greater than 250 ns
     {
