@@ -6,6 +6,7 @@
 #include "G4ApplicationState.hh"
 #include "G4UIcmdWithAString.hh"
 #include "SteppingAction.hh"
+#include "SteppingWResponseFunction.hh"
 #include "G4UIdirectory.hh"
 
 class SteppingAction;
@@ -22,6 +23,7 @@ public:
   void SetNewValue(G4UIcommand*, G4String);
 private:
   SteppingAction* stepA;
+  SteppingWResponseFunction* stepAWResponseFunction;
   G4UIcmdWithAString* Cmd;
   G4UIdirectory *myDir;
 };

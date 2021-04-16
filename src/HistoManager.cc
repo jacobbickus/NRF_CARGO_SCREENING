@@ -273,7 +273,7 @@ void HistoManager::Book()
       tuple_counter++;
     }
 
-    if(!ResponseFunctionTest)
+    if(!ResponseFunction)
     {
       // Create ID 8/2 Ntuple for scinitllation in water per EVENT
       manager->CreateNtuple("Scintillation","Scintillation per Event Water Data");
