@@ -164,7 +164,7 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-t1")
       {
         detTest = true;
-        i = i+2;
+        i = i-1;
       }
       else if (G4String(argv[i]) == "--Brem_Test") bremTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-t2")
@@ -179,7 +179,11 @@ int main(int argc,char **argv)
         i = i+2;
       }
       else if (G4String(argv[i]) == "--Force_Isotropic") force_isotropic_in = argv[i+1];
-      else if (G4String(argv[i]) == "-i") force_isotropic = true;
+      else if (G4String(argv[i]) == "-i")
+      {
+        force_isotropic = true;
+        i = i+2;
+      }
       else if (G4String(argv[i]) == "--Print_Standalone_Data") standalone_in = argv[i+1];
       else if (G4String(argv[i]) == "-s") standalone = true;
       else if (G4String(argv[i]) == "--Verbose") verbose_in = argv[i+1];
