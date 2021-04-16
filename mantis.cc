@@ -154,10 +154,18 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
       else if (G4String(argv[i]) == "--Output_Filename") root_output_name = argv[i+1];
       else if (G4String(argv[i]) == "--Detector_Response_Input") ResponseFunction_in = argv[i+1];
-      else if (G4String(argv[i]) == "-r") ResponseFunction = true;
+      else if (G4String(argv[i]) == "-r")
+      {
+        ResponseFunction = true;
+        i++;
+      }
       else if (G4String(argv[i]) == "--Detector_Response_File") response_function_file = argv[i+1];
       else if (G4String(argv[i]) == "--Detector_Response_Test") detTest_in = argv[i+1];
-      else if (G4String(argv[i]) == "-t1") detTest = true;
+      else if (G4String(argv[i]) == "-t1")
+      {
+        detTest = true;
+        i++;
+      }
       else if (G4String(argv[i]) == "--Brem_Test") bremTest_in = argv[i+1];
       else if (G4String(argv[i]) == "-t2") bremTest = true;
       else if (G4String(argv[i]) == "--Resonance_Test") resonance_in = argv[i+1];
