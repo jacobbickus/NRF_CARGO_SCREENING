@@ -61,25 +61,25 @@ void PrintUsage()
 {
   G4cerr << "Usage: " << G4endl;
   G4cerr << "mantis [-h --help] Prints this Usage Screen" << G4endl
-  << "[--macro=mantis.in] Macro File to be read for user input options -> Required!" << G4endl
-  << "[--File_To_Sample=brems_distributions.root] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
-  << "[--seed=1] Simulation Seed." << G4endl
-  << "[--Output_Filename=test.root] Data will be written to this file." << G4endl
-  << "[--Energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
-  << "[-d --Debug=false] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
-  << "[-i --Force_Isotropic=true] Forces nrf isotropic emission." << G4endl
-  << "[-n --NRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
-  << "[-p --Print_Events=false]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
-  << "[-r --Detector_Response_Input=false] Runs Mantis Simulation with Detector Response Function Input" << G4endl
-  << "[-s --Print_Standalone_Data=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
-  << "[--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << G4endl
-  << "[-v --Verbose=false] Sets NRF Physics Verbosity" << G4endl
+  << "  [--macro=mantis.in] Macro File to be read for user input options -> Required!" << G4endl
+  << "  [--File_To_Sample=brems_distributions.root] Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
+  << "  [--seed=1] Simulation Seed." << G4endl
+  << "  [--Output_Filename=test.root] Data will be written to this file." << G4endl
+  << "  [--Energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
+  << "  [--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << G4endl
+  << "  [--Uniform_Width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true." << G4endl
+  << "  [-d --Debug=false] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
+  << "  [-i --Force_Isotropic=true] Forces nrf isotropic emission." << G4endl
+  << "  [-n --NRF=true] IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
+  << "  [-p --Print_Events=false]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
+  << "  [-r --Detector_Response_Input=false] Runs Mantis Simulation with Detector Response Function Input" << G4endl
+  << "  [-s --Print_Standalone_Data=false] Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers" << G4endl
+  << "  [-v --Verbose=false] Sets NRF Physics Verbosity" << G4endl
   << G4endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test" << G4endl << G4endl
-  << "[-t1 --Detector_Response_Test=false] Create Detector Response Function" << G4endl
-  << "[-t2 --Brem_Test=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
-  << "[-t3 --Resonance_Test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
-  << "[-t4 --Sample_Energy_Range=false] Samples from a normal distribution centered on user's energy." << G4endl
-  << "[--Uniform_Width=0.005] Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true." << G4endl
+  << "  [-t1 --Detector_Response_Test=false] Create Detector Response Function" << G4endl
+  << "  [-t2 --Brem_Test=false] For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy" << G4endl
+  << "  [-t3 --Resonance_Test=false] Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
+  << "  [-t4 --Sample_Energy_Range=false] Samples from a normal distribution centered on user's energy." << G4endl
   << G4endl;
   exit(1);
 }
