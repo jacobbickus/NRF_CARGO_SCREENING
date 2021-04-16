@@ -30,7 +30,7 @@ extern G4String inFile;
 extern G4long seed;
 
 
-SteppingDetTest::SteppingAction(EventAction* event)
+SteppingDetTest::SteppingDetTest(EventAction* event)
 : G4UserSteppingAction()
 {
   fExpectedNextStatus = Undefined;

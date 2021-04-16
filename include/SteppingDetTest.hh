@@ -61,6 +61,8 @@ public:
 
   // method from the base class
   virtual void UserSteppingAction(const G4Step*);
+private:
+  G4bool WEIGHTED;
 
 };
 
