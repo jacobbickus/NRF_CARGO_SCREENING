@@ -34,11 +34,8 @@ DetectorResponseFunction::DetectorResponseFunction()
   fin = TFile::Open(response_function_file.c_str());
   fin->cd();
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
-  tdet_response->SetEstimate(-1);
   tdet_scintillation_response = (TProfile*) fin->Get("ScinitllationResponse");
-  tdet_scintillation_response->SetEstimate(-1);
   tdet_cherenkov_response = (TProfile*) fin->Get("CherenkovResponse");
-  tdet_cherenkov_response->SetEstimate(-1);
 }
 
 DetectorResponseFunction::~DetectorResponseFunction()

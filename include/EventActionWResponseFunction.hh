@@ -53,14 +53,6 @@ public:
 void BeginOfEventAction(const G4Event*);
 void EndOfEventAction(const G4Event*);
 
-void ScintillationEnergy(G4double energy){scintillation_energyv.push_back(energy);}
-void CherenkovEnergy(G4double energy){cherenkov_energyv.push_back(energy);}
-void ScintillationAddSecondary(){s_secondaries++;}
-void CherenkovAddSecondary(){c_secondaries++;}
-void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
-void AddDetectedScintillation(){s_detected++;}
-void AddDetectedCherenkov(){c_detected++;}
-void AddDetected(){number_detected++;}
 void SetIncidentEnergy(G4double e){incident_energy = e;}
 
 private:

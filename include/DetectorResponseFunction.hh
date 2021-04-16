@@ -63,6 +63,7 @@ private:
   TProfile* tdet_response;
   TProfile* tdet_scintillation_response;
   TProfile* tdet_cherenkov_response;
+  TFile* fin;
 };
 
 #endif
