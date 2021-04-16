@@ -23,7 +23,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "SteppingAction.hh"
-extern G4bool bremTest;
 extern G4bool debug;
 extern G4String inFile;
 extern G4bool addNRF;
@@ -86,18 +85,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     // kill photons past IntObj
     G4double EndIntObj = kdet->getEndIntObj();
 
-    // Run Cuts
-    if(bremTest)
-    {
-        G4double EndChop = kdet->getEndChop();
-        if(theTrack->GetPosition().z() > EndChop)
-        {
-          theTrack->SetTrackStatus(fStopAndKill);
-          krun->AddStatusKilledPosition();
-          return;
-        }
-    }
-
     if(theTrack->GetPosition().z() > EndIntObj)
     {
       // kill photons that go beyond the interrogation object
@@ -106,15 +93,13 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    if(!bremTest)
+
+    if(nextStep_VolumeName.compare(0, 3, "Col") == 0)
     {
-      if(nextStep_VolumeName.compare(0, 3, "Col") == 0)
-      {
-        // kill photons in collimator
-        theTrack->SetTrackStatus(fStopAndKill);
-        krun->AddStatusKilledPosition();
-        return;
-      }
+      // kill photons in collimator
+      theTrack->SetTrackStatus(fStopAndKill);
+      krun->AddStatusKilledPosition();
+      return;
     }
 
     // Run Time Cut
@@ -142,72 +127,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     // sin(phi) -> angle in the XY plane reference to the positive X axis
     G4double phi = std::asin(p.y()/p.mag());
     G4ThreeVector loc = theTrack->GetPosition();
-
-// *********************************** Track Bremsstrahlung Beam for Brem Test ***************************************** //
-
-    if(bremTest)
-    {
-      // exiting Brem Radiator cuts
-      if(nextStep_VolumeName.compare("Brem") != 0
-          && previousStep_VolumeName.compare("Brem") == 0)
-
-      {
-        if(std::cos(phi) < 0.)
-        {
-          krun->AddStatusKilledPhiAngle();
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
-        if(std::cos(theta) < 0.)
-        {
-          krun->AddStatusKilledThetaAngle();
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
-
-        manager->FillNtupleIColumn(1,0, eventID);
-        manager->FillNtupleDColumn(1,1, energy);
-        manager->FillNtupleDColumn(1,2, theta);
-        manager->FillNtupleDColumn(1,3, phi);
-        manager->AddNtupleRow(1);
-      }
-      // exiting BremBacking
-      if(nextStep_VolumeName.compare("CBack") != 0
-          && previousStep_VolumeName.compare("CBack") == 0
-          && theTrack->GetParticleDefinition() == G4Gamma::Definition())
-      {
-        krun->AddBremBackingHit();
-        if(CPName.compare("eBrem") !=0)
-        {
-          krun->AddStatusKilledProcess();
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
-        else if(std::cos(phi) < 0.)
-        {
-          krun->AddStatusKilledPhiAngle();
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
-        else if(std::cos(theta) < 0.)
-        {
-          krun->AddStatusKilledThetaAngle();
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
-        else
-        {
-          manager->FillNtupleIColumn(2,0, eventID);
-          manager->FillNtupleDColumn(2,1, energy);
-          manager->FillNtupleDColumn(2,2, theta);
-          manager->FillNtupleDColumn(2,3, phi);
-          //manager->FillNtupleSColumn(0,4, CPName);
-          manager->AddNtupleRow(2);
-          return;
-        }
-      }
-    }
-
 // **************************************************** Track NRF Materials **************************************************** //
 
     const G4VProcess* process = endPoint->GetProcessDefinedStep();
@@ -256,16 +175,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
          && previousStep_VolumeName.compare("Chop") != 0
          && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
-        if(bremTest)
-        {
-          if(CPName.compare("eBrem") !=0)
-          {
-            krun->AddStatusKilledProcess();
-            theTrack->SetTrackStatus(fStopAndKill);
-            return;
-          }
-        }
-
         manager->FillNtupleIColumn(0,0, eventID);
         manager->FillNtupleDColumn(0,1, energy);
         manager->FillNtupleDColumn(0,2, loc.x());
@@ -273,12 +182,6 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         if(WEIGHTED)
           manager->FillNtupleDColumn(0,4, weight);
         manager->AddNtupleRow(0);
-        // Once Incident Chopper record data and kill for brem test
-        if(bremTest)
-        {
-          theTrack->SetTrackStatus(fStopAndKill);
-          return;
-        }
       }
     }
 
@@ -319,7 +222,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 // *********************************************** Track Interrogation Object Interactions **************************************************** //
 
     // Incident Interrogation Object
-    if(drawIntObjInDataFlag && !bremTest)
+    if(drawIntObjInDataFlag)
     {
       if(nextStep_VolumeName.compare("IntObj") == 0
          && previousStep_VolumeName.compare("IntObj") != 0)
@@ -354,7 +257,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
       }
       else
       {
-        if(drawIntObjOutDataFlag && !bremTest)
+        if(drawIntObjOutDataFlag)
         {
           manager->FillNtupleIColumn(4,0, eventID);
           manager->FillNtupleIColumn(4,1, trackID);
@@ -380,7 +283,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 // *********************************************** Track Shielding Interactions  **************************************************** //
 
     // Track particles incident shielding from world
-    if(drawShieldingIncDataFlag && !bremTest)
+    if(drawShieldingIncDataFlag)
     {
       if(nextStep_VolumeName.compare(0,5,"Atten") == 0
           && previousStep_VolumeName.compare("World") == 0)
@@ -418,7 +321,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
         theTrack->SetTrackStatus(fStopAndKill);
         return;
       }
-      if(drawPlexiIncDataFlag && !bremTest)
+      if(drawPlexiIncDataFlag)
       {
         manager->FillNtupleIColumn(6,0, eventID);
         manager->FillNtupleIColumn(6,1, seed);
@@ -444,7 +347,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
     // Water Analysis
     // First time incident Water keep track of NRF hitting water
     // Be careful here it will keep track of reflections
-    if(drawWaterIncDataFlag && !bremTest)
+    if(drawWaterIncDataFlag)
     {
       if(nextStep_VolumeName.compare("Water") == 0
          && previousStep_VolumeName.compare("Water") != 0)
@@ -559,42 +462,25 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
 
           G4OpBoundaryProcess* opProc = dynamic_cast<G4OpBoundaryProcess*>(currentProcess);
 
-          if(opProc && !bremTest)
+          if(opProc)
           {
             theStatus = opProc->GetStatus();
-
             if(theStatus == Transmission)
-            {
-                    procCount = "Trans";
-            }
+              procCount = "Trans";
             else if(theStatus == FresnelRefraction)
-            {
-                    procCount = "Refr";
-            }
+              procCount = "Refr";
             else if (theStatus == TotalInternalReflection)
-            {
-                    procCount = "Int_Refl";
-            }
+              procCount = "Int_Refl";
             else if (theStatus == LambertianReflection)
-            {
-                    procCount = "Lamb";
-            }
+              procCount = "Lamb";
             else if (theStatus == LobeReflection)
-            {
-                    procCount = "Lobe";
-            }
+              procCount = "Lobe";
             else if (theStatus == SpikeReflection)
-            {
-                    procCount = "Spike";
-            }
+              procCount = "Spike";
             else if (theStatus == BackScattering)
-            {
-                    procCount = "BackS";
-            }
+              procCount = "BackS";
             else if (theStatus == Absorption)
-            {
-                    procCount = "Abs";
-            }
+              procCount = "Abs";
             // Keep track of detected photons
             else if (theStatus == Detection)
             {
@@ -621,27 +507,17 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 manager->AddNtupleRow(12);
             }
             else if (theStatus == NotAtBoundary)
-            {
-                    procCount = "NotAtBoundary";
-            }
+              procCount = "NotAtBoundary";
             else if (theStatus == SameMaterial)
-            {
-                    procCount = "SameMaterial";
-            }
+              procCount = "SameMaterial";
             else if (theStatus == StepTooSmall)
-            {
-                    procCount = "SteptooSmall";
-            }
+              procCount = "SteptooSmall";
             else if (theStatus == NoRINDEX)
-            {
-                    procCount = "NoRINDEX";
-            }
+              procCount = "NoRINDEX";
             else
-            {
-                    procCount = "noStatus";
-            }
+              procCount = "noStatus";
             // Keep track of Detector Process Data
-            if(drawDetDataFlag && !bremTest)
+            if(drawDetDataFlag)
             {
               manager->FillNtupleIColumn(13,0,eventID);
               manager->FillNtupleDColumn(13,1, theParticle->GetKineticEnergy()/(MeV));

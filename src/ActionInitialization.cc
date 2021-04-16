@@ -26,12 +26,16 @@
 #include "PrimaryGeneratorAction.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
+#include "SteppingBremTest.hh"
+#include "SteppingDetTest.hh"
 #include "StackingAction.hh"
 #include "EventAction.hh"
 #include "HistoManager.hh"
 #include "G4Types.hh"
 
 extern G4bool debug;
+extern G4bool detTest;
+extern G4bool bremTest;
 
 ActionInitialization::ActionInitialization()
         : G4VUserActionInitialization()
@@ -53,7 +57,14 @@ void ActionInitialization::Build() const
     SetUserAction(new RunAction(histo,pga));
     EventAction* event = new EventAction();
     SetUserAction(event);
-    SetUserAction(new SteppingAction(event));
+    
+    if(bremTest)
+      SetUserAction(new SteppingBremTest(event));
+    else if(detTest)
+      SetUserAction(new SteppingDetTest(event));
+    else
+      SetUserAction(new SteppingAction(event));
+
     SetUserAction(new StackingAction());
 
     if(debug)

@@ -22,19 +22,17 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef SteppingAction_h
-#define SteppingAction_h 1
+#ifndef SteppingBremTest_h
+#define SteppingBremTest_h 1
 
 #include "G4UserSteppingAction.hh"
 #include "globals.hh"
 #include <vector>
 #include "G4ThreeVector.hh"
-#include "G4OpBoundaryProcess.hh"
 #include "RunInformation.hh"
 #include "DetectorInformation.hh"
 #include "StackingAction.hh"
 #include "HistoManager.hh"
-#include "StepMessenger.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"
@@ -55,44 +53,15 @@
 #include "G4ParticleGun.hh"
 #include "G4SystemOfUnits.hh"
 
-class StepMessenger;
-
-class SteppingAction : public G4UserSteppingAction
+class SteppingBremTest : public UserSteppingAction
 {
 public:
-SteppingAction(EventAction*);
-virtual ~SteppingAction();
+  SteppingBremTest();
+  virtual ~SteppingBremTest();
 
-// method from the base class
-virtual void UserSteppingAction(const G4Step*);
+  // method from the base class
+  virtual void UserSteppingAction(const G4Step*);
 
-public:
-
-void SetChopperIncDataFlag(G4int val){drawChopperIncDataFlag = val;}
-void SetChopperOutDataFlag(G4int val){drawChopperOutDataFlag = val;}
-void SetNRFDataFlag(G4int val){drawNRFDataFlag = val;}
-void SetIntObjInDataFlag(G4int val){drawIntObjInDataFlag = val;}
-void SetIntObjOutDataFlag(G4int val){drawIntObjOutDataFlag = val;}
-void SetShieldingIncDataFlag(G4int val){drawShieldingIncDataFlag = val;}
-void SetPlexiIncDataFlag(G4int val){drawPlexiIncDataFlag = val;}
-void SetWaterIncDataFlag(G4int val){drawWaterIncDataFlag = val;}
-void SetScintillationDataFlag(G4int val){drawScintillationDataFlag = val;}
-void SetScintillation2DataFlag(G4int val){drawScintillation2DataFlag = val;}
-void SetCherenkovDataFlag(G4int val){drawCherenkovDataFlag = val;}
-void SetCherenkov2DataFlag(G4int val){drawCherenkov2DataFlag = val;}
-void SetDetDataFlag(G4int val){drawDetDataFlag = val;}
-
-private:
-G4double weight;
-EventAction* kevent;
-G4OpBoundaryProcessStatus fExpectedNextStatus;
-G4String procCount;
-G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag;
-G4int drawIntObjInDataFlag, drawIntObjOutDataFlag, drawShieldingIncDataFlag, drawPlexiIncDataFlag;
-G4int drawWaterIncDataFlag, drawScintillationDataFlag, drawScintillation2DataFlag;
-G4int drawCherenkovDataFlag, drawCherenkov2DataFlag, drawDetDataFlag;
-G4bool WEIGHTED;
-StepMessenger* stepM;
 };
 
-#endif
+#endif 
