@@ -239,7 +239,7 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
         {
           theStatus = opProc->GetStatus();
           if (theStatus == Detection)
-          {
+          { 
             manager->FillNtupleIColumn(6,0,eventID);
             manager->FillNtupleDColumn(6,1, theParticle->GetKineticEnergy()/(MeV));
             manager->FillNtupleDColumn(6,2, beamEnergy);
@@ -260,6 +260,13 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
               manager->FillNtupleDColumn(6,8, weight);
 
             manager->AddNtupleRow(6);
+            
+            kevent->AddDetected();
+            if(creatorProcess == "Scintillation")
+              kevent->AddDetectedScintillation();
+            else if(creatorProcess == "Cherenkov")
+              kevent->AddDetectedCherenkov();
+            
           } // for if status == Detection
         } // for if opProc
       } // for for loop
