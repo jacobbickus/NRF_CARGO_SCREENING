@@ -31,7 +31,7 @@ extern G4long seed;
 
 
 SteppingDetTest::SteppingDetTest(EventAction* event)
-: G4UserSteppingAction()
+: G4UserSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))

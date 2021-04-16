@@ -31,6 +31,7 @@
 #include "G4ThreeVector.hh"
 #include "RunInformation.hh"
 #include "DetectorInformation.hh"
+#include "G4OpBoundaryProcess.hh"
 #include "StackingAction.hh"
 #include "HistoManager.hh"
 #include "EventAction.hh"
