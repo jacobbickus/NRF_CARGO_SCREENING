@@ -43,6 +43,7 @@ HistoManager::~HistoManager()
 
 void HistoManager::Book()
 {
+  int tuple_counter = 0;
   G4AnalysisManager* manager = G4AnalysisManager::Instance();
   manager->SetVerboseLevel(0);
   // open output file
@@ -62,12 +63,17 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleDColumn("X");
     manager->CreateNtupleDColumn("Y");
+    
+    if(WEIGHTED)
+      manager->CreateNtupleDColumn("Weight");
+
+    manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Incident Chopper Data Number: " << tuple_counter << G4endl;
+ 
+    tuple_counter++;
   }
-
-  if(WEIGHTED)
-    manager->CreateNtupleDColumn("Weight");
-
-  manager->FinishNtuple();
 
   if(bremTest)
   {
@@ -77,8 +83,14 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Energy");
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
-    //manager->CreateNtupleSColumn("CreatorProcess");
+
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Brem Radiator Emission Number: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
+    
 
     // Create ID 2 Ntuple for Brem Backing Emission
     manager->CreateNtuple("Backing","Bremsstrahlung Beam from Backing");
@@ -87,6 +99,11 @@ void HistoManager::Book()
     manager->CreateNtupleDColumn("Theta");
     manager->CreateNtupleDColumn("Phi");
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
   }
 
   else
@@ -104,6 +121,11 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
 
       // Create ID 2 Ntuple for NRF Materials
       manager->CreateNtuple("NRF","NRF Data");
@@ -119,6 +141,11 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
 
       // Create ID 3 NTuple for Incident Interrogation Object Information
       manager->CreateNtuple("IntObjIn","Incident Interrogation Object Data");
@@ -136,6 +163,11 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
 
       // Create ID 4 Ntuple for IntObj Emission Data
       manager->CreateNtuple("IntObjOut","Interrogation Object Emission Data");
@@ -153,8 +185,13 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
     }
-
+       
     // Create ID 5/0 Ntuple for Incident Shielding Layer Data
     manager->CreateNtuple("Shielding","Incident Outer Shielding Layer");
     manager->CreateNtupleIColumn("EventID");
@@ -169,6 +206,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     // Create ID 6/1 Ntuple for Incident Plexiglass Layer (Prior to Water)
     manager->CreateNtuple("Plexiglass", "Incident Plexiglass Layer");
@@ -186,6 +228,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     // Create ID 7 Ntuple for Incident Water Tank Data
     // Only Run with smaller runs this ntuple can get quite large
@@ -201,6 +248,11 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
     }
 
     // Create ID 8/2 Ntuple for scinitllation in water per EVENT
@@ -213,6 +265,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     // Create ID 9/3 Ntuple for Scintillation in water tracking
     manager->CreateNtuple("Scintillation2","Scintillation in Water Optical Photon Data");
@@ -225,6 +282,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     // Create ID 10/4 Ntuple for cherenkov in water per EVENT
     manager->CreateNtuple("Cherenkov","Cherenkov per Event Water Data");
@@ -237,6 +299,11 @@ void HistoManager::Book()
 
     manager->FinishNtuple();
 
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
+    
     // Create ID 11/5 Ntuple for Cherenkov in water tracking optical photons
     manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
     manager->CreateNtupleIColumn("EventID");
@@ -247,6 +314,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     // Create ID 12/6 Ntuple for Detected Information
     manager->CreateNtuple("DetInfo","Detected Information");
@@ -263,6 +335,11 @@ void HistoManager::Book()
       manager->CreateNtupleDColumn("Weight");
 
     manager->FinishNtuple();
+    
+    if(debug)
+      G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+    tuple_counter++;
 
     if(!detTest)
     {
@@ -278,6 +355,15 @@ void HistoManager::Book()
         manager->CreateNtupleDColumn("Weight");
 
       manager->FinishNtuple();
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> Ntuple Bremmsstrahlung Beam From Backing: " << tuple_counter << G4endl;
+    
+      tuple_counter++;
+      
+      if(debug)
+        G4cout << "HistoManager::Book -> TOTAL NTUPLES: " << tuple_counter << G4endl;
+      
     }
 
   }
