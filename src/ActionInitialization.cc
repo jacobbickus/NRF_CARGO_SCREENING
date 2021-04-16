@@ -58,9 +58,9 @@ void ActionInitialization::Build() const
     PrimaryGeneratorAction* pga = new PrimaryGeneratorAction();
     SetUserAction(pga);
     SetUserAction(new RunAction(histo,pga));
-    EventActionWResponseFunction* eventWResponseFunction;
-    EventAction* event;
-    
+    EventActionWResponseFunction* eventWResponseFunction = 0;
+    EventAction* event = 0;
+
     if(ResponseFunction)
     {
       eventWResponseFunction = new EventActionWResponseFunction();
