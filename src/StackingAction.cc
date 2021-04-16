@@ -34,17 +34,19 @@ StackingAction::~StackingAction()
 }
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* currentTrack)
-{
-  DetectorInformation* detInfo = DetectorInformation::Instance();
-  RunInformation* runInfo = RunInformation::Instance();
-  // if a new track is created beyond interogation material kill it
-  G4double EndIntObj = detInfo->getEndIntObj();
-  G4double trackZ = currentTrack->GetPosition().z();
-
-  if(trackZ/(cm) > EndIntObj/(cm))
+{ 
+  if(!detTest)
   {
-    runInfo->AddStatusKilledPosition();
-    return fKill;
+    DetectorInformation* detInfo = DetectorInformation::Instance();
+    RunInformation* runInfo = RunInformation::Instance();
+    // if a new track is created beyond interogation material kill it
+    G4double EndIntObj = detInfo->getEndIntObj();
+    G4double trackZ = currentTrack->GetPosition().z();
+    if(trackZ/(cm) > EndIntObj/(cm))
+    {
+      runInfo->AddStatusKilledPosition();
+      return fKill;
+    }
   }
 
   if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it 
