@@ -268,7 +268,7 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
             kevent->AddDetected();
             if(creatorProcess == "Scintillation")
               kevent->AddDetectedScintillation();
-            else if(creatorProcess == "Cherenkov")
+            else if(creatorProcess == "Cerenkov")
               kevent->AddDetectedCherenkov();
             
           } // for if status == Detection
