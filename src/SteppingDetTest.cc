@@ -30,7 +30,7 @@ extern G4String inFile;
 extern G4long seed;
 
 
-SteppingDetTest::SteppingDetTest()
+SteppingDetTest::SteppingDetTest(EventAction* event)
 {
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))
