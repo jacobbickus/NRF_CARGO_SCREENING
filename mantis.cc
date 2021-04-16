@@ -63,7 +63,7 @@ void PrintUsage()
   G4cerr << "mantis [-h help] Prints this Usage Screen" << G4endl
   << "[-a chosen_energy=-1.] Sets the energy of the primary particle to the user's value in MeV" << G4endl
   << "[-c detTest=false Create Detector Response Fucntion]" << G4endl
-  << "[-d debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
+  << "[-debug debug] Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
   << "[-f printEvents]  Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
   << "[-g ResponseFunctionRun] Runs Mantis Simulation with Detector Response Function Input" << G4endl
   << "[-j ResponseFunctionInput] Input File with Detector Response Function TProfile" << G4endl
@@ -162,7 +162,7 @@ int main(int argc,char **argv)
       else if (G4String(argv[i]) == "-v") verbose_in = argv[i+1];
       else if (G4String(argv[i]) == "-n") addNRF_in = argv[i+1];
       else if (G4String(argv[i]) == "-i") inFile = argv[i+1];
-      else if (G4String(argv[i]) == "-d") debug_in = argv[i+1];
+      else if (G4String(argv[i]) == "-debug") debug_in = argv[i+1];
       else if (G4String(argv[i]) == "-f") printEvents_in = argv[i+1];
       else if (G4String(argv[i]) == "-u") SampleEnergyRange_in = argv[i+1];
       else if (G4String(argv[i]) == "-w") uniform_width = std::stod(argv[i+1]);
