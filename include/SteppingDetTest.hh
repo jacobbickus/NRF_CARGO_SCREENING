@@ -56,7 +56,7 @@
 class SteppingDetTest : public UserSteppingAction
 {
 public:
-  SteppingDetTest();
+  SteppingDetTest(EventAction*);
   virtual ~SteppingDetTest();
 
   // method from the base class

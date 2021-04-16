@@ -56,7 +56,7 @@
 class SteppingBremTest : public UserSteppingAction
 {
 public:
-  SteppingBremTest();
+  SteppingBremTest(EventAction*);
   virtual ~SteppingBremTest();
 
   // method from the base class
@@ -64,4 +64,4 @@ public:
 
 };
 
-#endif 
+#endif
