@@ -51,14 +51,9 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   {
     return;
   }
-
-  // Grab Relevant event information including the particle weight
   eventInformation* info =
             (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
   G4double beamEnergy = info->GetBeamEnergy()/(MeV);
-
-  if(WEIGHTED)
-    weight = info->GetWeight();
 
   RunInformation* krun = RunInformation::Instance();
   DetectorInformation* kdet = DetectorInformation::Instance();
@@ -177,8 +172,6 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
     manager->FillNtupleDColumn(0,1, energy);
     manager->FillNtupleDColumn(0,2, loc.x());
     manager->FillNtupleDColumn(0,3, loc.y());
-    if(WEIGHTED)
-      manager->FillNtupleDColumn(0,4, weight);
     manager->AddNtupleRow(0);
     // Once Incident Chopper record data and kill for brem test
     theTrack->SetTrackStatus(fStopAndKill);
@@ -207,10 +200,6 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
       manager->FillNtupleDColumn(1,1, energy);
       manager->FillNtupleDColumn(1,2,theta);
       manager->FillNtupleDColumn(1,3, phi);
-
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(1,4, weight);
-
       manager->AddNtupleRow(1);
       return;
     } // end else
