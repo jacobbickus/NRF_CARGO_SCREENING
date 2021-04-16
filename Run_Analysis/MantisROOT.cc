@@ -2740,17 +2740,39 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
 
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
+  TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
+  TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
+
   tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Created." << std::endl;
+  tdet_response->Draw("NumScintillation:IncidentEnergy>>ScintillationResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Scintillation Response Created." << std::endl;
+  tdet_response->Draw("NumCherenkov:IncidentEnergy>>CherenkovResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Cherenkov Response Created." << std::endl;
+
   TCanvas* c1 = new TCanvas("c1","Detector Response Function",600,400);
   c1->cd();
   DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
   DetectorResponse->Draw();
 
+  TCanvas* c2 = new TCanvas("c2","Detector Scintillation Response",600,400);
+  c2->cd();
+  ScintillationResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+  ScintillationResponse->GetYaxis()->SetTitle("Number of Detector Scintillation Photoelectrons");
+  ScintillationResponse->Draw();
+
+  TCanvas* c3 = new TCanvas("c3","Detector Cherenkov Response",600,400);
+  c2->cd();
+  CherenkovResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+  CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
+  CherenkovResponse->Draw();
+
   TFile* fout = new TFile(outfilename,"RECREATE");
   fout->cd();
   DetectorResponse->Write();
+  ScintillationResponse->Write();
+  CherenkovResponse->Write();
   fout->Close();
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
 }
