@@ -147,6 +147,8 @@ int main(int argc,char **argv)
 
   for (G4int i=1; i<argc; i=i+2)
   {
+    std::cout << i << std::endl;
+    
       if      (G4String(argv[i]) == "-h") PrintUsage();
       else if (G4String(argv[i]) == "--help") PrintUsage();
       else if (G4String(argv[i]) == "--Macro") macro = argv[i+1];
