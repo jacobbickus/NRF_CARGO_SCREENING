@@ -29,9 +29,9 @@ G4VisManager* visManager;
 // For FileSystem Handling
 #include <sys/stat.h>
 
-#include <iostream>
+#include <algorithm>
+#include <cctype>
 #include <string>
-#include <locale>
 
 // declare global variables
 G4long seed;
@@ -86,13 +86,6 @@ namespace
     << "      [-t4 --Sample_Energy_Range=false]                Samples from a normal distribution centered on user's energy." << G4endl
     << G4endl;
     exit(1);
-  }
-
-  void MyLower(std::string str)
-  {
-    std::locale loc;
-    for(auto elem : str)
-      std::tolower(elem,loc);
   }
 
 }
@@ -160,9 +153,11 @@ int main(int argc,char **argv)
   for (G4int i=1; i<argc; i=i+2)
   {
     //std::cout << i << std::endl;
-      MyLower(std::string(argv[i]));
-      if      (G4String(argv[i]) == "-h") PrintUsage();
-      else if (G4String(argv[i]) == "--help") PrintUsage();
+      std::string input = argv[i];
+      std::transform(input.begin(),input.end(),input.begin(),[](unsigned char c){return std::tolower(c);});
+
+      if      (G4String(input) == "-h") PrintUsage();
+      else if (G4String(input) == "--help") PrintUsage();
       else if (G4String(argv[i]) == "--macro") macro = argv[i+1];
       else if (G4String(argv[i]) == "--energy") chosen_energy = std::stod(argv[i+1]);
       else if (G4String(argv[i]) == "--seed") seed = atoi(argv[i+1]);
