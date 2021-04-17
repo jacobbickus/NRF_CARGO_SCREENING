@@ -58,6 +58,11 @@ public:
   G4double GetDetectorPhotoelectrons(G4double);
   G4double GetScintillationResponse(G4double);
   G4double GetCherenkovResponse(G4double);
+  void CloseInputFile()
+  {
+    if(fin->IsOpen())
+      fin->Close();
+  }
 
 private:
   TProfile* tdet_response;

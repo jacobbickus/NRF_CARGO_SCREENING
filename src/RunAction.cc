@@ -26,6 +26,7 @@
 extern G4bool output;
 extern G4double chosen_energy;
 extern G4bool debug;
+extern G4bool ResponseFunction;
 
 RunAction::RunAction(HistoManager* histoAnalysis, PrimaryGeneratorAction* pga)
         : G4UserRunAction(), fHistoManager(histoAnalysis), fpga(pga)
@@ -51,6 +52,15 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   {
     fpga->CloseInputFile();
     G4cout << G4endl << "RunAction::EndOfRunAction -> PrimaryGeneratorAction Input File Closed." << G4endl;
+  }
+
+  if(ResponseFunction)
+  {
+    DetectorResponseFunction* dResponse = DetectorResponseFunction::Instance();
+    dResponse->CloseInputFile();
+    G4cout << G4endl
+    << "RunAction::EndOfRunAction -> DetectorResponseFunction Input File Closed."
+    << G4endl;
   }
 
   RunInformation* rInfo = RunInformation::Instance();
