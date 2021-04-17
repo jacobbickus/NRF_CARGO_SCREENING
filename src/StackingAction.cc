@@ -24,6 +24,7 @@
 
 #include "StackingAction.hh"
 extern G4bool detTest;
+extern G4bool ResponseFunction;
 
 StackingAction::StackingAction()
 {
@@ -34,7 +35,7 @@ StackingAction::~StackingAction()
 }
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* currentTrack)
-{ 
+{
   if(!detTest)
   {
     DetectorInformation* detInfo = DetectorInformation::Instance();
@@ -49,7 +50,19 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
     }
   }
 
-  if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it 
+  if(ResponseFunction)
+  {
+    G4String nextStep_VolumeName = currentTrack->GetNextVolume()->GetName();
+    G4String previousStep_VolumeName = currentTrack->GetVolume()->GetName();
+    if(nextStep_VolumeName.compare(0,4,"Plex") == 0
+        && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
+    {
+      runInfo->AddStatusKilledPosition();
+      return fKill;
+    }
+  }
+
+  if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it
 
   G4ParticleDefinition *pdef = currentTrack->GetDefinition();
   // kill neutrons (probably not important)
