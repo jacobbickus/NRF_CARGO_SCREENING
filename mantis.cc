@@ -171,7 +171,7 @@ int main(int argc,char **argv)
       else if (G4String(input) == "--seed")
       {
         seed = atoi(argv[i+1]);
-        std::cout << "Seed: " << std::endl;
+        std::cout << "Seed: " << seed << std::endl;
       }
       else if (G4String(input) == "--output_filename")
       {
