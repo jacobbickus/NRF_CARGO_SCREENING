@@ -63,28 +63,28 @@ namespace
 {
   void PrintUsage()
   {
-    G4cerr << "Usage: " << G4endl;
-    G4cerr << "mantis [-h --help]                              Prints this Usage Screen" << G4endl
-    << "      [--Macro=mantis.in]                              Macro File to be read for user input options -> Required!" << G4endl
-    << "      [--File_To_Sample=brems_distributions.root]      Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << G4endl
-    << "      [--Seed=1]                                       Simulation Seed." << G4endl
-    << "      [--Output_Filename=test.root]                    Data will be written to this file." << G4endl
-    << "      [--Energy=-1.]                                   Sets the energy of the primary particle to the user's value in MeV" << G4endl
-    << "      [--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << G4endl
-    << "      [--Uniform_Width=0.005]                          Sets the uniform distribution width. Requires SampleEnergyRange Boolean to be passed as true." << G4endl
-    << "      [-d --Debug=false]                               Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << G4endl
-    << "      [-i --Force_Isotropic=true]                      Forces nrf isotropic emission." << G4endl
-    << "      [-n --NRF=true]                                  IF set to false NRF Physics will be removed from physicsList! The default is set to true." << G4endl
-    << "      [-p --Print_Events=false]                        Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << G4endl
-    << "      [-r --Detector_Response_Input=false]             Runs Mantis Simulation with Detector Response Function Input" << G4endl
-    << "      [-s --Print_Standalone_Data=false]               Calls G4NRF to print a file of NRF Energies (takes up to 15 min)" << G4endl
-    << "      [-v --Verbose=false]                             Sets NRF Physics Verbosity" << G4endl
-    << G4endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test" << G4endl << G4endl
-    << "      [-t1 --Detector_Response_Test=false]             Create Detector Response Function" << G4endl
-    << "      [-t2 --Brem_Test=false]                          For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy" << G4endl
-    << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << G4endl
-    << "      [-t4 --Sample_Energy_Range=false]                Samples from a normal distribution centered on user's energy." << G4endl
-    << G4endl;
+    std::cerr << "Usage: " << std::endl;
+    std::cerr << "mantis [-h --help]                              Prints this Usage Screen" << std::endl
+    << "      [--Macro=mantis.in]                              Macro File to be read for user input options -> Required!" << std::endl
+    << "      [--File_To_Sample=brems_distributions.root]      Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << std::endl
+    << "      [--Seed=1]                                       Simulation Seed." << std::endl
+    << "      [--Output_Filename=test.root]                    Data will be written to this file." << std::endl
+    << "      [--Energy=-1.]                                   Sets the energy of the primary particle to the user's value in MeV" << std::endl
+    << "      [--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << std::endl
+    << "      [--Uniform_Width=0.005]                          Sets the uniform distribution width. Requires SampleEnergyRange Boolean to be passed as true." << std::endl
+    << "      [-d --Debug=false]                               Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << std::endl
+    << "      [-i --Force_Isotropic=true]                      Forces nrf isotropic emission." << std::endl
+    << "      [-n --NRF=true]                                  IF set to false NRF Physics will be removed from physicsList! The default is set to true." << std::endl
+    << "      [-p --Print_Events=false]                        Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << std::endl
+    << "      [-r --Detector_Response_Input=false]             Runs Mantis Simulation with Detector Response Function Input" << std::endl
+    << "      [-s --Print_Standalone_Data=false]               Calls G4NRF to print a file of NRF Energies (takes up to 15 min)" << std::endl
+    << "      [-v --Verbose=false]                             Sets NRF Physics Verbosity" << std::endl
+    << std::endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test" << std::endl << std::endl
+    << "      [-t1 --Detector_Response_Test=false]             Create Detector Response Function" << std::endl
+    << "      [-t2 --Brem_Test=false]                          For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy" << std::endl
+    << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
+    << "      [-t4 --Sample_Energy_Range=false]                Samples from a normal distribution centered on user's energy." << std::endl
+    << std::endl;
     exit(1);
   }
 
@@ -226,7 +226,7 @@ int main(int argc,char **argv)
         resonance_in = argv[i+1];
         if(resonance_in == "True" || resonance_in == "true")
         {
-          G4cout << "Completing Resonance Test!" << G4endl;
+          G4cout << "Completing Resonance Test!" << std::endl;
           resonanceTest = true;
         }
       }
@@ -370,7 +370,7 @@ int main(int argc,char **argv)
 
   if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
   {
-    G4cout << "Sampling Uniform Centered on " << chosen_energy
+    std::cout << "Sampling Uniform Centered on " << chosen_energy
     << " with normal width " << uniform_width << std::endl;
   }
 
@@ -390,35 +390,33 @@ int main(int argc,char **argv)
   if(bremTest && resonanceTest)
   {
     std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << std::endl;
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
     exit(1);
   }
   if(bremTest && detTest)
   {
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot test Bremsstrahlung and Detector Response during the same run!" << G4endl;
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot test Bremsstrahlung and Detector Response during the same run!" << std::endl;
     exit(1);
   }
   if(detTest && resonanceTest)
   {
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot test Detector Response and Resonance Test!" << G4endl;
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot test Detector Response and Resonance Test!" << std::endl;
     exit(1);
   }
   if(bremTest && chosen_energy < 0)
   {
     std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without input energy!" << std::endl;
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
     exit(1);
   }
 
   if(SampleEnergyRangebool && chosen_energy < 0)
   {
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range without choosing uniform center!" << G4endl;
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range without choosing uniform center!" << std::endl;
     exit(1);
   }
 
   if(SampleEnergyRangebool && uniform_width < 0)
   {
-    G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range with a width < 0." << G4endl;
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range with a width < 0." << std::endl;
     exit(1);
   }
 
@@ -441,8 +439,8 @@ int main(int argc,char **argv)
 #ifdef G4VIS_USE
   if(ui || macro == "vis_save.mac")
   {
-          visManager = new G4VisExecutive();
-          visManager->Initialize();
+    visManager = new G4VisExecutive();
+    visManager->Initialize();
   }
 #endif
 
