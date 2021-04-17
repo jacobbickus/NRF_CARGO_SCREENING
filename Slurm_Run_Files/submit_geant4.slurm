@@ -8,6 +8,6 @@
 MACRO=$1
 OUTFILENAME=$OUTFILE
 ARG=$envvar_bsh
-srun ./mantis -m ${MACRO} -o ${OUTFILENAME}-${ARG}.root -s ${ARG} -n true -f false -d false &
+srun ./mantis --macro ${MACRO} --output_filename ${OUTFILENAME}-${ARG}.root --seed ${ARG} &
 wait
 exit

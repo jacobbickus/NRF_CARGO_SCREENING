@@ -152,52 +152,123 @@ Mantis Input
 ==
 
 The User can manipulate the simulation in various ways through the mantis.in macro input file. For example the following line of code:
-`> ./mantis -m mantis.in -o test.root -s 1`
+`> ./mantis --macro mantis.in --output_filename test.root --seed 1`
 would run mantis with the inputs found in mantis.in located in the mantis executable directory. The output would be found in test.root and would have a seed of 1.
 
 The command line input options and flags include:
+--Macro=mantis.in  
 
-`-a Energy` -> Sets the energy of the primary particle to the user's value in MeV
+Description:
 
-`-d Debug` -> Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program
+Macro File to be read for user input options -> Required!
 
-`-f PrintEvents` -> Runtime Boolean option to print event tracker to std::cout instead of G4cout to file
+--File_To_Sample=brems_distributions.root      
+Description:
 
-`-h help` -> Prints Usage Options
+Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from.
 
-`-i Input Filename` -> Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from. No importance sampling weighting will be done if the -i input is passed. The Default input file name is brems_distributions.root which should contain an importance sampling distribution
+--Seed=1                                      
 
-`-m macro file`-> Macro File to be read for user input options -> Required!
+Description
 
-`-n addNRF` -> IF set to false NRF Physics will be removed from physicsList! The default is set to true.
+Simulation Seed
 
-`-o Output Filename` -> Data will be written to this file
+--Output_Filename=test.root                   
 
-`-p print standalone.dat file` -> Calls G4NRF to print a file of NRF Energies (takes up to 15 min) not recommended for non-developers
+Description:
 
-`-q NRF Force Isotropic` -> Forces Isotropic NRF Emission 
+Data will be written to this file.
 
-`-r Test Resonance` -> Tests Resonance energies as input
+--Energy=-1.                             
 
-`-s seed` -> Seeds simulation Default = 1
+Description:
 
-`-t testBrem` -> For creating a bremsstrahlung beam for a secondary simulation input. Requires -a energy flag to be passed with max bremsstrahlung energy
+Sets the energy of the primary particle to the user's value in MeV" << G4endl
 
-`-u Uniform Sampling` -> Samples from a normal distribution centered on user's energy passed with flag -a
+--Detector_Response_File=DetectorResponse.root
 
-`-v NRF Verbose`   
+Description:
 
-`-w Uniform Width` -> Sets the uniform distribution width. Requires -u SampleEnergyRange Boolean to be passed as true and requires flag -a to be passed with energy greater than 0
+Input File with Detector Response Function TProfile
 
-__Mandatory Inputs for mantis.in__
+--Uniform_Width=0.005                       
 
-mantis.in has the following MANDATORY inputs that the user must not comment:
+Description:
 
-1. Chopper State (On/Off)
-2. Chopper Material (Uranium/Plutonium)
-3. Chopper Material Isotopic Composition
-4. Interrogation Object Material
-5. Interrogation Object Material Isotopic Composition if Interrogation Object is Uranium/Plutonium
+Sets the uniform distribution width. Requires SampleEnergyRange Boolean to be passed as true.
+
+-d --Debug=false                             
+
+Description:
+
+Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program
+
+-i --Force_Isotropic=true                     
+
+Description:
+
+Forces nrf isotropic emission.
+
+-n --NRF=true                                
+
+Description:
+
+IF set to false NRF Physics will be removed from physicsList! The default is set to true.
+
+-p --Print_Events=false                    
+
+Description:
+
+Runtime Boolean option to print event tracker to std::cout instead of G4cout to file
+
+
+-r --Detector_Response_Input=false          
+
+Description:
+
+Runs Mantis Simulation with Detector Response Function Input
+
+-s --Print_Standalone_Data=false            
+
+Description:
+
+Calls G4NRF to print a file of NRF Energies (takes up to 15 min)
+
+-v --Verbose=false                             
+
+Description:
+
+Sets NRF Physics Verbosity
+
+Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test
+
+-t1 --Detector_Response_Test=false
+
+Description:
+
+Create Detector Response Function
+
+-t2 --Brem_Test=false                          
+
+Description:
+
+For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy
+
+-t3 --Resonance_Test=false                
+
+Description:
+
+Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies.
+
+-t4 --Sample_Energy_Range=false              
+
+Description:
+
+Samples from a normal distribution centered on user's energy.
+
+
+__Inputs for Macro File Input__
+
 
 The user also has several optional commands available in mantis.in:
 
