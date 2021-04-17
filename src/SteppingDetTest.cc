@@ -141,12 +141,17 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
       manager->FillNtupleSColumn(1,8, CPName);
 
       manager->AddNtupleRow(1);
+    }
 
+    if(nextStep_VolumeName.compare("Water") == 0
+        && previousStep_VolumeName.compare("Tape") == 0)
+    {
       if(trackID == 1)
         kevent->SetIncidentEnergy(energy);
 
       return;
     }
+    
     // While in water keep track of cherenkov and pass number of cherenkov to EventAction
     if(startPoint->GetPhysicalVolume()->GetName().compare("Water")==0)
     {

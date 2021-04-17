@@ -100,8 +100,9 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
                 << std::setprecision(6) << std::flush;
     }
 
-    // Reset values 
+    // Reset values
     number_detected = 0;
+    energy_counter = 0;
     s_detected = 0;
     c_detected = 0;
     incident_energy = 0.;
@@ -122,7 +123,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double weight = info->GetWeight();
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
-  
+
     // Deal With Scintillation per Event
     if(s_secondaries > 0)
     {
@@ -141,7 +142,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
         manager->AddNtupleRow(2);
       }
-      else 
+      else
       {
         manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
         manager->FillNtupleDColumn(8,1,maxE);
@@ -153,7 +154,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
         manager->AddNtupleRow(8);
       }
     }
-  
+
     // Deal With Cherenkov per Event
     if(c_secondaries > 0)
     {
@@ -172,7 +173,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
         manager->AddNtupleRow(4);
       }
-      else 
+      else
       {
         manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
         manager->FillNtupleDColumn(10,1,maxE);
@@ -185,7 +186,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       }
     }
 
-    // Deal with Detected per Event 
+    // Deal with Detected per Event
     if(detTest)
     {
       manager->FillNtupleIColumn(7,0, anEvent->GetEventID());
@@ -194,14 +195,14 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       manager->FillNtupleIColumn(7,3, s_detected);
       manager->FillNtupleIColumn(7,4, c_detected);
       manager->FillNtupleIColumn(7,5, seed);
-      
+
       if(WEIGHTED)
         manager->FillNtupleDColumn(7,6, weight);
-      
+
       manager->AddNtupleRow(7);
-      
+
     }
-  
+
     if(debug)
         std::cout << "EventAction::EndOfEventAction() --> Ending!" << std::endl;
 }

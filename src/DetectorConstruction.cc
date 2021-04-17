@@ -91,7 +91,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double world_size_x = 2.5*m;
   G4double world_size_y = 2.5*m;
   G4double world_size_z = 4.5*m;
-        
+
   if(detTest)
   {
    world_size_x = 1.*m;
@@ -166,7 +166,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4cout<< "DetectorConstruction::Construct -> Second Attenuator State automatically set to Off." << G4endl;
   }
 
-  //G4double water_z_pos = container_z_pos - 1.2192*m;
   G4double water_z_pos = detInfo->getRearCollimatorPosition();
   G4double myangle = (180. - theAngle)*pi/180.;
   G4double water_x_pos = tan(myangle)*(container_z_pos - water_z_pos);
@@ -326,7 +325,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         false,
                         k,
                         checkOverlaps);
-    }      
+    }
   }
   else
   {
@@ -340,7 +339,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         false,
                         k,
                         checkOverlaps);
-    }     
+    }
   }
 
 // **************************************************** Construct Photocathode ****************************************************** //

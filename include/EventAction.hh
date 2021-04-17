@@ -60,7 +60,14 @@ void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
 void AddDetectedScintillation(){s_detected++;}
 void AddDetectedCherenkov(){c_detected++;}
 void AddDetected(){number_detected++;}
-void SetIncidentEnergy(G4double e){incident_energy = e;}
+void SetIncidentEnergy(G4double e)
+{
+  if(energy_counter == 0)
+  {
+    incident_energy = e;
+    energy_counter++;
+  }
+}
 
 private:
 G4int eventInfoFreq, runID;
@@ -69,6 +76,7 @@ G4bool WEIGHTED;
 EventMessenger* eventM;
 G4int c_secondaries, s_secondaries, s_detected, c_detected, number_detected;
 G4double incident_energy;
+G4int energy_counter;
 std::vector<double> cherenkov_energyv, scintillation_energyv;
 };
 
