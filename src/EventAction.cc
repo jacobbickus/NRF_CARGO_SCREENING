@@ -189,18 +189,20 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     // Deal with Detected per Event
     if(detTest)
     {
-      manager->FillNtupleIColumn(7,0, anEvent->GetEventID());
-      manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
-      manager->FillNtupleIColumn(7,2, number_detected);
-      manager->FillNtupleIColumn(7,3, s_detected);
-      manager->FillNtupleIColumn(7,4, c_detected);
-      manager->FillNtupleIColumn(7,5, seed);
+      if(incident_energy > 0)
+      {
+        manager->FillNtupleIColumn(7,0, anEvent->GetEventID());
+        manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
+        manager->FillNtupleIColumn(7,2, number_detected);
+        manager->FillNtupleIColumn(7,3, s_detected);
+        manager->FillNtupleIColumn(7,4, c_detected);
+        manager->FillNtupleIColumn(7,5, seed);
 
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(7,6, weight);
+        if(WEIGHTED)
+          manager->FillNtupleDColumn(7,6, weight);
 
-      manager->AddNtupleRow(7);
-
+        manager->AddNtupleRow(7);
+      }
     }
 
     if(debug)
