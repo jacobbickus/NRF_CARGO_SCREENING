@@ -112,12 +112,11 @@ int main(int argc,char **argv)
   G4String verbose_in = "false";
   G4String addNRF_in = "true";
   G4String printEvents_in = "false";
-  G4String SampleEnergyRange_in = "false";
-
   G4bool standalone = false;
   G4bool NRF_Verbose = false;
   addNRF = true;
   printEvents = false;
+
   // Run Defaults
   macro = "mantis.in";
   seed = 1;
@@ -125,6 +124,7 @@ int main(int argc,char **argv)
   response_function_file = "DetectorResponse.root";
   G4String debug_in = "false";
   debug = false;
+
   // Primary Generator Defaults
   G4String resonance_in = "false";
   resonanceTest = false;
@@ -135,6 +135,7 @@ int main(int argc,char **argv)
   detTest=false;
   G4String bremTest_in = "false";
   bremTest = false;
+  G4String SampleEnergyRange_in = "false";
   SampleEnergyRangebool = false;
   uniform_width = 0.005; // units MeV
 
@@ -388,6 +389,7 @@ int main(int argc,char **argv)
   // Some User Error Checking
   if(bremTest && resonanceTest)
   {
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << std::endl;
     G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << G4endl;
     exit(1);
   }
@@ -403,6 +405,7 @@ int main(int argc,char **argv)
   }
   if(bremTest && chosen_energy < 0)
   {
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without input energy!" << std::endl;
     G4cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung without option -a input energy!" << G4endl;
     exit(1);
   }
