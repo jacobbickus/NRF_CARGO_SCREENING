@@ -158,79 +158,196 @@ int main(int argc,char **argv)
 
       if      (G4String(input) == "-h") PrintUsage();
       else if (G4String(input) == "--help") PrintUsage();
-      else if (G4String(input) == "--macro") macro = argv[i+1];
-      else if (G4String(input) == "--energy") chosen_energy = std::stod(argv[i+1]);
-      else if (G4String(input) == "--seed") seed = atoi(argv[i+1]);
-      else if (G4String(input) == "--output_filename") root_output_name = argv[i+1];
-      else if (G4String(input) == "--detector_response_input") ResponseFunction_in = argv[i+1];
+      else if (G4String(input) == "--macro")
+      {
+        macro = argv[i+1];
+        std::cout << "Macro Input: " << macro << std::endl;
+      }
+      else if (G4String(input) == "--energy")
+      {
+        chosen_energy = std::stod(argv[i+1]);
+        std::cout << "Chosen Energy: " << chosen_energy << std::endl;
+      }
+      else if (G4String(input) == "--seed")
+      {
+        seed = atoi(argv[i+1]);
+        std::cout << "Seed: " << std::endl;
+      }
+      else if (G4String(input) == "--output_filename")
+      {
+        root_output_name = argv[i+1];
+        std::cout << "Output Filename: " << root_output_name << std::endl;
+      }
+      else if (G4String(input) == "--detector_response_input")
+      {
+        ResponseFunction_in = argv[i+1];
+        std::cout << "Detector Response Run: " << ResponseFunction_in << std::endl;
+      }
       else if (G4String(input) == "-r")
       {
+        std::cout << "Detector Response Run: TRUE" << std::endl;
         ResponseFunction = true;
         i = i-1;
       }
-      else if (G4String(input) == "--detector_response_file") response_function_file = argv[i+1];
-      else if (G4String(input) == "--detector_response_test") detTest_in = argv[i+1];
+      else if (G4String(input) == "--detector_response_file")
+      {
+        response_function_file = argv[i+1];
+        std::cout << "Detector Response Input File: " << response_function_file << std::endl;
+      }
+      else if (G4String(input) == "--detector_response_test")
+      {
+        detTest_in = argv[i+1];
+        std::cout << "Detector Response TEST: " << detTest_in << std::endl;
+      }
       else if (G4String(input) == "-t1")
       {
+        std::cout << "Detector Response TEST: TRUE" << std::endl;
         detTest = true;
         i = i-1;
       }
-      else if (G4String(input) == "--brem_test") bremTest_in = argv[i+1];
+      else if (G4String(input) == "--brem_test")
+      {
+        bremTest_in = argv[i+1];
+        if(bremTest_in == "True" || bremTest_in == "true")
+        {
+          std::cout << "Conducting Brem Test!" << std::endl;
+          bremTest = true;
+        }
+      }
       else if (G4String(input) == "-t2")
       {
+        std::cout << "Bremsstrahlung TEST: TRUE" << std::endl;
         bremTest = true;
         i = i-1;
       }
-      else if (G4String(input) == "--resonance_test") resonance_in = argv[i+1];
+      else if (G4String(input) == "--resonance_test")
+      {
+        resonance_in = argv[i+1];
+        if(resonance_in == "True" || resonance_in == "true")
+        {
+          G4cout << "Completing Resonance Test!" << G4endl;
+          resonanceTest = true;
+        }
+      }
       else if (G4String(input) == "-t3")
       {
+        std::cout << "Resonance TEST: TRUE" << std::endl;
         resonanceTest = true;
         i = i-1;
       }
-      else if (G4String(input) == "--force_isotropic") force_isotropic_in = argv[i+1];
+      else if (G4String(input) == "--force_isotropic")
+      {
+        force_isotropic_in = argv[i+1];
+        if(force_isotropic_in == "False" || force_isotropic_in == "false")
+        {
+          std::cout << "NRF Force Isotropic turned OFF!" << std::endl;
+          force_isotropic = false;
+        }
+      }
       else if (G4String(input) == "-i")
       {
+        std::cout << "NRF Force Isotropic Turned ON!" << std::endl;
         force_isotropic = true;
         i = i-1;
       }
-      else if (G4String(input) == "--print_standalone_data") standalone_in = argv[i+1];
+      else if (G4String(input) == "--print_standalone_data")
+      {
+        standalone_in = argv[i+1];
+        if(standalone_in == "True" || standalone_in == "true")
+        {
+          std::cout << "Standalone File Requested." << std::endl;
+          standalone = true;
+        }
+      }
       else if (G4String(input) == "-s")
       {
+        std::cout << "Standalone File Requested." << std::endl;
         standalone = true;
         i = i-1;
       }
-      else if (G4String(input) == "--verbose") verbose_in = argv[i+1];
+      else if (G4String(input) == "--verbose")
+      {
+        verbose_in = argv[i+1];
+        if(verbose_in == "True" || verbose_in == "true")
+        {
+          std::cout << "NRF Verbose set to: " << verbose_in << std::endl;
+          NRF_Verbose = true;
+        }
+      }
       else if (G4String(input) == "-v")
       {
+        std::cout << "NRF Verbose set to: TRUE" << std::endl;
         NRF_Verbose = true;
         i =i-1;
       }
-      else if (G4String(input) == "--nrf") addNRF_in = argv[i+1];
+      else if (G4String(input) == "--nrf")
+      {
+        addNRF_in = argv[i+1];
+        if(addNRF_in == "False" || addNRF_in == "false")
+        {
+          std::cout << "NRF Physics turned OFF!" << std::endl;
+          addNRF = false;
+        }
+      }
       else if (G4String(input) == "-n")
       {
+        std::cout << "NRF Physics Turned ON!" << std::endl;
         addNRF = true;
         i=i-1;
       }
-      else if (G4String(input) == "--file_to_sample") inFile = argv[i+1];
-      else if (G4String(input) == "--debug") debug_in = argv[i+1];
+      else if (G4String(input) == "--file_to_sample")
+      {
+        inFile = argv[i+1];
+        std::cout << "Sampling from file: " << inFile << std::endl;
+      }
+      else if (G4String(input) == "--debug")
+      {
+        debug_in = argv[i+1];
+        if(debug_in == "True" || debug_in == "true")
+        {
+          std::cout << "Debugging mode set." << std::endl;
+          debug = true;
+        }
+      }
       else if (G4String(input) == "-d")
       {
+        std::cout << "Debugging mode set." << std::endl;
         debug = true;
         i=i-1;
       }
-      else if (G4String(input) == "--print_events") printEvents_in = argv[i+1];
+      else if (G4String(input) == "--print_events")
+      {
+        printEvents_in = argv[i+1];
+        if(printEvents_in == "True" || printEvents_in == "true")
+        {
+          std::cout << "Printing Events to std::cout" << std::endl;
+          printEvents = true;
+        }
+      }
       else if (G4String(input) == "-p")
       {
+        std::cout << "Printing Events to std::cout" << std::endl;
         printEvents = true;
         i=i-1;
       }
-      else if (G4String(input) == "--sample_energy_range") SampleEnergyRange_in = argv[i+1];
+      else if (G4String(input) == "--sample_energy_range")
+      {
+        SampleEnergyRange_in = argv[i+1];
+
+        if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
+          SampleEnergyRangebool = true;
+
+      }
       else if (G4String(input) == "-t4")
       {
         SampleEnergyRangebool = true;
         i=i-1;
       }
-      else if (G4String(input) == "--uniform_width") uniform_width = std::stod(argv[i+1]);
+      else if (G4String(input) == "--uniform_width")
+      {
+        uniform_width = std::stod(argv[i+1]);
+        std::cout << "Uniform Width Set to: " << uniform_width << std::endl;
+      }
       else
       {
         std::cerr << "FATAL ERROR: " << std::endl << "User Inputs: " << std::endl;
@@ -245,17 +362,15 @@ int main(int argc,char **argv)
   }
 
   // Handle Output File
-  std::cout << "Output Filename: " << root_output_name << std::endl;
   std::string RootOutputFile = (std::string)root_output_name;
   if(RootOutputFile.find(".root")<RootOutputFile.length())
     gOutName=(std::string)RootOutputFile.substr(0, RootOutputFile.find(".root"));
   else gOutName=(std::string)root_output_name;
 
-  // Handle Debugging
-  if(debug_in == "True" || debug_in == "true")
+  if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
   {
-    std::cout << "Debugging mode set." << std::endl;
-    debug = true;
+    G4cout << "Sampling Uniform Centered on " << chosen_energy
+    << " with normal width " << uniform_width << std::endl;
   }
 
   G4UImanager* UI = G4UImanager::GetUIpointer();
@@ -265,63 +380,6 @@ int main(int argc,char **argv)
   {
     output = true;
     UI->SetCoutDestination(LoggedSession);
-  }
-
-  // Physics List Options
-  if(standalone_in == "True" || standalone_in == "true")
-  {
-    G4cout << "Standalone File Requested." << G4endl;
-    standalone = true;
-  }
-  if(verbose_in == "True" || verbose_in == "true")
-  {
-    G4cout << "NRF Verbose set to: " << verbose_in << G4endl;
-    NRF_Verbose = true;
-  }
-  if(addNRF_in == "False" || addNRF_in == "false")
-  {
-    G4cout << "NRF Physics turned OFF!" << G4endl;
-    addNRF = false;
-  }
-  if(force_isotropic_in == "False" || force_isotropic_in == "false")
-  {
-    G4cout << "NRF Force Isotropic turned OFF!" << G4endl;
-    force_isotropic = false;
-  }
-  if(printEvents_in == "True" || printEvents_in == "true")
-  {
-    G4cout << "Printing Events to std::cout" << G4endl;
-    printEvents = true;
-  }
-
-  // Primary Generator Options
-  if(ResponseFunction_in == "True" || ResponseFunction_in == "true")
-    ResponseFunction = true;
-  if(ResponseFunction)
-    G4cout << "Conducting Response Function Run." << G4endl;
-    
-  if(detTest_in == "True" || detTest_in == "true")
-  {
-    G4cout << "Conducting Detector Response Test" << G4endl;
-    detTest = true;
-  }
-  if(bremTest_in == "True" || bremTest_in == "true")
-  {
-    G4cout << "Conducting Brem Test!" << G4endl;
-    bremTest = true;
-  }
-
-  if(resonance_in == "True" || resonance_in == "true")
-  {
-    G4cout << "Completing Resonance Test!" << G4endl;
-    resonanceTest = true;
-  }
-
-  if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
-  {
-    G4cout << "Sampling Uniform Centered on " << chosen_energy
-    << " with normal width " << uniform_width << std::endl;
-    SampleEnergyRangebool = true;
   }
 
   if(chosen_energy > 0)
@@ -360,9 +418,6 @@ int main(int argc,char **argv)
     G4cerr << "FATAL ERROR mantis.cc -> Cannot Sample Energy Range with a width < 0." << G4endl;
     exit(1);
   }
-
-  G4cout << "Seed set to: " << seed << G4endl;
-  std::cout << "Seed set to: " << seed << std::endl;
 
   // choose the Random engine
   CLHEP::HepRandom::setTheEngine(new CLHEP::RanluxEngine);
