@@ -39,12 +39,12 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
   if(!detTest)
   {
     DetectorInformation* detInfo = DetectorInformation::Instance();
-    RunInformation* runInfo = RunInformation::Instance();
     // if a new track is created beyond interogation material kill it
     G4double EndIntObj = detInfo->getEndIntObj();
     G4double trackZ = currentTrack->GetPosition().z();
     if(trackZ/(cm) > EndIntObj/(cm))
     {
+      RunInformation* runInfo = RunInformation::Instance();
       runInfo->AddStatusKilledPosition();
       return fKill;
     }
@@ -57,6 +57,7 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
         && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
     {
+      RunInformation* runInfo = RunInformation::Instance();
       runInfo->AddStatusKilledPosition();
       return fKill;
     }
