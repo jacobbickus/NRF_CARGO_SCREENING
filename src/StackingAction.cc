@@ -60,14 +60,16 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
   {
     if(debug)
       std::cout << "StackingAction::ClassifyNewTrack -> Making Position Cut." << std::endl;
-      
+
     G4String nextStep_VolumeName = currentTrack->GetNextVolume()->GetName();
     G4String previousStep_VolumeName = currentTrack->GetVolume()->GetName();
+    std::cout << "StackingAction::ClassifyNewTrack -> Here." << std::endl;
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
         && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
     {
       RunInformation* runInfo = RunInformation::Instance();
       runInfo->AddStatusKilledPosition();
+      std::cout << "StackingAction::ClassifyNewTrack -> about to kill. " << std::endl;
       return fKill;
     }
   }
