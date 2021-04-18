@@ -74,7 +74,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   // Default Kinematics
   fParticleGun->SetParticleTime(0.0*ns);
 
-  if(chosen_energy < 0)
+  if(chosen_energy < 0 && !resonanceTest)
   {
     gRandom->SetSeed(seed);
 
@@ -115,6 +115,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     }
 
   } // end of chosen_energy < 0
+  else if(resonanceTest)
+  {
+    file_check = false;
+    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction Sampling U235 Resonance Energies." << G4endl;
+  }
   else
   {
     file_check = false;
@@ -176,7 +181,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     // be used here
     else if(chosen_energy > 0 && SampleEnergyRangebool)
       energy = SampleEnergyRange(chosen_energy,uniform_width);
-    else
+    else if(resonanceTest)
       energy = SampleUResonances();
 
 // ************************************************************************************ //
