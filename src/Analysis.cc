@@ -88,6 +88,9 @@ void Analysis::Book()
   // for a simulation without detector response
   else
   {
+    if(debug)
+      std::cout << "Analysis::Book -> Weighting set to: " << WEIGHTED << std::endl;
+
     NRF(manager, WEIGHTED); // 0
     IncidentChopper(manager,WEIGHTED); // 1
     EmissionChopper(manager,WEIGHTED); // 2
@@ -102,6 +105,9 @@ void Analysis::Book()
     SteppingCherenkov(manager, WEIGHTED); // 11
     PCDetection(manager, WEIGHTED); // 12
     IncidentPC(manager, WEIGHTED); // 13
+    
+    if(debug)
+      std::cout << "Analysis::Book -> Ntuples 0 - 13" << std::endl;
   }
   fFactoryOn = true;
 
