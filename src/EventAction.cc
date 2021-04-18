@@ -28,7 +28,6 @@ extern G4bool debug;
 extern G4bool printEvents;
 extern G4bool detTest;
 extern G4String inFile;
-extern G4long seed;
 
 EventAction::EventAction()
 :eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),

@@ -79,7 +79,6 @@ void FillDetectorResponse(G4AnalysisManager* manager)
     manager->FillNtupleIColumn(1,2, number_detected);
     manager->FillNtupleIColumn(1,3, s_detected);
     manager->FillNtupleIColumn(1,4, c_detected);
-    manager->FillNtupleIColumn(1,5, seed);
     manager->AddNtupleRow(1);
   }
 }

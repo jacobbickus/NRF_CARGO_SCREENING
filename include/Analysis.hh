@@ -305,8 +305,6 @@ void DetectorResponse(G4AnalysisManager* manager)
   manager->CreateNtupleIColumn("NumPE");
   manager->CreateNtupleIColumn("NumScintillation");
   manager->CreateNtupleIColumn("NumCherenkov");
-  manager->CreateNtupleIColumn("Seed");
-
   manager->FinishNtuple();
 }
 
