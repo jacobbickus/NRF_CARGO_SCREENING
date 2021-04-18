@@ -55,10 +55,10 @@ SteppingWResponseFunction::~SteppingWResponseFunction()
 
 void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
 {
-  std::cout << "SteppingWResponseFunction::UserSteppingAction -> HERE." << std::endl;
+  //std::cout << "SteppingWResponseFunction::UserSteppingAction -> HERE." << std::endl;
   if(!output)
     return;
-    
+
   G4StepPoint* endPoint   = aStep->GetPostStepPoint();
   G4StepPoint* startPoint = aStep->GetPreStepPoint();
   G4Track* theTrack       = aStep->GetTrack();
