@@ -151,7 +151,7 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
 
       return;
     }
-    
+
     // While in water keep track of cherenkov and pass number of cherenkov to EventAction
     if(startPoint->GetPhysicalVolume()->GetName().compare("Water")==0)
     {
@@ -169,16 +169,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
                   // for event level scintillation photon data
                   kevent->ScintillationEnergy(energy);
                   kevent->ScintillationAddSecondary();
-                  // for individual scintillation photon data
-                  manager->FillNtupleIColumn(3,0, eventID);
-                  manager->FillNtupleDColumn(3,1, secondaries->at(i)->GetKineticEnergy()/(MeV));
-                  G4ThreeVector p_scint = secondaries->at(i)->GetMomentum();
-                  G4double phi_scint = std::asin(p_scint.y()/p_scint.mag());
-                  G4double theta_scint = std::asin(std::sqrt(std::pow(p_scint.x(),2)+std::pow(p_scint.y(),2))/p_scint.mag());
-                  manager->FillNtupleDColumn(3,2, phi_scint);
-                  manager->FillNtupleDColumn(3,3, theta_scint);
-
-                  manager->AddNtupleRow(3);
                   krun->AddScintillationEnergy(secondaries->at(i)->GetKineticEnergy());
                   krun->AddScintillation();
                 }
@@ -187,15 +177,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
                   // for event level cherenkov photon data
                   kevent->CherenkovEnergy(energy);
                   kevent->CherenkovAddSecondary();
-                  // for individual cherenkov photon data
-                  manager->FillNtupleIColumn(5,0, eventID);
-                  manager->FillNtupleDColumn(5,1,secondaries->at(i)->GetKineticEnergy()/(MeV));
-                  G4ThreeVector p_cher = secondaries->at(i)->GetMomentum();
-                  G4double phi_cher = std::asin(p_cher.y()/p_cher.mag());
-                  manager->FillNtupleDColumn(5,2,phi_cher);
-
-                  manager->AddNtupleRow(5);
-
                   krun->AddCerenkovEnergy(secondaries->at(i)->GetKineticEnergy());
                   krun->AddCerenkov();
                 } // end of if secondaries->at(i)->GetCreatorProcess

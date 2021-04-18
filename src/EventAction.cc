@@ -131,18 +131,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       G4double maxE = *std::max_element(scintillation_energyv.begin(), scintillation_energyv.end());
 
       // Fill the Tree
-      if(detTest)
-      {
-        manager->FillNtupleIColumn(2,0,anEvent->GetEventID());
-        manager->FillNtupleDColumn(2,1,maxE);
-        manager->FillNtupleIColumn(2,2,s_secondaries);
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(2,3,weight);
-
-        manager->AddNtupleRow(2);
-      }
-      else
+      if(!detTest)
       {
         manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
         manager->FillNtupleDColumn(8,1,maxE);
@@ -162,18 +151,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
 
       // Fill the TTree
-      if(detTest)
-      {
-        manager->FillNtupleIColumn(4,0,anEvent->GetEventID());
-        manager->FillNtupleDColumn(4,1,maxE);
-        manager->FillNtupleIColumn(4,2,c_secondaries);
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(4,3, weight);
-
-        manager->AddNtupleRow(4);
-      }
-      else
+      if(!detTest)
       {
         manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
         manager->FillNtupleDColumn(10,1,maxE);
