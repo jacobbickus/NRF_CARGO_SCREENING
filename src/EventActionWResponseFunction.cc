@@ -67,8 +67,8 @@ void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
     // Calculate the rate [particles tracked / s] and the estimated
     // time to completion of the present run [m,s]
     runTime = clock()*1.0/CLOCKS_PER_SEC - prevRunTime;
-    eventsPerSec = event*1.0/runTime;  // [s]
-    timeToFinish = (totalEventsToRun-event)/eventsPerSec; // [s]
+    eventsPerSec = eventID*1.0/runTime;  // [s]
+    timeToFinish = (totalEventsToRun-eventID)/eventsPerSec; // [s]
 
     // Output the event variables in scientific notation using
     // std::stringstreams to avoid screwing up G4cout formatting
