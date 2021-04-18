@@ -45,12 +45,9 @@ G4double uniform_width, chosen_energy;
 
 void check_file_exists(const std::string &p)
 {
-  std::cout << "Checking Database Path: " << p << std::endl;
   struct stat buffer;
 
-  if(stat (p.c_str(), &buffer) == 0)
-    std::cout << p << " exists." << std::endl;
-  else
+  if(stat (p.c_str(), &buffer) != 0)
   {
     std::cout << p << " does not exist." << std::endl;
     std::cout << "User MUST Set the correct Path for the NRF Database as an environment variable." <<
@@ -67,7 +64,7 @@ namespace
     << "Example:  ./mantis --macro mantis.in --file_to_sample brems_distributions.root -r --detector_response_file DetectorResponse.root"
     << std::endl << "Would run a simulation using a detector response function found in DetectorResponse.root to predict the detector counts." << std::endl
     << "The input spectrum would be a weighted spectrum read from brems_distributions.root." << std::endl
-    << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl << 
+    << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl <<
 
     std::cerr << "mantis [-h --help]                              Prints this Usage Screen" << std::endl
     << "      [--Macro=mantis.in]                              Macro File to be read for user input options" << std::endl
