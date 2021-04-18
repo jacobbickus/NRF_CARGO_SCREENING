@@ -39,7 +39,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile, response_function_file;
 // boolean global variables
-G4bool ResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -130,7 +130,7 @@ int main(int argc,char **argv)
   resonanceTest = false;
   chosen_energy = -1.;
   G4String ResponseFunction_in = "false";
-  ResponseFunction = false;
+  WResponseFunction = false;
   G4String detTest_in = "false";
   detTest=false;
   G4String bremTest_in = "false";
@@ -182,12 +182,16 @@ int main(int argc,char **argv)
       else if (G4String(input) == "--detector_response_input")
       {
         ResponseFunction_in = argv[i+1];
+
+        if(ResponseFunction_in == "True" || ResponseFunction_in == "true")
+          WResponseFunction = true;
+
         std::cout << "Detector Response Run: " << ResponseFunction_in << std::endl;
       }
       else if (G4String(input) == "-r")
       {
         std::cout << "Detector Response Run: TRUE" << std::endl;
-        ResponseFunction = true;
+        WResponseFunction = true;
         i = i-1;
       }
       else if (G4String(input) == "--detector_response_file")
@@ -198,6 +202,10 @@ int main(int argc,char **argv)
       else if (G4String(input) == "--detector_response_test")
       {
         detTest_in = argv[i+1];
+
+        if(detTest_in == "True" || detTest_in == "true")
+          detTest = true;
+
         std::cout << "Detector Response TEST: " << detTest_in << std::endl;
       }
       else if (G4String(input) == "-t1")
@@ -466,7 +474,7 @@ int main(int argc,char **argv)
 
   G4int stop_time = time(0);
   G4cout << G4endl
-  << "----------------------------------------------------------------------" 
+  << "----------------------------------------------------------------------"
   << G4endl << G4endl
   << "----------------------------------------------------------------------"
   << G4endl << G4endl

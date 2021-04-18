@@ -92,25 +92,6 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
     G4double phi = std::asin(p.y()/p.mag());
     G4ThreeVector loc = theTrack->GetPosition();
 
-    // *********************************************** Track Shielding Interactions  **************************************************** //
-
-    // Track particles incident shielding from world
-
-    if(nextStep_VolumeName.compare(0,5,"Atten") == 0
-        && previousStep_VolumeName.compare("World") == 0)
-    {
-      manager->FillNtupleIColumn(0,0, eventID);
-      manager->FillNtupleIColumn(0,1, seed);
-      manager->FillNtupleIColumn(0,2, trackID);
-      manager->FillNtupleDColumn(0,3, energy);
-      manager->FillNtupleDColumn(0,4, beamEnergy);
-      manager->FillNtupleDColumn(0,5, theTrack->GetGlobalTime());
-      manager->FillNtupleSColumn(0,6, CPName);
-
-      manager->AddNtupleRow(0);
-      return;
-    }
-
 // *********************************************** Track Plexiglass Interactions **************************************************** //
 
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
@@ -129,17 +110,17 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
         return;
       }
 
-      manager->FillNtupleIColumn(1,0, eventID);
-      manager->FillNtupleIColumn(1,1, seed);
-      manager->FillNtupleIColumn(1,2, trackID);
-      manager->FillNtupleDColumn(1,3, energy);
-      manager->FillNtupleDColumn(1,4, beamEnergy);
-      manager->FillNtupleDColumn(1,5, theTrack->GetGlobalTime());
-      manager->FillNtupleDColumn(1,6, theta);
-      manager->FillNtupleDColumn(1,7, phi);
-      manager->FillNtupleSColumn(1,8, CPName);
+      manager->FillNtupleIColumn(0,0, eventID);
+      manager->FillNtupleIColumn(0,1, seed);
+      manager->FillNtupleIColumn(0,2, trackID);
+      manager->FillNtupleDColumn(0,3, energy);
+      manager->FillNtupleDColumn(0,4, beamEnergy);
+      manager->FillNtupleDColumn(0,5, theTrack->GetGlobalTime());
+      manager->FillNtupleDColumn(0,6, theta);
+      manager->FillNtupleDColumn(0,7, phi);
+      manager->FillNtupleSColumn(0,8, CPName);
 
-      manager->AddNtupleRow(1);
+      manager->AddNtupleRow(0);
     }
 
     if(nextStep_VolumeName.compare("Water") == 0
@@ -214,23 +195,12 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
           theStatus = opProc->GetStatus();
           if (theStatus == Detection)
           {
-            manager->FillNtupleIColumn(2,0,eventID);
-            manager->FillNtupleDColumn(2,1, theParticle->GetKineticEnergy()/(MeV));
-            manager->FillNtupleDColumn(2,2, beamEnergy);
-            manager->FillNtupleDColumn(2,3, loc.x()/(cm));
-            manager->FillNtupleDColumn(2,4, loc.y()/(cm));
             G4String creatorProcess;
 
             if(theTrack->GetCreatorProcess() !=0)
                 creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
             else
                 creatorProcess = "Brem";
-
-            manager->FillNtupleSColumn(2,5, creatorProcess);
-            manager->FillNtupleDColumn(2,6, theTrack->GetGlobalTime()); // time units is nanoseconds
-            manager->FillNtupleIColumn(2,7, seed);
-
-            manager->AddNtupleRow(2);
 
             kevent->AddDetected();
             if(creatorProcess == "Scintillation")

@@ -30,7 +30,7 @@
 #include "G4Types.hh"
 #include "G4EventManager.hh"
 #include "eventInformation.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
 #include "G4ios.hh"
@@ -58,6 +58,7 @@ void SetIncidentEnergy(G4double e){incident_energy = e;}
 
 private:
 G4int eventInfoFreq, runID;
+G4int eventID;
 G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
 G4bool WEIGHTED;
 EventMessenger* eventM;

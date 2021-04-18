@@ -32,7 +32,7 @@
 #include "RunInformation.hh"
 #include "DetectorInformation.hh"
 #include "StackingAction.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"

@@ -29,7 +29,7 @@
 #include "G4UserRunAction.hh"
 #include <vector>
 #include "G4Run.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
@@ -40,7 +40,7 @@
 class RunAction : public G4UserRunAction
 {
   public:
-    RunAction(HistoManager*, PrimaryGeneratorAction*);
+    RunAction(Analysis*, PrimaryGeneratorAction*);
     virtual ~RunAction();
 
   public:
@@ -49,7 +49,7 @@ class RunAction : public G4UserRunAction
     virtual void EndOfRunAction(const G4Run*);
 
   private:
-    HistoManager* fHistoManager;
+    Analysis* fAnalysis;
     PrimaryGeneratorAction* fpga;
 };
 

@@ -144,21 +144,21 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
           {
             if(emitted_nrf->at(i)->GetCreatorProcess()->GetProcessName() == "NRF")
             {
-              manager->FillNtupleIColumn(2,0, eventID);
-              manager->FillNtupleDColumn(2,1, energy);
-              manager->FillNtupleSColumn(2,2, nextStep_VolumeName);
-              manager->FillNtupleDColumn(2,3, loc.z()/(cm));
+              manager->FillNtupleIColumn(0,0, eventID);
+              manager->FillNtupleDColumn(0,1, energy);
+              manager->FillNtupleSColumn(0,2, nextStep_VolumeName);
+              manager->FillNtupleDColumn(0,3, loc.z()/(cm));
               G4ThreeVector p_nrf = emitted_nrf->at(i)->GetMomentum();
               G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
               G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
-              manager->FillNtupleDColumn(2,4, theta_nrf);
-              manager->FillNtupleDColumn(2,5, phi_nrf);
-              manager->FillNtupleIColumn(2,6, seed);
+              manager->FillNtupleDColumn(0,4, theta_nrf);
+              manager->FillNtupleDColumn(0,5, phi_nrf);
+              manager->FillNtupleIColumn(0,6, seed);
 
               if(WEIGHTED)
-                manager->FillNtupleDColumn(2,7,weight);
+                manager->FillNtupleDColumn(0,7,weight);
 
-              manager->AddNtupleRow(2);
+              manager->AddNtupleRow(0);
             } // end if emitted_nrf->at(i)->GetCreatorProcess()
           } // end of for loop
         } // end of process->GetProcessName() == "NRF"
@@ -175,13 +175,15 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
          && previousStep_VolumeName.compare("Chop") != 0
          && theTrack->GetParticleDefinition() == G4Gamma::Definition())
       {
-        manager->FillNtupleIColumn(0,0, eventID);
-        manager->FillNtupleDColumn(0,1, energy);
-        manager->FillNtupleDColumn(0,2, loc.x());
-        manager->FillNtupleDColumn(0,3, loc.y());
+        manager->FillNtupleIColumn(1,0, eventID);
+        manager->FillNtupleDColumn(1,1, energy);
+        manager->FillNtupleDColumn(1,2, loc.x());
+        manager->FillNtupleDColumn(1,3, loc.y());
+
         if(WEIGHTED)
-          manager->FillNtupleDColumn(0,4, weight);
-        manager->AddNtupleRow(0);
+          manager->FillNtupleDColumn(1,4, weight);
+
+        manager->AddNtupleRow(1);
       }
     }
 
@@ -205,13 +207,15 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       {
         if(drawChopperOutDataFlag)
         {
-          manager->FillNtupleIColumn(1,0,eventID);
-          manager->FillNtupleDColumn(1,1, energy);
-          manager->FillNtupleDColumn(1,2,theta);
-          manager->FillNtupleDColumn(1,3, phi);
+          manager->FillNtupleIColumn(2,0,eventID);
+          manager->FillNtupleDColumn(2,1, energy);
+          manager->FillNtupleDColumn(2,2,theta);
+          manager->FillNtupleDColumn(2,3, phi);
+
           if(WEIGHTED)
-            manager->FillNtupleDColumn(1,4, weight);
-          manager->AddNtupleRow(1);
+            manager->FillNtupleDColumn(2,4, weight);
+
+          manager->AddNtupleRow(2);
           return;
         }
         else

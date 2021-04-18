@@ -30,7 +30,7 @@
 #include "G4Types.hh"
 #include "G4EventManager.hh"
 #include "eventInformation.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"
 #include "G4ios.hh"
@@ -68,9 +68,61 @@ void SetIncidentEnergy(G4double e)
     energy_counter++;
   }
 }
+private:
+
+void FillDetectorResponse()
+{
+  if(incident_energy > 0)
+  {
+    manager->FillNtupleIColumn(1,0, eventID);
+    manager->FillNtupleDColumn(1,1, incident_energy/(MeV));
+    manager->FillNtupleIColumn(1,2, number_detected);
+    manager->FillNtupleIColumn(1,3, s_detected);
+    manager->FillNtupleIColumn(1,4, c_detected);
+    manager->FillNtupleIColumn(1,5, seed);
+    manager->AddNtupleRow(1);
+  }
+}
+
+void FillScintillationPerEvent(G4double weight=0.)
+{
+  if(s_secondaries > 0)
+  {
+    // Grab Max Energy
+    G4double maxE = *std::max_element(scintillation_energyv.begin(), scintillation_energyv.end());
+
+    manager->FillNtupleIColumn(8,0,eventID);
+    manager->FillNtupleDColumn(8,1,maxE);
+    manager->FillNtupleIColumn(8,2,s_secondaries);
+
+    if(WEIGHTED)
+      manager->FillNtupleDColumn(8,3,weight);
+
+    manager->AddNtupleRow(8);
+  }
+}
+
+void FillCherenkovPerEvent(G4double weight=0.)
+{
+  if(c_secondaries > 0)
+  {
+    // Grab Max Energy
+    G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
+
+    manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
+    manager->FillNtupleDColumn(10,1,maxE);
+    manager->FillNtupleIColumn(10,2,c_secondaries);
+
+    if(WEIGHTED)
+      manager->FillNtupleDColumn(10,3, weight);
+
+    manager->AddNtupleRow(10);
+  }
+}
 
 private:
 G4int eventInfoFreq, runID;
+G4int eventID;
 G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
 G4bool WEIGHTED;
 EventMessenger* eventM;

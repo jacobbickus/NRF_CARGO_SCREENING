@@ -26,7 +26,6 @@
 
 extern G4bool debug;
 extern G4bool printEvents;
-extern G4bool bremTest;
 extern G4bool detTest;
 extern G4String inFile;
 extern G4long seed;
@@ -47,16 +46,17 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event* anEvent)
 {
-    G4int event = anEvent->GetEventID();
-    if(debug && event == 0)
+    eventID = anEvent->GetEventID();
+    if(debug && eventID == 0)
         std::cout << "EventAction::BeginOfEventAction -> Beginning" << std::endl;
-    if(event == 0)
+
+    if(eventID == 0)
     {
       std::cout << "Tracking Events... " << std::endl;
       G4cout << "Tracking Events: " << G4endl;
       totalEventsToRun = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
     }
-    else if(event % eventInfoFreq == 0)
+    else if(eventID % eventInfoFreq == 0)
     {
       G4RunManager *runMgr = G4RunManager::GetRunManager();
       if(runMgr->GetCurrentRun()->GetRunID()!=runID)
@@ -75,7 +75,7 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
       // std::stringstreams to avoid screwing up G4cout formatting
       std::stringstream eventSS;
       eventSS.precision(3);
-      eventSS << std::scientific << (double)event;
+      eventSS << std::scientific << (double)eventID;
       std::stringstream tEventSS;
       tEventSS.precision(3);
       tEventSS << std::scientific << totalEventsToRun;
@@ -110,78 +110,30 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
     scintillation_energyv.clear();
     cherenkov_energyv.clear();
 
-    if(debug)
+    if(debug && eventID == 0)
         std::cout << "EventAction::BeginOfEventAction -> Ending" << std::endl;
 }
 
 void EventAction::EndOfEventAction(const G4Event* anEvent)
 {
-    if(debug && anEvent->GetEventID() == 0)
+    if(debug && eventID == 0)
         std::cout << "EventAction::EndOfEventAction -> Beginning" << std::endl;
 
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double weight = info->GetWeight();
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
 
-    // Deal With Scintillation per Event
-    if(s_secondaries > 0)
-    {
-      // Grab Max Energy
-      G4double maxE = *std::max_element(scintillation_energyv.begin(), scintillation_energyv.end());
-
-      // Fill the Tree
-      if(!detTest)
-      {
-        manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
-        manager->FillNtupleDColumn(8,1,maxE);
-        manager->FillNtupleIColumn(8,2,s_secondaries);
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(8,3,weight);
-
-        manager->AddNtupleRow(8);
-      }
-    }
-
-    // Deal With Cherenkov per Event
-    if(c_secondaries > 0)
-    {
-      // Grab Max Energy
-      G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
-
-      // Fill the TTree
-      if(!detTest)
-      {
-        manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
-        manager->FillNtupleDColumn(10,1,maxE);
-        manager->FillNtupleIColumn(10,2,c_secondaries);
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(10,3, weight);
-
-        manager->AddNtupleRow(10);
-      }
-    }
-
     // Deal with Detected per Event
     if(detTest)
     {
-      if(incident_energy > 0)
-      {
-        manager->FillNtupleIColumn(3,0, anEvent->GetEventID());
-        manager->FillNtupleDColumn(3,1, incident_energy/(MeV));
-        manager->FillNtupleIColumn(3,2, number_detected);
-        manager->FillNtupleIColumn(3,3, s_detected);
-        manager->FillNtupleIColumn(3,4, c_detected);
-        manager->FillNtupleIColumn(3,5, seed);
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(3,6, weight);
-
-        manager->AddNtupleRow(3);
-      }
+      FillDetectorResponse();
+    }
+    else
+    {
+      FillScintillationPerEvent(weight);
+      FillCherenkovPerEvent(weight);
     }
 
-    if(debug)
+    if(debug && eventID == 0)
         std::cout << "EventAction::EndOfEventAction() --> Ending!" << std::endl;
 }

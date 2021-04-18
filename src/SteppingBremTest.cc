@@ -113,11 +113,11 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    manager->FillNtupleIColumn(1,0, eventID);
-    manager->FillNtupleDColumn(1,1, energy);
-    manager->FillNtupleDColumn(1,2, theta);
-    manager->FillNtupleDColumn(1,3, phi);
-    manager->AddNtupleRow(1);
+    manager->FillNtupleIColumn(0,0, eventID);
+    manager->FillNtupleDColumn(0,1, energy);
+    manager->FillNtupleDColumn(0,2, theta);
+    manager->FillNtupleDColumn(0,3, phi);
+    manager->AddNtupleRow(0);
   }
   // exiting BremBacking
   if(nextStep_VolumeName.compare("CBack") != 0
@@ -145,12 +145,11 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
     }
     else
     {
-      manager->FillNtupleIColumn(2,0, eventID);
-      manager->FillNtupleDColumn(2,1, energy);
-      manager->FillNtupleDColumn(2,2, theta);
-      manager->FillNtupleDColumn(2,3, phi);
-      //manager->FillNtupleSColumn(0,4, CPName);
-      manager->AddNtupleRow(2);
+      manager->FillNtupleIColumn(1,0, eventID);
+      manager->FillNtupleDColumn(1,1, energy);
+      manager->FillNtupleDColumn(1,2, theta);
+      manager->FillNtupleDColumn(1,3, phi);
+      manager->AddNtupleRow(1);
       return;
     } // end else
   } // end if exiting brem backing
@@ -168,40 +167,13 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    manager->FillNtupleIColumn(0,0, eventID);
-    manager->FillNtupleDColumn(0,1, energy);
-    manager->FillNtupleDColumn(0,2, loc.x());
-    manager->FillNtupleDColumn(0,3, loc.y());
-    manager->AddNtupleRow(0);
+    manager->FillNtupleIColumn(2,0, eventID);
+    manager->FillNtupleDColumn(2,1, energy);
+    manager->FillNtupleDColumn(2,2, loc.x());
+    manager->FillNtupleDColumn(2,3, loc.y());
+    manager->AddNtupleRow(2);
     // Once Incident Chopper record data and kill for brem test
     theTrack->SetTrackStatus(fStopAndKill);
     return;
   }
-
-  // Gammas Exiting Chopper Wheel
-  if(nextStep_VolumeName.compare("Chop") != 0
-   && previousStep_VolumeName.compare("Chop") == 0)
-  {
-    if(std::abs(theta) > 0.1)
-    {
-      theTrack->SetTrackStatus(fStopAndKill);
-      krun->AddStatusKilledThetaAngle();
-      return;
-    }
-    else if(std::abs(phi) > 0.1)
-    {
-      theTrack->SetTrackStatus(fStopAndKill);
-      krun->AddStatusKilledPhiAngle();
-      return;
-    }
-    else
-    {
-      manager->FillNtupleIColumn(1,0,eventID);
-      manager->FillNtupleDColumn(1,1, energy);
-      manager->FillNtupleDColumn(1,2,theta);
-      manager->FillNtupleDColumn(1,3, phi);
-      manager->AddNtupleRow(1);
-      return;
-    } // end else
-  } // end if gammas exiting chopper wheel
 }// end of user stepping function

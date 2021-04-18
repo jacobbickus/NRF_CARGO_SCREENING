@@ -33,7 +33,7 @@
 #include "DetectorInformation.hh"
 #include "G4OpBoundaryProcess.hh"
 #include "StackingAction.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "EventAction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"

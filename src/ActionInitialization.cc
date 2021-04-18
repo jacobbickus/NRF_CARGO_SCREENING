@@ -32,13 +32,13 @@
 #include "StackingAction.hh"
 #include "EventAction.hh"
 #include "EventActionWResponseFunction.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "G4Types.hh"
 
 extern G4bool debug;
 extern G4bool detTest;
 extern G4bool bremTest;
-extern G4bool ResponseFunction;
+extern G4bool WResponseFunction;
 
 ActionInitialization::ActionInitialization()
         : G4VUserActionInitialization()
@@ -54,14 +54,14 @@ void ActionInitialization::Build() const
     if(debug)
         std::cout << "ActionInitialization::Build() -> Begin!" << std::endl;
 
-    HistoManager* histo = new HistoManager();
+    Analysis* analysis = new Analysis();
     PrimaryGeneratorAction* pga = new PrimaryGeneratorAction();
     SetUserAction(pga);
-    SetUserAction(new RunAction(histo,pga));
+    SetUserAction(new RunAction(analysis,pga));
     EventActionWResponseFunction* eventWResponseFunction = 0;
     EventAction* event = 0;
 
-    if(ResponseFunction)
+    if(WResponseFunction)
     {
       eventWResponseFunction = new EventActionWResponseFunction();
       SetUserAction(eventWResponseFunction);
@@ -76,7 +76,7 @@ void ActionInitialization::Build() const
       SetUserAction(new SteppingBremTest(event));
     else if(detTest)
       SetUserAction(new SteppingDetTest(event));
-    else if(ResponseFunction)
+    else if(WResponseFunction)
       SetUserAction(new SteppingWResponseFunction(eventWResponseFunction));
     else
       SetUserAction(new SteppingAction(event));
