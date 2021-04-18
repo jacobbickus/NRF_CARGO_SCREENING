@@ -70,7 +70,7 @@ void SetIncidentEnergy(G4double e)
 }
 private:
 
-void FillDetectorResponse()
+void FillDetectorResponse(G4AnalysisManager* manager)
 {
   if(incident_energy > 0)
   {
@@ -84,7 +84,7 @@ void FillDetectorResponse()
   }
 }
 
-void FillScintillationPerEvent(G4double weight=0.)
+void FillScintillationPerEvent(G4AnalysisManager* manager, G4double weight=0.)
 {
   if(s_secondaries > 0)
   {
@@ -102,7 +102,7 @@ void FillScintillationPerEvent(G4double weight=0.)
   }
 }
 
-void FillCherenkovPerEvent(G4double weight=0.)
+void FillCherenkovPerEvent(G4AnalysisManager* manager, G4double weight=0.)
 {
   if(c_secondaries > 0)
   {
