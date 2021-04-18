@@ -33,9 +33,23 @@ DetectorResponseFunction::DetectorResponseFunction()
   CheckFile(response_function_file.c_str());
   fin = TFile::Open(response_function_file.c_str());
   fin->cd();
+
+  if(debug)
+    std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Grabbing Response Function..." << std::endl;
+
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
+
+  if(debug && tdet_response == NULL)
+    std::cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << std::endl;
+
+  if(tdet_response == NULL)
+    G4cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << G4endl;
+    
   tdet_scintillation_response = (TProfile*) fin->Get("ScintillationResponse");
   tdet_cherenkov_response = (TProfile*) fin->Get("CherenkovResponse");
+  if(debug)
+    std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Response Functions Obtained." << std::endl;
+
   G4cout << "DetectorResponseFunction::DetectorResponseFunction -> Response Functions Obtained." << G4endl;
 }
 

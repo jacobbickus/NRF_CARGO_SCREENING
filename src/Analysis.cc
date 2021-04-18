@@ -106,7 +106,7 @@ void Analysis::Book()
   fFactoryOn = true;
 
   if(debug)
-    std::cout << "HistoManager::Book() --> Complete!" << std::endl;
+    std::cout << "Analysis::Book() --> Complete!" << std::endl;
 }// end of Analysis::Book
 
 void Analysis::finish()
