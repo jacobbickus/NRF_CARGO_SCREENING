@@ -26,7 +26,7 @@
 #define PrimaryGeneratorAction_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "PGAMessenger.hh"
 #include "globals.hh"
 #include <vector>
@@ -49,7 +49,7 @@
 #include "TMath.h"
 
 class G4Event;
-class HistoManager;
+class Analysis;
 class PGAMessenger;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
