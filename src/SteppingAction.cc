@@ -42,7 +42,7 @@ SteppingAction::SteppingAction(EventAction* event)
 {
   if(debug)
     std::cout << "SteppingAction::SteppingAction -> Initialized." << std::endl;
-    
+
   stepM = new StepMessenger(this);
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))
@@ -506,12 +506,12 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep)
                 else
                     creatorProcess = "Brem";
 
-                manager->FillNtupleSColumn(12,5, creatorProcess);
-                manager->FillNtupleDColumn(12,6, theTrack->GetGlobalTime()); // time units is nanoseconds
-                manager->FillNtupleIColumn(12,7, seed);
+                manager->FillNtupleSColumn(12,3, creatorProcess);
+                manager->FillNtupleDColumn(12,4, theTrack->GetGlobalTime()); // time units is nanoseconds
+                manager->FillNtupleIColumn(12,5, seed);
 
                 if(WEIGHTED)
-                  manager->FillNtupleDColumn(12,8, weight);
+                  manager->FillNtupleDColumn(12,6, weight);
 
                 manager->AddNtupleRow(12);
             }
