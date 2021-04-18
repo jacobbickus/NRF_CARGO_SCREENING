@@ -109,7 +109,7 @@ void FillCherenkovPerEvent(G4AnalysisManager* manager, G4double weight=0.)
     // Grab Max Energy
     G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
 
-    manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
+    manager->FillNtupleIColumn(10,0, eventID);
     manager->FillNtupleDColumn(10,1,maxE);
     manager->FillNtupleIColumn(10,2,c_secondaries);
 
