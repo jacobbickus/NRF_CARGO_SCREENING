@@ -25,7 +25,6 @@
 #include "SteppingDetTest.hh"
 
 extern G4bool output;
-extern G4bool debug;
 extern G4long seed;
 
 

@@ -84,9 +84,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     fin->cd();
     tBrems  = (TGraph*) fin->Get("Graph_from_hBrems");
 
-    if(debug)
-      tBrems->Print();
-
     if(!tBrems)
     {
       G4cerr << "PrimaryGeneratorAction::PrimaryActionGenerator FATAL ERROR -> hBrems Fail." << G4endl;
