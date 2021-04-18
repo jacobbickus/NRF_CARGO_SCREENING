@@ -79,7 +79,7 @@ namespace
     << "      [-r --Detector_Response_Input=false]             Runs Mantis Simulation with Detector Response Function Input" << std::endl
     << "      [-s --Print_Standalone_Data=false]               Calls G4NRF to print a file of NRF Energies (takes up to 15 min)" << std::endl
     << "      [-v --Verbose=false]                             Sets NRF Physics Verbosity" << std::endl
-    << std::endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test" << std::endl << std::endl
+    << std::endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test, Sample from Normal Distribution" << std::endl << std::endl
     << "      [-t1 --Detector_Response_Test=false]             Create Detector Response Function" << std::endl
     << "      [-t2 --Brem_Test=false]                          For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy" << std::endl
     << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
