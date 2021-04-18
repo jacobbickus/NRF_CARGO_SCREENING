@@ -66,16 +66,22 @@ void Analysis::Book()
     BremRadiator(manager); // 0
     BremBacking(manager); // 1
     IncidentChopper(manager); // 2
+    if(debug)
+      std::cout << "Analysis::Book -> Brem Test Ntuples 0 - 2" << std::endl;
   }
   // for Creating Detector Response Function
   else if(detTest)
   {
     IncidentPlexiglass(manager); // 0
     DetectorResponse(manager); // 1
+    if(debug)
+      std::cout << "Analysis::Book -> Creating Detector Response Function Ntuples 0 - 1" << std::endl;
   }
   // for a Simulation with Detector Response
   else if(WResponseFunction)
   {
+    if(debug)
+      std::cout << "Analysis::Book -> Weighting set to: " << WEIGHTED << std::endl;
     NRF(manager, WEIGHTED); // 0
     IncidentChopper(manager,WEIGHTED); // 1
     EmissionChopper(manager,WEIGHTED); // 2
@@ -84,6 +90,8 @@ void Analysis::Book()
     IncidentShielding(manager, WEIGHTED); // 5
     IncidentPlexiglass(manager, WEIGHTED); // 6
     DetectorEstimatedInfo(manager, WEIGHTED); // 7
+    if(debug)
+      std::cout << "Analysis::Book -> With Detector Response Ntuples 0 - 7" << std::endl;
   }
   // for a simulation without detector response
   else
@@ -105,9 +113,9 @@ void Analysis::Book()
     SteppingCherenkov(manager, WEIGHTED); // 11
     PCDetection(manager, WEIGHTED); // 12
     IncidentPC(manager, WEIGHTED); // 13
-    
+
     if(debug)
-      std::cout << "Analysis::Book -> Ntuples 0 - 13" << std::endl;
+      std::cout << "Analysis::Book -> Without Detector Response Ntuples 0 - 13" << std::endl;
   }
   fFactoryOn = true;
 
