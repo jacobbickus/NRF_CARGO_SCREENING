@@ -43,6 +43,10 @@ void RunAction::BeginOfRunAction(const G4Run*)
   {
     fAnalysis->Book();
   }
+  
+  if(debug)
+    std::cout << "RunAction::BeginOfRunAction -> Beginning Run..." << std::endl;
+
   G4cout << G4endl << "Beginning Run..." << G4endl;
 }
 
