@@ -109,26 +109,30 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
   if(debug && eventID == 0)
       std::cout << "EventActionWResponseFunction::EndOfEventActionWResponseFunction -> Beginning" << std::endl;
 
-  eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
-  G4double beam_energy = info->GetBeamEnergy();
-  G4double weight = info->GetWeight();
-  DetectorResponseFunction *r_function = DetectorResponseFunction::Instance();
-  G4double numPE = r_function->GetDetectorPhotoelectrons(incident_energy);
-  G4double numScint = r_function->GetScintillationResponse(incident_energy);
-  G4double numCher = r_function->GetCherenkovResponse(incident_energy);
+  if(incident_energy > 0.)
+  {
+    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    G4double beam_energy = info->GetBeamEnergy();
+    G4double weight = info->GetWeight();
+    DetectorResponseFunction *r_function = DetectorResponseFunction::Instance();
+    G4double numPE = r_function->GetDetectorPhotoelectrons(incident_energy);
+    G4double numScint = r_function->GetScintillationResponse(incident_energy);
+    G4double numCher = r_function->GetCherenkovResponse(incident_energy);
 
-  G4AnalysisManager* manager = G4AnalysisManager::Instance();
-  manager->FillNtupleIColumn(7,0, eventID);
-  manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
-  manager->FillNtupleDColumn(7,2, beam_energy);
-  manager->FillNtupleDColumn(7,3, numPE);
-  manager->FillNtupleDColumn(7,4, numScint);
-  manager->FillNtupleDColumn(7,5, numCher);
+    G4AnalysisManager* manager = G4AnalysisManager::Instance();
+    manager->FillNtupleIColumn(7,0, eventID);
+    manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
+    manager->FillNtupleDColumn(7,2, beam_energy);
+    manager->FillNtupleDColumn(7,3, numPE);
+    manager->FillNtupleDColumn(7,4, numScint);
+    manager->FillNtupleDColumn(7,5, numCher);
 
-  if(WEIGHTED)
-    manager->FillNtupleDColumn(7,6, weight);
+    if(WEIGHTED)
+      manager->FillNtupleDColumn(7,6, weight);
 
-  manager->AddNtupleRow(7);
+    manager->AddNtupleRow(7);
+
+  }
 
   if(debug && eventID == 0)
       std::cout << "EventActionWResponseFunction::EndOfEventActionWResponseFunction() --> Ending!" << std::endl;
