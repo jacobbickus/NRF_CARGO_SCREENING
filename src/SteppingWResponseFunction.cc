@@ -40,10 +40,9 @@ SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunctio
         WEIGHTED(false),
         stepM(NULL)
 {
-  stepM = new StepMessenger(this);
-
   if(debug)
     std::cout << "SteppingWResponseFunction::SteppingWResponseFunction -> Initialized." << std::endl;
+  stepM = new StepMessenger(this);
 
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
@@ -56,13 +55,13 @@ SteppingWResponseFunction::~SteppingWResponseFunction()
 
 void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
 {
-    if(!output)
-      return;
-
-    std::cout << "SteppingWResponseFunction::UserSteppingAction -> HERE." << std::endl;
-    G4StepPoint* endPoint   = aStep->GetPostStepPoint();
-    G4StepPoint* startPoint = aStep->GetPreStepPoint();
-    G4Track* theTrack       = aStep->GetTrack();
+  std::cout << "SteppingWResponseFunction::UserSteppingAction -> HERE." << std::endl;
+  if(!output)
+    return;
+    
+  G4StepPoint* endPoint   = aStep->GetPostStepPoint();
+  G4StepPoint* startPoint = aStep->GetPreStepPoint();
+  G4Track* theTrack       = aStep->GetTrack();
 
     // Run Logical Checks
     if(endPoint == NULL)

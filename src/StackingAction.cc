@@ -25,9 +25,12 @@
 #include "StackingAction.hh"
 extern G4bool detTest;
 extern G4bool WResponseFunction;
+extern G4bool debug;
 
 StackingAction::StackingAction()
 {
+  if(debug)
+    std::cout << "StackingAction::StackingAction -> Initialized." << std::endl;
 }
 
 StackingAction::~StackingAction()
@@ -38,6 +41,9 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
 {
   if(!detTest)
   {
+    if(debug)
+      std::cout << "StackingAction::ClassifyNewTrack -> Making Z Cut." << std::endl;
+
     DetectorInformation* detInfo = DetectorInformation::Instance();
     // if a new track is created beyond interogation material kill it
     G4double EndIntObj = detInfo->getEndIntObj();
@@ -52,6 +58,9 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
 
   if(WResponseFunction)
   {
+    if(debug)
+      std::cout << "StackingAction::ClassifyNewTrack -> Making Position Cut." << std::endl;
+      
     G4String nextStep_VolumeName = currentTrack->GetNextVolume()->GetName();
     G4String previousStep_VolumeName = currentTrack->GetVolume()->GetName();
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
