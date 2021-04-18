@@ -40,14 +40,14 @@ DetectorResponseFunction::DetectorResponseFunction()
 
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
 
-  if(debug)
-    std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response: " << tdet_response << std::endl;
-
   if(debug && tdet_response == NULL)
     std::cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << std::endl;
 
   if(tdet_response == NULL)
+  {
     G4cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << G4endl;
+    exit(1);
+  }
 
   tdet_scintillation_response = (TProfile*) fin->Get("ScintillationResponse");
   tdet_cherenkov_response = (TProfile*) fin->Get("CherenkovResponse");
