@@ -47,10 +47,9 @@ EventAction::~EventAction()
 
 void EventAction::BeginOfEventAction(const G4Event* anEvent)
 {
-    if(debug)
-        std::cout << "EventAction::BeginOfEventAction -> Beginning" << std::endl;
-
     G4int event = anEvent->GetEventID();
+    if(debug && event == 0)
+        std::cout << "EventAction::BeginOfEventAction -> Beginning" << std::endl;
     if(event == 0)
     {
       std::cout << "Tracking Events... " << std::endl;
@@ -117,7 +116,7 @@ void EventAction::BeginOfEventAction(const G4Event* anEvent)
 
 void EventAction::EndOfEventAction(const G4Event* anEvent)
 {
-    if(debug)
+    if(debug && anEvent->GetEventID() == 0)
         std::cout << "EventAction::EndOfEventAction -> Beginning" << std::endl;
 
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
