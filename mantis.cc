@@ -145,15 +145,6 @@ int main(int argc,char **argv)
   // Output Defaults
   output = false;
 
-  // Detect interactive mode (if no arguments) and define UI session
-  //
-  G4UIExecutive* ui = 0;
-
-  if ( argc == 1 )
-  {
-    ui = new G4UIExecutive(argc, argv);
-  }
-
   for (G4int i=1; i<argc; i=i+2)
   {
     //std::cout << i << std::endl;
@@ -388,7 +379,7 @@ int main(int argc,char **argv)
   G4UImanager* UI = G4UImanager::GetUIpointer();
   MySession* LoggedSession = new MySession;
 
-  if(!ui && macro != "vis_save.mac")
+  if(macro != "vis_save.mac")
   {
     output = true;
     UI->SetCoutDestination(LoggedSession);
@@ -448,28 +439,18 @@ int main(int argc,char **argv)
   runManager->SetUserInitialization(new ActionInitialization());
 
 #ifdef G4VIS_USE
-  if(ui || macro == "vis_save.mac")
+  if(macro == "vis_save.mac")
   {
     visManager = new G4VisExecutive();
     visManager->Initialize();
   }
 #endif
 
-  if(!ui)
-  {
-    G4String command = "/control/execute ";
-    UI->ApplyCommand(command+macro);
-  }
-  else
-  {
-    // interactive mode
-    UI->ApplyCommand("/control/execute init_vis.mac");
-    ui->SessionStart();
-    delete ui;
-  }
+  G4String command = "/control/execute ";
+  UI->ApplyCommand(command+macro);
 
 #ifdef G4VIS_USE
-  if(ui || macro == "vis_save.mac")
+  if(macro == "vis_save.mac")
   {
     delete visManager;
   }
