@@ -40,6 +40,9 @@ SteppingAction::SteppingAction(EventAction* event)
         WEIGHTED(false),
         stepM(NULL)
 {
+  if(debug)
+    std::cout << "SteppingAction::SteppingAction -> Initialized." << std::endl;
+    
   stepM = new StepMessenger(this);
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))
