@@ -24,7 +24,7 @@
 
 #include "StackingAction.hh"
 extern G4bool detTest;
-extern G4bool ResponseFunction;
+extern G4bool WResponseFunction;
 
 StackingAction::StackingAction()
 {
@@ -50,7 +50,7 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* curre
     }
   }
 
-  if(ResponseFunction)
+  if(WResponseFunction)
   {
     G4String nextStep_VolumeName = currentTrack->GetNextVolume()->GetName();
     G4String previousStep_VolumeName = currentTrack->GetVolume()->GetName();
