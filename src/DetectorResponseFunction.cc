@@ -40,6 +40,9 @@ DetectorResponseFunction::DetectorResponseFunction()
 
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
 
+  if(debug)
+    std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response: " << tdet_response << std::endl;
+
   if(debug && tdet_response == NULL)
     std::cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << std::endl;
 
