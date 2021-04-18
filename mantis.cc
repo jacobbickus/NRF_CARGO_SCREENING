@@ -119,6 +119,7 @@ int main(int argc,char **argv)
 
   // Run Defaults
   macro = "mantis.in";
+  root_output_name = "test.root";
   seed = 1;
   inFile = "brems_distributions.root";
   response_function_file = "DetectorResponse.root";
