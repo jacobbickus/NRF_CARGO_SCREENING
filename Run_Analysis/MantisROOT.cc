@@ -2763,7 +2763,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   ScintillationResponse->Draw();
 
   TCanvas* c3 = new TCanvas("c3","Detector Cherenkov Response",600,400);
-  c2->cd();
+  c3->cd();
   CherenkovResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
   CherenkovResponse->Draw();
