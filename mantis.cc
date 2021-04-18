@@ -66,7 +66,7 @@ namespace
     << "The input spectrum would be a weighted spectrum read from brems_distributions.root." << std::endl
     << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl << std::endl
 
-    << " mantis [-h --help]                              Prints this Usage Screen" << std::endl
+    << "mantis [-h --help]                                     Prints this Usage Screen" << std::endl
     << "      [--Macro=mantis.in]                              Macro File to be read for user input options" << std::endl
     << "      [--File_To_Sample=brems_distributions.root]      Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << std::endl
     << "      [--Seed=1]                                       Simulation Seed." << std::endl
