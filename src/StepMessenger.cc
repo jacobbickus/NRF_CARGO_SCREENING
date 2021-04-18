@@ -24,7 +24,7 @@
 
 #include "StepMessenger.hh"
 
-extern G4bool ResponseFunction;
+extern G4bool WResponseFunction;
 
 StepMessenger::StepMessenger(SteppingAction* stepAction)
         : stepA(stepAction)
@@ -65,7 +65,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     G4String theCommand = newValue;
     if(theCommand == "ChopIncData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetChopperIncDataFlag(1);
       else
         stepA->SetChopperIncDataFlag(1);
@@ -74,7 +74,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "ChopOutData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetChopperOutDataFlag(1);
       else
         stepA->SetChopperOutDataFlag(1);
@@ -83,7 +83,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "NRFData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetNRFDataFlag(1);
       else
         stepA->SetNRFDataFlag(1);
@@ -92,7 +92,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "IntObjInData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetIntObjInDataFlag(1);
       else
         stepA->SetIntObjInDataFlag(1);
@@ -101,7 +101,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "IntObjOutData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetIntObjOutDataFlag(1);
       else
         stepA->SetIntObjOutDataFlag(1);
@@ -110,7 +110,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "ShieldingData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetShieldingIncDataFlag(1);
       else
         stepA->SetShieldingIncDataFlag(1);
@@ -119,7 +119,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "PlexiData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetPlexiIncDataFlag(1);
       else
         stepA->SetPlexiIncDataFlag(1);
@@ -128,7 +128,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "WaterIncData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetWaterIncDataFlag(1);
       else
         stepA->SetWaterIncDataFlag(1);
@@ -137,7 +137,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "ScintillationData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetScintillationDataFlag(1);
       else
         stepA->SetScintillationDataFlag(1);
@@ -146,7 +146,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "ScintillationData2")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetScintillation2DataFlag(1);
       else
         stepA->SetScintillation2DataFlag(1);
@@ -155,7 +155,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "CherenkovData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetCherenkovDataFlag(1);
       else
         stepA->SetCherenkovDataFlag(1);
@@ -164,7 +164,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "CherenkovData2")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetCherenkov2DataFlag(1);
       else
         stepA->SetCherenkov2DataFlag(1);
@@ -173,7 +173,7 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "DetData")
     {
-      if(ResponseFunction)
+      if(WResponseFunction)
         stepAWResponseFunction->SetDetDataFlag(1);
       else
         stepA->SetDetDataFlag(1);
