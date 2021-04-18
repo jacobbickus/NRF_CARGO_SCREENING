@@ -25,6 +25,7 @@
 #include "DetectorResponseFunction.hh"
 
 extern G4String response_function_file;
+extern G4bool debug;
 
 DetectorResponseFunction *DetectorResponseFunction::instance = 0;
 
@@ -44,7 +45,7 @@ DetectorResponseFunction::DetectorResponseFunction()
 
   if(tdet_response == NULL)
     G4cerr << "DetectorResponseFunction::DetectorResponseFunction -> Detector Response TProfile NULL... Check Detector Response Function Input." << G4endl;
-    
+
   tdet_scintillation_response = (TProfile*) fin->Get("ScintillationResponse");
   tdet_cherenkov_response = (TProfile*) fin->Get("CherenkovResponse");
   if(debug)
