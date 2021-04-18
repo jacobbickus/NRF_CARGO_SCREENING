@@ -28,6 +28,7 @@ extern G4String inFile;
 extern G4bool addNRF;
 extern G4long seed;
 extern G4bool output;
+extern G4bool resonanceTest;
 
 SteppingAction::SteppingAction(EventAction* event)
         : G4UserSteppingAction(), kevent(event),
@@ -43,6 +44,9 @@ SteppingAction::SteppingAction(EventAction* event)
   fExpectedNextStatus = Undefined;
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
+
+  if(resonanceTest)
+    WEIGHTED = false;
 }
 
 SteppingAction::~SteppingAction()

@@ -29,6 +29,7 @@ extern G4bool debug;
 extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool WResponseFunction;
+extern G4bool resonanceTest;
 extern G4String inFile;
 
 Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
@@ -36,6 +37,9 @@ Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
   start_time = time(0);
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
+
+  if(resonanceTest)
+    WEIGHTED = false;
 }
 
 Analysis::~Analysis()
