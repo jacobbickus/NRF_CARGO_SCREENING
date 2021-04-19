@@ -30,7 +30,7 @@ extern G4long seed;
 
 DetectorResponseFunction *DetectorResponseFunction::instance = 0;
 
-DetectorResponseFunction::DetectorResponseFunction(double maxE=1.8)
+DetectorResponseFunction::DetectorResponseFunction(G4double maxE)
 {
   CheckFile(response_function_file.c_str());
   fin = TFile::Open(response_function_file.c_str());
