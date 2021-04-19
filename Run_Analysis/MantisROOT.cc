@@ -70,7 +70,7 @@ public:
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
-    void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8);
+    void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
 
 private:
 
@@ -2726,7 +2726,7 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
   fout->Close();
 }
 
-void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename, double maxE=1.8)
+void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename, double maxE=1.8, bool drawFigures=false)
 {
   CheckFile(filename);
   TFile* fin = TFile::Open(filename);
@@ -2738,6 +2738,9 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   int x_bins = maxE/10e-3; // set bin width to 10 keV
   double ymax = tdet_response->GetMaximum("NumPE");
   ymax = ymax + 100;
+  std::vector<TH1D*> projections;
+  //double left_bin = 0;
+  //double right_bin = 10e-3;
 
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
@@ -2754,41 +2757,75 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   tdet_response->Draw("NumCherenkov:IncidentEnergy>>CherenkovResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Cherenkov Response Created." << std::endl;
 
-  TCanvas* c1 = new TCanvas("c1","Detector Response Function Profile",600,400);
-  c1->cd();
-  DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
-  DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
-  DetectorResponse->SetLineColor(kRed);
-  DetectorResponse->Draw();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Projection Vector..." << std::endl;
+  string hn = "projY_";
+  for(int i=0;i<x_bins-1;++i)
+  {
+    string h_name = hn + std::to_string(i) + "_" + std::to_string(i+1);
+    TH1D* h = new TH1D();
+    h = hDetectorResponse->ProjectionY(h_name.c_str(),i,i+1);
+    if(debug)
+    {
+      if(i < 2)
+      {
+        h->Print();
+      }
+    }
+    projections.push_back(h);
+    //delete h;
+  }
 
-  TCanvas* c2 = new TCanvas("c2","Detector Scintillation Response",600,400);
-  c2->cd();
-  ScintillationResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
-  ScintillationResponse->GetYaxis()->SetTitle("Number of Detector Scintillation Photoelectrons");
-  ScintillationResponse->Draw();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Projection Vector complete." << std::endl;
 
-  TCanvas* c3 = new TCanvas("c3","Detector Cherenkov Response",600,400);
-  c3->cd();
-  CherenkovResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
-  CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
-  CherenkovResponse->Draw();
+  if(debug)
+  {
+    for(int i=0;i<5;++i)
+      projections[i]->Print();
+  }
 
-  TCanvas* c4 = new TCanvas("c4", "Detector Response Function",600,400);
-  c4->cd();
-  hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
-  hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
-  hDetectorResponse->SetStats(0);
-  hDetectorResponse->Draw("colz");
-  DetectorResponse->Draw("SAME");
+  if(drawFigures)
+  {
+    TCanvas* c1 = new TCanvas("c1","Detector Response Function Profile",600,400);
+    c1->cd();
+    DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+    DetectorResponse->SetLineColor(kRed);
+    DetectorResponse->Draw();
 
-  auto legend = new TLegend();
-  legend->SetHeader("Detector Response","C");
-  legend->AddEntry(hDetectorResponse, "Response 2D Histogram");
-  legend->AddEntry(DetectorResponse, "Response Profile");
-  legend->Draw();
+    TCanvas* c2 = new TCanvas("c2","Detector Scintillation Response",600,400);
+    c2->cd();
+    ScintillationResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    ScintillationResponse->GetYaxis()->SetTitle("Number of Detector Scintillation Photoelectrons");
+    ScintillationResponse->Draw();
+
+    TCanvas* c3 = new TCanvas("c3","Detector Cherenkov Response",600,400);
+    c3->cd();
+    CherenkovResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
+    CherenkovResponse->Draw();
+
+    TCanvas* c4 = new TCanvas("c4", "Detector Response Function",600,400);
+    c4->cd();
+    hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+    hDetectorResponse->SetStats(0);
+    hDetectorResponse->Draw("colz");
+    DetectorResponse->Draw("SAME");
+
+    auto legend = new TLegend();
+    legend->SetHeader("Detector Response","C");
+    legend->AddEntry(hDetectorResponse, "Response 2D Histogram");
+    legend->AddEntry(DetectorResponse, "Response Profile");
+    legend->Draw();
+  }
+
 
   TFile* fout = new TFile(outfilename,"RECREATE");
   fout->cd();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Writting to file: " << outfilename << std::endl;
+  for(int i=0;i<projections.size();++i)
+    projections[i]->Write();
+
   DetectorResponse->Write();
   hDetectorResponse->Write();
   ScintillationResponse->Write();

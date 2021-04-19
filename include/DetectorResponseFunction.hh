@@ -35,6 +35,9 @@
 #include "TSystem.h"
 #include "TMath.h"
 #include "TProfile.h"
+#include "TH1.h"
+#include "TH2.h"
+#include <vector>
 
 class DetectorResponseFunction
 {
@@ -66,9 +69,12 @@ public:
 
 private:
   TProfile* tdet_response;
+  TH2D* hdet_response;
   TProfile* tdet_scintillation_response;
   TProfile* tdet_cherenkov_response;
   TFile* fin;
+  TAxis* xAxis;
+  std::vector<TH1D*> projections;
 };
 
 #endif
