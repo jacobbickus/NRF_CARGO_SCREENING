@@ -288,6 +288,7 @@ void DetectorEstimatedInfo(G4AnalysisManager* manager, G4bool Weight=false)
   manager->CreateNtupleDColumn("IncidentEnergy");
   manager->CreateNtupleDColumn("BeamEnergy");
   manager->CreateNtupleDColumn("NumPE");
+  manager->CreateNtupleDColumn("NumPE2");
   manager->CreateNtupleDColumn("NumScintillation");
   manager->CreateNtupleDColumn("NumCherenkov");
 

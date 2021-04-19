@@ -116,6 +116,7 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
     G4double weight = info->GetWeight();
     DetectorResponseFunction *r_function = DetectorResponseFunction::Instance();
     G4double numPE = r_function->GetDetectorPhotoelectrons(incident_energy);
+    G4double numPE2 = r_function->GetProjectedPhotoelectrons(incident_energy);
     G4double numScint = r_function->GetScintillationResponse(incident_energy);
     G4double numCher = r_function->GetCherenkovResponse(incident_energy);
 
@@ -124,11 +125,12 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
     manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
     manager->FillNtupleDColumn(7,2, beam_energy);
     manager->FillNtupleDColumn(7,3, numPE);
-    manager->FillNtupleDColumn(7,4, numScint);
-    manager->FillNtupleDColumn(7,5, numCher);
+    manager->FillNtupleDColumn(7,4, numPE2);
+    manager->FillNtupleDColumn(7,5, numScint);
+    manager->FillNtupleDColumn(7,6, numCher);
 
     if(WEIGHTED)
-      manager->FillNtupleDColumn(7,6, weight);
+      manager->FillNtupleDColumn(7,7, weight);
 
     manager->AddNtupleRow(7);
 

@@ -61,6 +61,8 @@ public:
   G4double GetDetectorPhotoelectrons(G4double);
   G4double GetScintillationResponse(G4double);
   G4double GetCherenkovResponse(G4double);
+  G4int GetBin(G4double);
+  G4double GetProjectedPhotoelectrons(G4double);
   void CloseInputFile()
   {
     if(fin->IsOpen())
