@@ -62,6 +62,8 @@ public:
   G4double GetScintillationResponse(G4double);
   G4double GetCherenkovResponse(G4double);
   G4int GetBin(G4double);
+  //void SetBeamMax(G4double maximumE){maxE = maximumE;}
+  //G4double GetBeamMax()const {return maxE;}
   G4double GetProjectedPhotoelectrons(G4double);
   void CloseInputFile()
   {
