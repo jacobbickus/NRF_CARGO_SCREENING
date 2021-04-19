@@ -43,7 +43,7 @@ class DetectorResponseFunction
 {
   static DetectorResponseFunction *instance;
 
-  DetectorResponseFunction();
+  DetectorResponseFunction(double maxE=1.8);
 public:
 
   static DetectorResponseFunction *Instance()

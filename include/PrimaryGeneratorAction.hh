@@ -71,6 +71,9 @@ void SetBeamSize(G4double x)
   G4cout << "PrimaryGeneratorAction::BeamSize set to: " << beam_size << " mm" << G4endl;
 }
 
+void SetBeamMax(G4double maxE){beamMax = maxE;}
+G4double GetBeamMax()const {return beamMax;}
+
 void CloseInputFile(){if(fFileOpen) fin->Close();}
 
 private:
@@ -82,7 +85,7 @@ private:
 private:
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
-  G4double beamStart;
+  G4double beamStart, beamMax;
   G4double beam_size, energy;
   G4bool file_check, fFileOpen;
   std::vector<double> energies, N;

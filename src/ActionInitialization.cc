@@ -34,6 +34,7 @@
 #include "EventActionWResponseFunction.hh"
 #include "Analysis.hh"
 #include "G4Types.hh"
+#include "DetectorResponseFunction.hh"
 
 extern G4bool debug;
 extern G4bool detTest;
@@ -63,6 +64,10 @@ void ActionInitialization::Build() const
 
     if(WResponseFunction)
     {
+      if(debug)
+        std::cout << "ActionInitialization::Build() -> Beam Max Energy: " << pga->GetBeamMax() << " MeV" << std::endl;
+        
+      DetectorResponseFunction* r_function = new DetectorResponseFunction(pga->GetBeamMax());
       eventWResponseFunction = new EventActionWResponseFunction();
       SetUserAction(eventWResponseFunction);
     }

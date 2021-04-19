@@ -89,7 +89,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       G4cerr << "PrimaryGeneratorAction::PrimaryActionGenerator FATAL ERROR -> hBrems Fail." << G4endl;
       exit(1);
     }
-
+    SetBeamMax(TMath::MaxElement(tBrems->GetN(), tBrems->GetX()));
     if(!inFile.compare("brems_distributions.root"))
     {
         file_check = false;
@@ -119,11 +119,13 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     file_check = false;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction Sampling U235 Resonance Energies." << G4endl;
+    SetBeamMax(-1.);
   }
   else
   {
     file_check = false;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction Chosen Energy set to: " << chosen_energy << " MeV" << G4endl;
+    SetBeamMax(chosen_energy);
   }
 
   G4cout << G4endl << "User Macro Inputs" << G4endl;
@@ -245,6 +247,7 @@ void PrimaryGeneratorAction::CreateInputSpectrum(TGraph* tBrems_in)
   // find max
   double dx = 5.0e-6;
   G4double maxE = TMath::MaxElement(tBrems_in->GetN(), tBrems_in->GetX());
+  SetBeamMax(maxE);
   G4int nbins = maxE/dx; // 5eV Spacing
   G4double counter = 0;
   for(int i=0;i<nbins;++i)
