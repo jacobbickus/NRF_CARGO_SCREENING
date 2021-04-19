@@ -2743,7 +2743,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
   TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
   TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
-  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE, x_bins,0.,ymax);
+  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function",x_bins,0.,maxE, x_bins,0.,ymax);
 
   tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Profile Created." << std::endl;
@@ -2754,7 +2754,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   tdet_response->Draw("NumCherenkov:IncidentEnergy>>CherenkovResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Cherenkov Response Created." << std::endl;
 
-  TCanvas* c1 = new TCanvas("c1","Detector Response Function",600,400);
+  TCanvas* c1 = new TCanvas("c1","Detector Response Function Profile",600,400);
   c1->cd();
   DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
@@ -2773,12 +2773,19 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
   CherenkovResponse->Draw();
 
-  TCanvas* c4 = new TCanvas("c4", "Detector Response Function Histogram",600,400);
+  TCanvas* c4 = new TCanvas("c4", "Detector Response Function",600,400);
   c4->cd();
   hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+  hDetectorResponse->SetStats(0);
   hDetectorResponse->Draw("colz");
   DetectorResponse->Draw("SAME");
+
+  auto legend = new TLegend();
+  legend->SetHeader("Detector Response","C");
+  legend->AddEntry(hDetectorResponse, "Response 2D Histogram");
+  legend->AddEntry(DetectorResponse, "Response Profile");
+  legend->Draw();
 
   TFile* fout = new TFile(outfilename,"RECREATE");
   fout->cd();
