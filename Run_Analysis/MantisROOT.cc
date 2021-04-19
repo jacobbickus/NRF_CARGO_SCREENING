@@ -2741,7 +2741,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
   TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
   TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
-  TH1D* hDetectorResponse = new TH1D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE);
+  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE, x_bins,0.,1000);
 
   tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Profile Created." << std::endl;
