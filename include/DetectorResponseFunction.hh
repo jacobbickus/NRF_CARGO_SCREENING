@@ -38,6 +38,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include <vector>
+#include "TRandom2.h"
 
 class DetectorResponseFunction
 {

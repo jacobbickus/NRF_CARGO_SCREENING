@@ -66,8 +66,8 @@ void ActionInitialization::Build() const
     {
       if(debug)
         std::cout << "ActionInitialization::Build() -> Beam Max Energy: " << pga->GetBeamMax() << " MeV" << std::endl;
-        
-      DetectorResponseFunction* r_function = new DetectorResponseFunction(pga->GetBeamMax());
+
+      DetectorResponseFunction* r_function = DetectorResponseFunction::Instance(pga->GetBeamMax());
       eventWResponseFunction = new EventActionWResponseFunction();
       SetUserAction(eventWResponseFunction);
     }
