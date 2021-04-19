@@ -85,7 +85,7 @@ namespace
     << "      [-t1 --Detector_Response_Test=false]             Create Detector Response Function" << std::endl
     << "      [-t2 --Brem_Test=false]                          For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy" << std::endl
     << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
-    << "      [-t4 --Sample_Energy_Range=false]                Samples from a normal distribution centered on user's energy." << std::endl
+    << "      [-t4 --Sample_Energy_Range=false]                Samples from a uniform distribution centered on user's energy." << std::endl
     << std::endl << std::endl;
     exit(1);
   }
