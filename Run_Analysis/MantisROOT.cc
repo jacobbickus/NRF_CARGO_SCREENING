@@ -2736,12 +2736,14 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   tdet_response->SetEstimate(-1);
 
   int x_bins = maxE/10e-3; // set bin width to 10 keV
+  double ymax = tdet_response->GetMaximum("NumPE");
+  ymax = ymax + 100;
 
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
   TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
   TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
-  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE, x_bins,0.,1000);
+  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE, x_bins,0.,ymax);
 
   tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Profile Created." << std::endl;
@@ -2775,7 +2777,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   c4->cd();
   hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
-  hDetectorResponse->Draw();
+  hDetectorResponse->Draw("colz");
   DetectorResponse->Draw("SAME");
 
   TFile* fout = new TFile(outfilename,"RECREATE");
