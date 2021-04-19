@@ -46,11 +46,11 @@ class DetectorResponseFunction
   DetectorResponseFunction(G4double);
 public:
 
-  static DetectorResponseFunction *Instance()
+  static DetectorResponseFunction *Instance(G4double maxE=1.8)
   {
     if(!instance)
     {
-      instance = new DetectorResponseFunction;
+      instance = new DetectorResponseFunction(maxE);
     }
     return instance;
   }
