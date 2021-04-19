@@ -70,7 +70,7 @@ public:
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
-    void CreateDetectorResponseFunction(const char*, const char*);
+    void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8);
 
 private:
 
@@ -2726,7 +2726,7 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
   fout->Close();
 }
 
-void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename)
+void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename, double maxE=1.8)
 {
   CheckFile(filename);
   TFile* fin = TFile::Open(filename);
@@ -2735,16 +2735,18 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   tdet_response = (TTree*) fin->Get("DetResponse");
   tdet_response->SetEstimate(-1);
 
-  double maxE = tdet_response->GetMaximum("IncidentEnergy");
   int x_bins = maxE/10e-3; // set bin width to 10 keV
 
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
   TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
   TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
   TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
+  TH1D* hDetectorResponse = new TH1D("hDetectorResponse","Detector Response Function Histogram",x_bins,0.,maxE);
 
   tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
-  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Created." << std::endl;
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Profile Created." << std::endl;
+  tdet_response->Draw("NumPE:IncidentEnergy>>hDetectorResponse","","colz,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Histogram Created." << std::endl;
   tdet_response->Draw("NumScintillation:IncidentEnergy>>ScintillationResponse","","prof,goff");
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Scintillation Response Created." << std::endl;
   tdet_response->Draw("NumCherenkov:IncidentEnergy>>CherenkovResponse","","prof,goff");
@@ -2754,6 +2756,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   c1->cd();
   DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
   DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+  DetectorResponse->SetLineColor(kRed);
   DetectorResponse->Draw();
 
   TCanvas* c2 = new TCanvas("c2","Detector Scintillation Response",600,400);
@@ -2768,9 +2771,17 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
   CherenkovResponse->Draw();
 
+  TCanvas* c4 = new TCanvas("c4", "Detector Response Function Histogram",600,400);
+  c4->cd();
+  hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+  hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+  hDetectorResponse->Draw();
+  DetectorResponse->Draw("SAME");
+
   TFile* fout = new TFile(outfilename,"RECREATE");
   fout->cd();
   DetectorResponse->Write();
+  hDetectorResponse->Write();
   ScintillationResponse->Write();
   CherenkovResponse->Write();
   fout->Close();
@@ -4839,7 +4850,7 @@ void MantisROOT::Show_Sampling_Description()
 
 void MantisROOT::Show_CreateDetectorResponseFunction()
 {
-  std::cout << "void CreateDetectorResponseFunction(const char* filename, const char* outfilename)" << std::endl;
+  std::cout << "void CreateDetectorResponseFunction(const char* filename, const char* outfilename, double MaxIncidentEnergy)" << std::endl;
 }
 
 void MantisROOT::Show_CreateDetectorResponseFunction_Description()
