@@ -44,7 +44,7 @@ DetectorResponseFunction::DetectorResponseFunction(G4double maxE)
   tdet_response = (TProfile*) fin->Get("DetectorResponse");
   std::string hn = "projY_";
   int x_bins = maxE/10e-3;
-  for(int i=0;i<x_bins-1;++i)
+  for(int i=0;i<x_bins;++i)
   {
     std::string h_name = hn + std::to_string(i) + "_" + std::to_string(i+1);
     TH1D* proj_tmp = new TH1D();
@@ -60,7 +60,7 @@ DetectorResponseFunction::DetectorResponseFunction(G4double maxE)
 
   if(debug)
     std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Number of Projections: " << projections.size() << std::endl;
-    
+
 
   hdet_response = (TH2D*) fin->Get("hDetectorResponse");
   xAxis = hdet_response->GetXaxis();
