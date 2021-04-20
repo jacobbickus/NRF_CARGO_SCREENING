@@ -56,6 +56,8 @@ DetectorResponseFunction::DetectorResponseFunction(G4double maxE)
   {
     for(int i=0;i<5;++i)
       projections[i]->Print();
+
+    projections[projections.size()]->Print();
   }
 
   if(debug)
