@@ -72,6 +72,7 @@ public:
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
     void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
     void GetCounts(const char*, bool weighted=false);
+    void GetCountIntegralAndError(const char*, bool weighted=false);
 
 private:
 
@@ -2739,6 +2740,27 @@ void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, d
   hSample->Write();
   std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to brems_distributions.root" << std::endl;
   fout->Close();
+}
+
+void MantisROOT::GetCountIntegralAndError(const char* filename, bool weighted=false)
+{
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
+  TTree* tree;
+  f->GetObject("DetInfo",tree);
+  tree->SetEstimate(-1);
+  TH1D* h = new TH1D("h","h",100,0.,tree->GetMaximum("Energy"));
+  if(weighted)
+    tree->Draw("Energy>>h","Weight","goff");
+  else
+    tree->Draw("Energy>>h","","goff");
+
+  double error;
+  double hIntegral = h->IntegralAndError(0,100,error);
+
+  std::cout << "MantisROOT::GetCountIntegralAndError -> Counts: " << hIntegral << " +- " << error << std::endl;
+
 }
 
 void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename, double maxE=1.8, bool drawFigures=false)
