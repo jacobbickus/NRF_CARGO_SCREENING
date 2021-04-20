@@ -111,7 +111,12 @@ G4double DetectorResponseFunction::GetProjectedPhotoelectrons(G4double incident_
   G4int low_bin = high_bin - 1;
 
   if(debug)
-    std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Bin Number: " << low_bin << std::endl;
+  {
+    std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Incident Energy:  "
+                << incident_energy << " MeV" << std::endl;
+    std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Bin Number:       "
+                << low_bin << std::endl;
+  }
 
   TH1D* theProjection = projections[low_bin];
 
