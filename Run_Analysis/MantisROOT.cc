@@ -3560,23 +3560,6 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   else
     weights = 1.;
 
-  TH1D* h = new TH1D("h","h",100,0.,tree->GetMaximum("NumPE"));
-  TH1D* h2 = new TH1D("h2","h2",100,0,tree->GetMaximum("NumPE2"));
-
-  if(weighted)
-  {
-    tree->Draw("NumPE>>h","Weight","goff");
-    tree->Draw("NumPE2>>h2","Weight","goff");
-  }
-  else
-  {
-    tree->Draw("NumPE>>h","","goff");
-    tree->Draw("NumPE2>>h2","","goff");
-  }
-
-  double profile_mean = h->GetMean();
-  double histo_mean = h2->GetMean();
-
   double sd_num_profile = 0.;
   double sd_num_histo = 0.;
   double weight_sum = 0.;
@@ -3584,13 +3567,21 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   for(int i=0;i<tree->GetEntries();++i)
   {
     tree->GetEntry(i);
-    sd_num_profile += (weights*pow((profile_counts - profile_mean),2));
-    sd_num_histo += (weights*pow((histo_counts - histo_mean),2));
     weight_sum += weights;
     total_profile_counts += profile_counts*weights;
     total_histo_counts += histo_counts*weights;
   }
 
+  double profile_mean = total_profile_counts/weight_sum;
+  double histo_mean = total_histo_counts/weight_sum;
+
+  for(int i=0;i<tree->GetEntries();++i)
+  {
+    tree->GetEntry(i);
+    sd_num_profile += (weights*pow((profile_counts - profile_mean),2));
+    sd_num_histo += (weights*pow((histo_counts - histo_mean),2));
+  }
+  
   double sd_denom = tree->GetEntries()*weight_sum;
   double sd_profile = sqrt(sd_num_profile/sd_denom);
   double sd_histo = sqrt(sd_num_histo/sd_denom);
