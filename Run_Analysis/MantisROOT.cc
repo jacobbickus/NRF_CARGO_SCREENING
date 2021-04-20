@@ -2759,7 +2759,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
 
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Projection Vector..." << std::endl;
   string hn = "projY_";
-  for(int i=0;i<x_bins-1;++i)
+  for(int i=0;i<x_bins+1;++i)
   {
     string h_name = hn + std::to_string(i) + "_" + std::to_string(i+1);
     TH1D* h = new TH1D();
