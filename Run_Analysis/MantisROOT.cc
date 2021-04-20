@@ -3525,8 +3525,10 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   tree->SetEstimate(-1);
 
   double weights;
-  double profile_counts, total_profile_counts;
-  double histo_counts, total_histo_counts;
+  double profile_counts; 
+  double histo_counts;
+  double total_profile_counts = 0.;
+  double total_histo_counts = 0.;
 
   tree->SetBranchAddress("NumPE", &profile_counts);
   tree->SetBranchAddress("NumPE2", &histo_counts);
@@ -3544,7 +3546,7 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   }
 
   std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << std::endl
-            << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts << std::endl;
+            << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << std::endl;
 
   f->Close();
   std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
