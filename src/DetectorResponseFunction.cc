@@ -58,6 +58,10 @@ DetectorResponseFunction::DetectorResponseFunction(G4double maxE)
       projections[i]->Print();
   }
 
+  if(debug)
+    std::cout << "DetectorResponseFunction::DetectorResponseFunction -> Number of Projections: " << projections.size() << std::endl;
+    
+
   hdet_response = (TH2D*) fin->Get("hDetectorResponse");
   xAxis = hdet_response->GetXaxis();
 
