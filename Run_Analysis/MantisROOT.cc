@@ -3543,8 +3543,8 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
     total_histo_counts += histo_counts*weights;
   }
 
-  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << std::endl
-            << "MantisROOT::GetCounts -> Histo Counts:   " << std::endl;
+  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << std::endl
+            << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts << std::endl;
 
   f->Close();
   std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
