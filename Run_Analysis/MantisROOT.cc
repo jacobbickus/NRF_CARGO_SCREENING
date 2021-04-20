@@ -71,6 +71,7 @@ public:
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
     void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
+    void GetCounts(const char*, bool weighted=false);
 
 private:
 
@@ -270,6 +271,9 @@ private:
     void Show_CreateOptPerEnergy_Description();
     void Show_CreateDetectorResponseFunction();
     void Show_CreateDetectorResponseFunction_Description();
+    void Show_GetCounts();
+    void Show_GetCounts_Description();
+
 
     double hc = 6.62607004e-34*299792458;
 
@@ -371,6 +375,10 @@ void MantisROOT::Help()
 
   Show_Energy2Wave();
   Show_Energy2Wave_Description();
+  std::cout << std::endl;
+
+  Show_GetCounts();
+  Show_GetCounts_Description();
   std::cout << std::endl;
 
   Show_GetInstance();
@@ -1117,6 +1125,7 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_CreateScintillationDistribution();
     Show_CreateTKDE();
     Show_Energy2Wave();
+    Show_GetCounts();
     Show_GetScintillationDistribution();
     Show_Help();
     Show_Integral();
@@ -1211,6 +1220,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_Energy2Wave();
     if(description)
       Show_Energy2Wave_Description();
+  }
+  else if(!name.compare("GetCounts"))
+  {
+    Show_GetCounts();
+    if(description)
+      Show_GetCounts_Description();
   }
   else if(!name.compare("GetScintillationDistribution"))
   {
@@ -3498,6 +3513,43 @@ TGraph* MantisROOT::CreateTKDE(const char* filename, int nentries=10000)
 
 } // End of CreateTKDE Function
 
+void MantisROOT::GetCounts(const char* filename, bool weighted=false)
+{
+
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
+
+  TTree* tree;
+  f->GetObject("DetInfo",tree);
+  tree->SetEstimate(-1);
+
+  double weights;
+  double profile_counts, total_profile_counts;
+  double histo_counts, total_histo_counts;
+
+  tree->SetBranchAddress("NumPE", &profile_counts);
+  tree->SetBranchAddress("NumPE2", &histo_counts);
+
+  if(weighted)
+    tree->SetBranchAddress("Weight",&weights);
+  else
+    weights = 1.;
+
+  for(int i=0;i<tree->GetEntries();++i)
+  {
+    tree->GetEntry(i);
+    total_profile_counts += profile_counts*weights;
+    total_histo_counts += histo_counts*weights;
+  }
+
+  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << std::endl
+            << "MantisROOT::GetCounts -> Histo Counts:   " << std::endl;
+
+  f->Close();
+  std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
+
+}
 
 void MantisROOT::CreateOptPerEnergy(const char* filename, double e_cut=1.4)
 {
@@ -4756,7 +4808,7 @@ void MantisROOT::Show_CopyTrees()
 
 void MantisROOT::Show_CopyTrees_Description()
 {
-  std::cout << "Clones TTrees from input 1 (filename) to a file named by input 3 outfilename."
+  std::cout << "DESCRIPTION: " << std::endl << "Clones TTrees from input 1 (filename) to a file named by input 3 outfilename."
   << std::endl << "The TTrees to be cloned are inputed as input two as a string vector."
   << std::endl << "Example: mantis->CopyTrees(\"test.root\",{\"IntObjIn\",\"DetInfo\"})" << std::endl;
 }
@@ -4768,7 +4820,7 @@ void MantisROOT::Show_Sig2Noise()
 
 void MantisROOT::Show_Sig2Noise_Description()
 {
-  std::cout << "Computes the Signal to Noise Ratio in the files inputed in the string vector."
+  std::cout << "DESCRIPTION: " << std::endl << "Computes the Signal to Noise Ratio in the files inputed in the string vector."
   << std::endl << "The signal to noise ratio can be computed for the Incident Interrogation Object spectrum"
   << std::endl << ", the detected spectrum, or both with the second input options: IncObj, Det, Both."
   << std::endl << "IF the TTrees contain weights be sure to set the third input bool option to true."
@@ -4778,6 +4830,15 @@ void MantisROOT::Show_Sig2Noise_Description()
   << std::endl << "Example: mantis->Sig2Noise({\"TestOn.root\",\"TestOff.root\"},\"Both\", true, true, true, \"Energy<5e-6\")" << std::endl;
 }
 
+void MantisROOT::Show_GetCounts()
+{
+  std::cout << "void GetCounts(const char* filename, bool weighted=false)" << std::endl;
+}
+
+void MantisROOT::Show_GetCounts_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Calculates the Number of Hits for Estimated Detector Info Tree." << std::endl;
+}
 void MantisROOT::Show_ZScore()
 {
   std::cout << "void ZScore(const char* filename1, const char* filename2, std::vector<string> ObjectNames, bool weighted=false)" << std::endl;
