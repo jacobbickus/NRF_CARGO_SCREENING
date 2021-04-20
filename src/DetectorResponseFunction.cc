@@ -112,20 +112,20 @@ G4double DetectorResponseFunction::GetProjectedPhotoelectrons(G4double incident_
   G4int high_bin = GetBin(incident_energy);
   G4int low_bin = high_bin - 1;
 
+  TH1D* theProjection = projections.at(low_bin);
+  G4double numPE = theProjection->GetRandom();
+
   if(debug)
   {
     std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Incident Energy:  "
                 << incident_energy << " MeV" << std::endl;
     std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Bin Number:       "
                 << low_bin << std::endl;
+    std::cout << "DetectorResponseFunction::GetProjectedPhotoelectrons -> Photoelectrons:   "
+                << numPE << std::endl;
   }
 
-  TH1D* theProjection = projections.at(low_bin);
-
-  if(debug)
-    theProjection->Print();
-
-  return theProjection->GetRandom();
+  return numPE;
 }
 
 void DetectorResponseFunction::CheckFile(const char* filename)
