@@ -118,7 +118,7 @@ G4double DetectorResponseFunction::GetProjectedPhotoelectrons(G4double incident_
                 << low_bin << std::endl;
   }
 
-  TH1D* theProjection = projections[low_bin];
+  TH1D* theProjection = projections.at(low_bin);
 
   if(debug)
     theProjection->Print();
