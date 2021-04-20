@@ -3525,7 +3525,7 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   tree->SetEstimate(-1);
 
   double weights;
-  double profile_counts; 
+  double profile_counts;
   double histo_counts;
   double total_profile_counts = 0.;
   double total_histo_counts = 0.;
@@ -3538,14 +3538,21 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
   else
     weights = 1.;
 
+  double sd_num_profile = 0.;
+  double weight_sum = 0.;
   for(int i=0;i<tree->GetEntries();++i)
   {
     tree->GetEntry(i);
+    sd_num_profile += (weights*pow((profile_counts - 6.409),2));
+    weight_sum += weights;
     total_profile_counts += profile_counts*weights;
     total_histo_counts += histo_counts*weights;
   }
 
-  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << std::endl
+  double sd_denom = tree->GetEntries()*weight_sum;
+  double sd_profile = sqrt(sd_num_profile/sd_denom);
+
+  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
             << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << std::endl;
 
   f->Close();
