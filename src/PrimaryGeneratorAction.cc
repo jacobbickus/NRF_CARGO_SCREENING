@@ -60,6 +60,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
     beamStart = -10.0;
+    beam_size = 60.0*cm;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
   else
@@ -207,7 +208,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4double rand_y_dir = 0.;
 
     if(detTest)
-      rand_y_dir = G4UniformRand();
+      rand_y_dir = cos(180.*G4UniformRand()*CLHEP::deg);
 
     fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, rand_y_dir, 1)); // along z axis
 
