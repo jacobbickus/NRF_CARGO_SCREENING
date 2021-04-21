@@ -204,7 +204,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart*cm)); // set the electron beam far enough back behind brem radiator
 
     // Set beam momentum
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,1)); // along z axis
+    G4double rand_y_dir = 0.;
+
+    if(detTest)
+      rand_y_dir = G4UniformRand();
+
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, rand_y_dir, 1)); // along z axis
 
     fParticleGun->GeneratePrimaryVertex(anEvent);
 
