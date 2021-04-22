@@ -75,10 +75,13 @@ void SetBeamSize(G4double x)
 }
 
 private:
+  G4double beam_size;
+protected:
+  G4double energy;
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
   G4double beamStart;
-  G4double beam_size, energy;
+
   G4bool file_check;
   // ROOT
   TGraph *tBrems;

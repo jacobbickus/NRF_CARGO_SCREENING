@@ -62,15 +62,8 @@ public:
 virtual void GeneratePrimaries(G4Event*);
 
 private:
-  G4ParticleGun* fParticleGun;
-  G4double beamStart;
-  G4double beam_size_x, beam_size_y, energy;
-  G4bool file_check;
-  // ROOT
-  TRandom2 Random;
-  TGraph *tBrems;
-  TGraph *gSample;
-  TH1D* hSample;
+  G4double beam_size_x, beam_size_y;
+
 };
 
 #endif
