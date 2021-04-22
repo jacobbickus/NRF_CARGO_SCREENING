@@ -53,6 +53,7 @@ class RunAction : public G4UserRunAction
   private:
     Analysis* fAnalysis;
     PrimaryGeneratorAction* fpga;
+    DetResponsePrimaryGenerator* fpga;
 };
 
 
