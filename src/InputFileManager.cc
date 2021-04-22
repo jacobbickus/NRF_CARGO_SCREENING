@@ -56,7 +56,7 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
   CloseInputFile();
 
   if(debug)
-    tBrems->Print();
+    hSample->Print();
 
   fFileOpen = false;
 }
@@ -72,10 +72,6 @@ void InputFileManager::ReadNonWeightedInput(const char* inFile, TGraph* &tBrems)
   fin->cd();
   fin->GetObject("Graph_from_hBrems",tBrems);
   CloseInputFile();
-
-  if(debug)
-    tBrems->Print();
-
   fFileOpen = false;
 }
 

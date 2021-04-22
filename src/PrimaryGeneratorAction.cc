@@ -75,12 +75,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     {
       ifm->ReadWeightedInput(inFile.c_str(), tBrems, tSample, hSample);
 
-      if(debug)
-      {
-        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Checking Sampled Distribution: " << std::endl;
-        tBrems->Print();
-      }
-
       file_check = false;
 
       if(!tSample || !hSample)
@@ -93,12 +87,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     else
     {
       ifm->ReadNonWeightedInput(inFile.c_str(), tBrems);
-
-      if(debug)
-      {
-        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Checking Non-Sampled Distribution: " << std::endl;
-        tBrems->Print();
-      }
       file_check = true;
 
       if(debug)
@@ -144,7 +132,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   // ******************** Energy Sampling Options *************************** //
 
     if(debug && anEvent->GetEventID() == 0)
+    {
       std::cout << "PrimaryGeneratorAction::GeneratePrimaries -> First Primary Generated." << std::endl;
+      if(!file_check)
+        hSample->print();
+
+    }
 
     G4double w = 1.;
     if(!resonanceTest && chosen_energy < 0)
