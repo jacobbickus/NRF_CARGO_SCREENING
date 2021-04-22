@@ -54,8 +54,8 @@ public:
 
   void CloseInputFile(){if(fFileOpen) fin->Close();}
   void CheckFile(const char*);
-  void ReadWeightedInput(const char*, TGraph&, TGraph&, TH1D&);
-  void ReadNonWeightedInput(const char*, TGraph&);
+  void ReadWeightedInput(const char*, TGraph& tBrems, TGraph& tSample, TH1D& hSample);
+  void ReadNonWeightedInput(const char*, TGraph& tBrems);
 
 private:
 
