@@ -75,11 +75,8 @@ void SetBeamSize(G4double x)
 void SetBeamMax(G4double maxE){beamMax = maxE;}
 G4double GetBeamMax()const {return beamMax;}
 
-void CloseInputFile(){if(fFileOpen) fin->Close();}
-
 private:
   void CreateInputSpectrum(TGraph*);
-  void CheckFile(const char*);
   G4double SampleUResonances();
   G4double SampleEnergyRange(double,double);
 
