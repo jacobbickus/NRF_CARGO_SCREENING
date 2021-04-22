@@ -56,7 +56,13 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
   CloseInputFile();
 
   if(debug)
+  {
+    tBrems->Print();
+    std::cout << std::endl << std::endl << "tSample: " << std::endl << std::endl;
+    tSample->Print();
+        std::cout << std::endl << std::endl << "hSample: " << std::endl << std::endl;
     hSample->Print();
+  }
 
   fFileOpen = false;
 }
