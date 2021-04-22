@@ -32,7 +32,7 @@ extern G4double uniform_width;
 extern G4bool debug;
 
 DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
-        : G4VUserPrimaryGeneratorAction(), PrimaryGeneratorAction(), fParticleGun(0)
+        : PrimaryGeneratorAction(), fParticleGun(0)
 {
   fParticleGun = new G4ParticleGun(1);
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
@@ -113,7 +113,7 @@ void DetResponsePrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
       {
         energy = hSample->GetRandom()*MeV;
         G4double dNdE = tBrems->Eval(energy);
-        G4double importanceSampling = gSample->Eval(energy);
+        G4double importanceSampling = tSample->Eval(energy);
         w = dNdE/importanceSampling;
       }
       else

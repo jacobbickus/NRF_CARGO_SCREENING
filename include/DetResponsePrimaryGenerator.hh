@@ -51,7 +51,7 @@
 class G4Event;
 class Analysis;
 
-class DetResponsePrimaryGenerator : public G4VUserPrimaryGeneratorAction, public PrimaryGeneratorAction
+class DetResponsePrimaryGenerator : public PrimaryGeneratorAction
 {
 
 public:
