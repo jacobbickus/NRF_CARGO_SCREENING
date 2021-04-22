@@ -135,7 +135,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     {
       std::cout << "PrimaryGeneratorAction::GeneratePrimaries -> First Primary Generated." << std::endl;
       if(!file_check)
-        hSample->print();
+        hSample->Print();
 
     }
 
