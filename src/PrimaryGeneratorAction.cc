@@ -27,7 +27,6 @@
 extern G4long seed;
 extern G4String inFile;
 extern G4double chosen_energy;
-extern G4bool detTest;
 extern G4bool resonanceTest;
 extern G4bool bremTest;
 extern G4bool SampleEnergyRangebool;
@@ -51,17 +50,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
     DetectorInformation* detInfo = DetectorInformation::Instance();
-    //G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Brem Radiator Position: " << detInfo->GetBremTargetBeginPosition()/(cm) << " cm." << G4endl;
     beamStart = 128.9; // start brem beam 1 cm behind brem radiator
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
-  }
-  else if(detTest)
-  {
-    fParticleGun->SetParticleDefinition(G4Gamma::Definition());
-    beamStart = -10.0;
-    beam_size = 60.0*cm;
-    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
   else
   {
@@ -205,12 +196,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart*cm)); // set the electron beam far enough back behind brem radiator
 
     // Set beam momentum
-    G4double rand_y_dir = 0.;
 
-    if(detTest)
-      rand_y_dir = cos(180.*G4UniformRand()*CLHEP::deg);
-
-    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, rand_y_dir, 1)); // along z axis
+    fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1)); // along z axis
 
     fParticleGun->GeneratePrimaryVertex(anEvent);
 
