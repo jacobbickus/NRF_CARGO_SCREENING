@@ -34,8 +34,7 @@ extern G4double uniform_width;
 extern G4bool debug;
 
 PrimaryGeneratorAction::PrimaryGeneratorAction()
-        : G4VUserPrimaryGeneratorAction(), pgaM(NULL),
-        fParticleGun(0),fFileOpen(false)
+        : G4VUserPrimaryGeneratorAction(), pgaM(NULL), fParticleGun(0)
 {
   fParticleGun = new G4ParticleGun(1);
   if(!bremTest)
@@ -287,14 +286,5 @@ void PrimaryGeneratorAction::CreateInputSpectrum(TGraph* tBrems_in)
       std::cout << "PrimaryGeneratorAction::CreateInputSpectrum -> N: "
       << N[i] << std::endl;
     }
-  }
-}
-
-void PrimaryGeneratorAction::CheckFile(const char* filename)
-{
-  if(gSystem->AccessPathName(filename))
-  {
-    std::cout << "PrimaryGeneratorAction::CheckFile -> File " << filename << " Not Found." << std::endl;
-    exit(1);
   }
 }
