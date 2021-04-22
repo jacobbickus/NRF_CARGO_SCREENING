@@ -76,7 +76,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       tBrems = 0;
       tSample = 0;
       hSample = 0;
-      
+
       ifm->ReadWeightedInput(inFile.c_str(), tBrems, tSample, hSample);
 
       file_check = false;
@@ -138,9 +138,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if(debug && anEvent->GetEventID() == 0)
     {
       std::cout << "PrimaryGeneratorAction::GeneratePrimaries -> First Primary Generated." << std::endl;
-      if(!file_check)
-        hSample->Print();
-
     }
 
     G4double w = 1.;

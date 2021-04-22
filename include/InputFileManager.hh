@@ -54,7 +54,12 @@ public:
     return instance;
   }
 
-  void CloseInputFile(){if(fFileOpen) fin->Close();}
+  void CloseInputFile()
+  {
+    if(fFileOpen) fin->Close();
+    fFileOpen = false;
+  }
+  
   void CheckFile(const char*);
   void ReadWeightedInput(const char*, TGraph* &tBrems, TGraph* &tSample, TH1D* &hSample);
   void ReadNonWeightedInput(const char*, TGraph* &tBrems);
