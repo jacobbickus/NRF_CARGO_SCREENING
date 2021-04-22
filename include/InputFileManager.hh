@@ -32,10 +32,11 @@
 
 #include "TFile.h"
 #include "TROOT.h"
-#include "TSystem.h"
-#include "TH1.h"
 #include "TH1D.h"
 #include "TGraph.h"
+#include "TRandom2.h"
+#include "TSystem.h"
+#include "TMath.h"
 
 
 class InputFileManager
