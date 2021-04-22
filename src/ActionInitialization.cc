@@ -24,6 +24,7 @@
 
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
+#include "DetResponsePrimaryGenerator.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 #include "SteppingBremTest.hh"
@@ -56,9 +57,22 @@ void ActionInitialization::Build() const
         std::cout << "ActionInitialization::Build() -> Begin!" << std::endl;
 
     Analysis* analysis = new Analysis();
-    PrimaryGeneratorAction* pga = new PrimaryGeneratorAction();
-    SetUserAction(pga);
-    SetUserAction(new RunAction(analysis,pga));
+
+    DetResponsePrimaryGenerator* detResponsePga = 0;
+    PrimaryGeneratorAction* pga = 0;
+    if(detTest)
+    {
+      detResponsePga = new DetResponsePrimaryGenerator();
+      SetUserAction(detResponsePga);
+      SetUserAction(new RunAction(analysis, detResponsePga));
+    }
+    else
+    {
+      pga = new PrimaryGeneratorAction();
+      SetUserAction(pga);
+      SetUserAction(new RunAction(analysis,pga));
+    }
+
     EventActionWResponseFunction* eventWResponseFunction = 0;
     EventAction* event = 0;
 

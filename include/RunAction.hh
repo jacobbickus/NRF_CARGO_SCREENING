@@ -35,12 +35,14 @@
 #include "G4UnitsTable.hh"
 #include "RunInformation.hh"
 #include "PrimaryGeneratorAction.hh"
+#include "DetResponsePrimaryGenerator.hh"
 #include "DetectorResponseFunction.hh"
 
 class RunAction : public G4UserRunAction
 {
   public:
     RunAction(Analysis*, PrimaryGeneratorAction*);
+    RunAction(Analysis*, DetResponsePrimaryGenerator*);
     virtual ~RunAction();
 
   public:

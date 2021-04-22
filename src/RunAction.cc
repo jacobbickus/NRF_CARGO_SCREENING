@@ -33,6 +33,11 @@ RunAction::RunAction(Analysis* histoAnalysis, PrimaryGeneratorAction* pga)
 {
 }
 
+RunAction::RunAction(Analysis* histoAnalysis, DetResponsePrimaryGenerator* pga)
+: G4UserRunAction(), fAnalysis(histoAnalysis), fpga(pga)
+{
+}
+
 RunAction::~RunAction()
 {
 }
@@ -43,7 +48,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
   {
     fAnalysis->Book();
   }
-  
+
   if(debug)
     std::cout << "RunAction::BeginOfRunAction -> Beginning Run..." << std::endl;
 
