@@ -63,6 +63,7 @@ virtual void GeneratePrimaries(G4Event*);
 
 private:
   G4double beam_size_x, beam_size_y;
+  G4ParticleGun* fParticleGun;
 
 };
 
