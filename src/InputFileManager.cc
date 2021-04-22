@@ -41,7 +41,7 @@ InputFileManager::~InputFileManager()
 }
 
 
-void InputFileManager::ReadWeightedInput(const char* inFile, TGraph &tBrems, TGraph &tSample, TH1D &hSample)
+void InputFileManager::ReadWeightedInput(const char* inFile, TGraph &tBrems, TGraph &tSample, TH1D &hSample) const 
 {
   if(debug)
     std::cout << "InputFileManager::ReadWeightedInput -> Importing weighted data..." << std::endl;
@@ -61,7 +61,7 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph &tBrems, TGr
   fFileOpen = false;
 }
 
-void InputFileManager::ReadNonWeightedInput(const char* inFile, TGraph &tBrems)
+void InputFileManager::ReadNonWeightedInput(const char* inFile, TGraph &tBrems) const
 {
   if(debug)
     std::cout << "InputFileManager::ReadNonWeightedInput -> Importing non-weighted data..." << std::endl;
