@@ -35,6 +35,7 @@
 #include "G4UnitsTable.hh"
 #include "RunInformation.hh"
 #include "DetectorResponseFunction.hh"
+#include "InputFileManager.hh"
 
 class RunAction : public G4UserRunAction
 {

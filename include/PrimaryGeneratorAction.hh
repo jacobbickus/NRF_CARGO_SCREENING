@@ -66,6 +66,8 @@ G4ParticleGun* GetParticleGun()
 {
   return fParticleGun;
 };
+
+// For PGA Messenger
 void SetBeamSize(G4double x)
 {
   beam_size = x;
@@ -73,22 +75,23 @@ void SetBeamSize(G4double x)
 }
 
 private:
-  void CreateInputSpectrum(TGraph*);
-  G4double SampleUResonances();
-  G4double SampleEnergyRange(double,double);
-
-private:
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
   G4double beamStart;
   G4double beam_size, energy;
   G4bool file_check;
-  std::vector<double> energies, N;
   // ROOT
-  TRandom2 Random;
   TGraph *tBrems;
   TGraph *tSample;
   TH1D   *hSample;
+  TRandom2 Random;
+
+protected:
+  void CreateInputSpectrum(TGraph*);
+  G4double SampleUResonances();
+  G4double SampleEnergyRange(double,double);
+  std::vector<double> energies, N;
+
 };
 
 #endif

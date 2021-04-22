@@ -52,6 +52,10 @@ void RunAction::BeginOfRunAction(const G4Run*)
 
 void RunAction::EndOfRunAction(const G4Run* aRun)
 {
+  InputFileManager *ifm = InputFileManager::Instance();
+  ifm->CloseInputFile();
+  G4cout << G4endl << "RunAction::EndOfRunAction -> Input File Closed." << G4endl;
+  
   if(WResponseFunction)
   {
     DetectorResponseFunction* dResponse = DetectorResponseFunction::Instance();
