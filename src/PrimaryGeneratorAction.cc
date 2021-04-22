@@ -76,6 +76,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       tBrems = 0;
       tSample = 0;
       hSample = 0;
+      
       ifm->ReadWeightedInput(inFile.c_str(), tBrems, tSample, hSample);
 
       file_check = false;

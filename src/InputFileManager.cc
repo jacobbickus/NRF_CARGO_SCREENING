@@ -52,7 +52,7 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
   fin->cd();
   fin->GetObject("Graph_from_hBrems",tBrems);
   fin->GetObject("Graph_from_hSample_short",tSample);
-  fin->GetObject("hSample_long",hSample);
+  hSample = (TH1D*) fin->Get("hSample_long");
   CloseInputFile();
 
   if(debug)

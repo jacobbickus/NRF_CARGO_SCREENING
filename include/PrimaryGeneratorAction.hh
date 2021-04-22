@@ -88,7 +88,7 @@ private:
   TRandom2 Random;
   TGraph *tBrems;
   TGraph *tSample;
-  TH1D* hSample;
+  TH1D   *hSample;
 };
 
 #endif
