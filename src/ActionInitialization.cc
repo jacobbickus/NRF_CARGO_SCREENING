@@ -58,20 +58,12 @@ void ActionInitialization::Build() const
 
     Analysis* analysis = new Analysis();
 
-    DetResponsePrimaryGenerator* detResponsePga = 0;
-    PrimaryGeneratorAction* pga = 0;
     if(detTest)
-    {
-      detResponsePga = new DetResponsePrimaryGenerator();
-      SetUserAction(detResponsePga);
-      SetUserAction(new RunAction(analysis, detResponsePga));
-    }
+      SetUserAction(new DetResponsePrimaryGenerator());
     else
-    {
-      pga = new PrimaryGeneratorAction();
-      SetUserAction(pga);
-      SetUserAction(new RunAction(analysis,pga));
-    }
+      SetUserAction(new PrimaryGeneratorAction());
+
+    SetUserAction(new RunAction(analysis));
 
     EventActionWResponseFunction* eventWResponseFunction = 0;
     EventAction* event = 0;

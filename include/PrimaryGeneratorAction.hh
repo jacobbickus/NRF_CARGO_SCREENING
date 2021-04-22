@@ -39,6 +39,7 @@
 #include "eventInformation.hh"
 #include "SourceInformation.hh"
 #include "DetectorInformation.hh"
+#include "InputFileManager.hh"
 
 #include "TFile.h"
 #include "TROOT.h"
@@ -87,14 +88,13 @@ private:
   G4ParticleGun* fParticleGun;
   G4double beamStart, beamMax;
   G4double beam_size, energy;
-  G4bool file_check, fFileOpen;
+  G4bool file_check;
   std::vector<double> energies, N;
   // ROOT
   TRandom2 Random;
   TGraph *tBrems;
-  TGraph *gSample;
+  TGraph *tSample;
   TH1D* hSample;
-  TFile *fin;
 };
 
 #endif

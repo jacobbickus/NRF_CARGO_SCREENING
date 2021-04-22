@@ -70,33 +70,36 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   {
     gRandom->SetSeed(seed);
 
-    CheckFile(inFile.c_str());
-    fin = TFile::Open(inFile.c_str());
-    fFileOpen = true;
-    fin->cd();
-    tBrems  = (TGraph*) fin->Get("Graph_from_hBrems");
+    InputFileManager* ifm = InputFileManager::Instance();
 
-    if(!tBrems)
-    {
-      G4cerr << "PrimaryGeneratorAction::PrimaryActionGenerator FATAL ERROR -> hBrems Fail." << G4endl;
-      exit(1);
-    }
-    SetBeamMax(TMath::MaxElement(tBrems->GetN(), tBrems->GetX()));
     if(!inFile.compare("brems_distributions.root"))
     {
-        file_check = false;
-        gSample = (TGraph*) fin->Get("Graph_from_hSample_short");
-        hSample = (TH1D*) fin->Get("hSample_long");
+      ifm->ReadWeightedInput(inFile.c_str(), tBrems, tSample, hSample);
 
-        if(!gSample || !hSample)
-        {
-          G4cerr << "PrimaryGeneratorAction::PrimaryGeneratorAction() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
-          exit(1);
-        }
-        G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading SAMPLED Distribution from: " << inFile << G4endl;
+      if(debug)
+      {
+        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Checking Sampled Distribution: " << std::endl;
+        tBrems->Print();
+      }
+
+      file_check = false;
+
+      if(!tSample || !hSample)
+      {
+        G4cerr << "PrimaryGeneratorAction::PrimaryGeneratorAction() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
+        exit(1);
+      }
+      G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading SAMPLED Distribution from: " << inFile << G4endl;
     }
     else
     {
+      ifm->ReadNonWeightedInput(inFile.c_str(), tBrems);
+
+      if(debug)
+      {
+        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Checking Non-Sampled Distribution: " << std::endl;
+        tBrems->Print();
+      }
       file_check = true;
 
       if(debug)
@@ -105,6 +108,13 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       CreateInputSpectrum(tBrems);
       G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
     }
+
+    if(!tBrems)
+    {
+      G4cerr << "PrimaryGeneratorAction::PrimaryActionGenerator FATAL ERROR -> hBrems Fail." << G4endl;
+      exit(1);
+    }
+    SetBeamMax(TMath::MaxElement(tBrems->GetN(), tBrems->GetX()));
 
   } // end of chosen_energy < 0
   else if(resonanceTest)
@@ -151,7 +161,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
         // range, a linear extrapolation is computed. Eval here returns the
         // probability per 5 eV for each respective distribution
         G4double dNdE = tBrems->Eval(energy);
-        G4double importanceSampling = gSample->Eval(energy);
+        G4double importanceSampling = tSample->Eval(energy);
         // Create importance weighting based on the two distributions probability
         w = dNdE/importanceSampling;
       }

@@ -22,34 +22,47 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef RunAction_h
-#define RunAction_h 1
+#ifndef InputFileManager_h
+#define InputFileManager_h 1
 
 #include "globals.hh"
-#include "G4UserRunAction.hh"
-#include <vector>
-#include "G4Run.hh"
-#include "Analysis.hh"
-#include "G4RunManager.hh"
+#include "G4Types.hh"
+#include "G4ios.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4UnitsTable.hh"
-#include "RunInformation.hh"
-#include "DetectorResponseFunction.hh"
 
-class RunAction : public G4UserRunAction
+#include "TFile.h"
+#include "TROOT.h"
+#include "TSystem.h"
+#include "TH1.h"
+#include "TGraph.h"
+
+
+class InputFileManager
 {
-  public:
-    RunAction(Analysis*);
-    virtual ~RunAction();
+  static InputFileManager *instance;
 
-  public:
+  InputFileManager();
+public:
+  static InputFileManager *Instance()
+  {
+    if(!instance)
+    {
+      instance = new InputFileManager;
+    }
+    return instance;
+  }
 
-    virtual void BeginOfRunAction(const G4Run*);
-    virtual void EndOfRunAction(const G4Run*);
+  void CloseInputFile(){if(fFileOpen) fin->Close();}
+  void CheckFile(const char*);
+  void ReadWeightedInput(const char*, TGraph*, TGraph*, TH1D*);
+  void ReadNonWeightedInput(const char*, TGraph*);
 
-  private:
-    Analysis* fAnalysis;
+private:
+
+TFile *fin;
+G4bool fFileOpen;
+
+~InputFileManager();
 };
-
 
 #endif
