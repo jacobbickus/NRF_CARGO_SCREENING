@@ -53,8 +53,9 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
   fin->ls();
   fin->GetObject("Graph_from_hBrems",tBrems);
   fin->GetObject("Graph_from_hSample_short",tSample);
-  fin->GetObject("hSample_long", hSample);
-  if(hSample == 0)
+  TH1D* hSample_long = 0;
+  fin->GetObject("hSample_long", hSample_long);
+  if(hSample_long == 0)
     std::cerr << "InputFileManager::ReadWeightedInput -> ERROR hSample_long is NULL Pointer." << std::endl;
   CloseInputFile();
 
@@ -63,8 +64,9 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
     tBrems->Print();
     std::cout << std::endl << std::endl << "tSample: " << std::endl << std::endl;
     tSample->Print();
-        std::cout << std::endl << std::endl << "hSample: " << std::endl << std::endl;
-    hSample->Print();
+    std::cout << std::endl << std::endl << "hSample: " << std::endl << std::endl;
+
+    hSample_long->Print();
   }
 
   fFileOpen = false;
