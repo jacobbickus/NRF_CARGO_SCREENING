@@ -32,8 +32,7 @@ extern G4double uniform_width;
 extern G4bool debug;
 
 DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
-        : G4VUserPrimaryGeneratorAction(), pgaM(NULL),
-        fParticleGun(0),fFileOpen(false)
+        : G4VUserPrimaryGeneratorAction(), fParticleGun(0), fFileOpen(false)
 {
   fParticleGun = new G4ParticleGun(1);
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
