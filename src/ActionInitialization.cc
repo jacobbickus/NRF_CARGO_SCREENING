@@ -36,6 +36,7 @@
 #include "Analysis.hh"
 #include "G4Types.hh"
 #include "DetectorResponseFunction.hh"
+#include "SourceInformation.hh"
 
 extern G4bool debug;
 extern G4bool detTest;
@@ -70,10 +71,12 @@ void ActionInitialization::Build() const
 
     if(WResponseFunction)
     {
+      SourceInformation* sInfo = SourceInformation::Instance();
+      G4double beamMax = sInfo->GetBeamMax();
       if(debug)
-        std::cout << "ActionInitialization::Build() -> Beam Max Energy: " << pga->GetBeamMax() << " MeV" << std::endl;
+        std::cout << "ActionInitialization::Build() -> Beam Max Energy: " << beamMax << " MeV" << std::endl;
 
-      DetectorResponseFunction* r_function = DetectorResponseFunction::Instance(pga->GetBeamMax());
+      DetectorResponseFunction* r_function = DetectorResponseFunction::Instance(beamMax);
       eventWResponseFunction = new EventActionWResponseFunction();
       SetUserAction(eventWResponseFunction);
     }

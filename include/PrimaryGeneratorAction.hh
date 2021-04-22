@@ -72,9 +72,6 @@ void SetBeamSize(G4double x)
   G4cout << "PrimaryGeneratorAction::BeamSize set to: " << beam_size << " mm" << G4endl;
 }
 
-void SetBeamMax(G4double maxE){beamMax = maxE;}
-G4double GetBeamMax()const {return beamMax;}
-
 private:
   void CreateInputSpectrum(TGraph*);
   G4double SampleUResonances();
@@ -83,7 +80,7 @@ private:
 private:
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
-  G4double beamStart, beamMax;
+  G4double beamStart;
   G4double beam_size, energy;
   G4bool file_check;
   std::vector<double> energies, N;
