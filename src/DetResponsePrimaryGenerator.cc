@@ -38,7 +38,7 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   beamStart = -10.0;
   beam_size_x = 30.0*cm;
-  beam_size_y = 150.0*cm;
+  beam_size_y = 200.0*cm;
   G4cout << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator -> Particle Type set to Gamma!" << G4endl;
 
 
