@@ -53,6 +53,10 @@ public:
   Collimator();
   ~Collimator();
   void Construct(G4LogicalVolume*, bool);
+
+private:
+  G4Cons* solidBremCollimator;
+  G4LogicalVolume* logicBremCollimator;
 };
 
 #endif
