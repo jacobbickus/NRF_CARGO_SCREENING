@@ -79,9 +79,13 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
   G4double shift_factor = detInfo->GetShiftFactor();
   G4double bremStartPos = detInfo->GetBremStartPosition();
   G4double linac_size = detInfo->GetLinacSize();
-  G4double container_edge_position = detInfo->GetContainerEdgePosition();
+  G4double container_edge_position = 0.;
+  if(!bremTest)
+    container_edge_position = detInfo->GetContainerEdgePosition();
+
   SourceInformation* sInfo = SourceInformation::Instance();
   G4double source_z_pos = sInfo->GetSourceZPosition();
+
   if(bremTest)
     chopper_z = (linac_size + 2*cm);
 
@@ -100,14 +104,17 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
           << chopper_end_edge_position/(cm) << " cm" << G4endl;
   detInfo->setEndChop(chopper_end_edge_position);
 
-  if(chopper_end_edge_position > container_edge_position)
+  if(!bremTest)
   {
-    G4cerr << "ChopperSetup::Construct -> ERROR: Chopper wheel location should be behind cargo container, exiting." << G4endl;
-    G4cerr << "ChopperSetup::Construct -> Chopper End Edge Position -> "
-            << chopper_end_edge_position/(cm) << " cm" << G4endl;
-    G4cerr << "ChopperSetup::Construct -> Container Edge Position -> "
-            << container_edge_position/(cm) << " cm" << G4endl;
-    exit(100);
+    if(chopper_end_edge_position > container_edge_position)
+    {
+      G4cerr << "ChopperSetup::Construct -> ERROR: Chopper wheel location should be behind cargo container, exiting." << G4endl;
+      G4cerr << "ChopperSetup::Construct -> Chopper End Edge Position -> "
+              << chopper_end_edge_position/(cm) << " cm" << G4endl;
+      G4cerr << "ChopperSetup::Construct -> Container Edge Position -> "
+              << container_edge_position/(cm) << " cm" << G4endl;
+      exit(100);
+    }
   }
 
   G4Tubs *solidChopper = new G4Tubs("Chop", 0*cm, 4.5*cm, chopper_thick/2, 0.*deg, 180.*deg);
@@ -124,13 +131,13 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
 
     if(chopperOn)
     {
-            chopper_U235_abundance = chopper_radio_abundance;
-            chopper_U238_abundance = 100. - chopper_radio_abundance;
+      chopper_U235_abundance = chopper_radio_abundance;
+      chopper_U238_abundance = 100. - chopper_radio_abundance;
     }
     else
     {
-            chopper_U235_abundance = 100. - chopper_radio_abundance;
-            chopper_U238_abundance = chopper_radio_abundance;
+      chopper_U235_abundance = 100. - chopper_radio_abundance;
+      chopper_U238_abundance = chopper_radio_abundance;
     }
 
     Uranium_chopper->AddIsotope(Uranium235, chopper_U235_abundance*perCent);
