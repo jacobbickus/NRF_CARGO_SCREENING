@@ -93,7 +93,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
   detInfo->setBremStartPosition(bremStartPos);
   G4double container_z_pos = 1.2192*m + 1.5*m - shift_factor;
   detInfo->setContainerZPosition(container_z_pos);
-  G4double container_edge_position = container_z_pos - 1.2192*m - shift_factor;
+  G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
   G4double linac_size = 4.5*cm;
   detInfo->setLinac_Size(linac_size);
