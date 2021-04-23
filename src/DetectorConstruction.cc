@@ -34,7 +34,7 @@ DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Linac* Linac, 
         // Attenuator Properties
         attenuatorState(false), attenuatorState2(false), attenThickness(0.001*mm), attenThickness2(0.001*mm), attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"),
         // Water Tank properties
-        theAngle(120.0), water_size_x(60*cm), water_size_y(129.54*cm), water_size_z(40*cm),
+        theAngle(120.0), water_size_x(28*cm), water_size_y(225*cm), water_size_z(30*cm),
         // plexi/tape properties
         plexiThickness(0.18*mm), tapeThick(0.01*cm),
         // PMT Properties
