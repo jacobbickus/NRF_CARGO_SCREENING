@@ -37,6 +37,7 @@
 class DetectorConstruction;
 class G4UIcmdWithADouble;
 class G4UIcmdWithAString;
+class G4UIcmdWithAnInteger;
 class G4UIdirectory;
 
 class DetectorMessenger: public G4UImessenger
