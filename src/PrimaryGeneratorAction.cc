@@ -48,7 +48,6 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   if(bremTest)
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
-    DetectorInformation* detInfo = DetectorInformation::Instance();
     beamStart = 128.9; // start brem beam 1 cm behind brem radiator
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
@@ -56,7 +55,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   else
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
-    beamStart = 135.9;
+    DetectorInformation* detInfo = DetectorInformation::Instance();
+    G4double shift_factor = detInfo->GetShiftFactor();
+    beamStart = 135.9 - shift_factor;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 

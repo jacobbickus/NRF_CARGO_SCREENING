@@ -27,6 +27,7 @@
 DetectorInformation *DetectorInformation::instance = 0;
 
 DetectorInformation::DetectorInformation()
+: shift_factor(0.)
 {}
 
 DetectorInformation::~DetectorInformation()
