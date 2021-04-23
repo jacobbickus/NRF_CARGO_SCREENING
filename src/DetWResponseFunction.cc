@@ -87,9 +87,9 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
                             false); //overlaps checking
 
   DetectorInformation* detInfo = DetectorInformation::Instance();
-  G4double bremStartPos = -50.;
+  G4double bremStartPos = detInfo->GetShiftFactor();
   detInfo->setBremStartPosition(bremStartPos);
-  G4double container_z_pos = 1.2192*m + 1.5*m - 185.9*cm;
+  G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos);
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
