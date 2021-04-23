@@ -39,8 +39,6 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
   beamStart = -10.0;
   beam_size_x = 30.0*cm;
   beam_size_y = 200.0*cm;
-  G4cout << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator -> Particle Type set to Gamma!" << G4endl;
-
 
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);
@@ -65,10 +63,9 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
 
       if(!tSample || !hSample)
       {
-        G4cerr << "PrimaryGeneratorAction::PrimaryGeneratorAction() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
+        G4cerr << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
         exit(1);
       }
-      G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading SAMPLED Distribution from: " << inFile << G4endl;
     }
     else
     {
@@ -76,17 +73,15 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
       file_check = true;
 
       if(debug)
-        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Calling CreateInputSpectrum..." << std::endl;
+        std::cout << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator -> Calling CreateInputSpectrum..." << std::endl;
 
       CreateInputSpectrum(tBrems);
-      G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
     }
 
   } // end of chosen_energy < 0
   else
   {
     file_check = false;
-    G4cout << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator Chosen Energy set to: " << chosen_energy << " MeV" << G4endl;
     sInfo->SetBeamMax(chosen_energy);
   }
 
