@@ -46,7 +46,7 @@ public:
   ~DetectorMessenger();
 
   void SetNewValue(G4UIcommand*, G4String); // must always be a string input
-private:
+protected:
   DetectorConstruction* DetectorA;
   G4UIcmdWithADouble* Cmd;
   G4UIcmdWithADouble* CmdX;
