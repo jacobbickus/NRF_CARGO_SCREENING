@@ -52,13 +52,15 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double rearCol_Z_pos = bremStartPos*cm - linac_size - 50.0*cm;
   detInfo->setRearCollimatorPosition(rearCol_Z_pos);
 
-  G4Box *solidCollimator =
-                        new G4Box("Collimator", 1*cm, water_size_y, colimator_size);
+  if(!bremTest)
+  {
+    solidCollimator = new G4Box("Collimator", 1*cm, water_size_y, colimator_size);
+    logicCollimator = new G4LogicalVolume(solidCollimator, lead, "Collimator");
+  }
+
   G4double rear_col_z_size = 5*cm;
   G4Box *solidCollimatorRear =
                         new G4Box("Collimator",0.3048*m - 2*cm, water_size_y, rear_col_z_size);
-  G4LogicalVolume *logicCollimator =
-                        new G4LogicalVolume(solidCollimator, lead, "Collimator");
   G4LogicalVolume *logicCollimatorRear =
                         new G4LogicalVolume(solidCollimatorRear, lead, "Collimator");
 
@@ -83,15 +85,19 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
     << col_edge_position/(cm) << " cm" << G4endl << G4endl;
   }
 
-  new G4PVPlacement(0, G4ThreeVector(-0.3048*m - 1*cm, 0, col_position),
-                    logicCollimator, "ColL-Pb", logicWorld,
-                    false, 0, checkOverlaps);
-  new G4PVPlacement(0, G4ThreeVector(0.3048*m + 1*cm, 0, col_position),
-                    logicCollimator, "ColRi-Pb", logicWorld,
-                    false, 0, checkOverlaps);
-  if(bremTest)
+  if(!bremTest)
+  {
+    new G4PVPlacement(0, G4ThreeVector(-0.3048*m - 1*cm, 0, col_position),
+                      logicCollimator, "ColL-Pb", logicWorld,
+                      false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.3048*m + 1*cm, 0, col_position),
+                      logicCollimator, "ColRi-Pb", logicWorld,
+                      false, 0, checkOverlaps);
+  }
+  else
     rearCol_Z_pos = bremStartPos - linac_size - rear_col_z_size;
 
+  // Place Rear collimator for both bremTest and !bremTest 
   new G4PVPlacement(0, G4ThreeVector(0,0,rearCol_Z_pos),
                     logicCollimatorRear, "ColRe-Pb", logicWorld,
                     false, 0, checkOverlaps);

@@ -48,7 +48,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   if(bremTest)
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
-    beamStart = 128.9; // start brem beam 1 cm behind brem radiator
+    beamStart = 0.; // start brem beam 1 cm behind brem radiator
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Electron!" << G4endl;
     file_check = false;
   }
