@@ -27,7 +27,6 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "ChopperSetup.hh"
-#include "Linac.hh"
 #include "Collimator.hh"
 #include "Cargo.hh"
 #include "MaterialProperties.hh"
@@ -73,7 +72,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 {
 
 public:
-DetectorConstruction(ChopperSetup*, Linac*, Collimator*, Cargo*);
+DetectorConstruction(ChopperSetup*, Collimator*, Cargo*);
 virtual ~DetectorConstruction();
 
 
@@ -131,7 +130,6 @@ void DefDetPositionConstraintRight(double, double, double, double);
 void DefDetPositionConstraintUpper(double, double, double);
 // Chopper
 ChopperSetup* chop;
-Linac* linac;
 Collimator* collimator;
 Cargo* cargo;
 

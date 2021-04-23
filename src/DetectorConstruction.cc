@@ -24,13 +24,12 @@
 
 #include "DetectorConstruction.hh"
 
-extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool debug;
 
-DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator, Cargo* Cargo)
+DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
         : G4VUserDetectorConstruction(),
-        chop(Chopper), linac(Linac), collimator(Collimator), cargo(Cargo),
+        chop(Chopper), collimator(Collimator), cargo(Cargo),
         // Attenuator Properties
         attenuatorState(false), attenuatorState2(false), attenThickness(0.001*mm), attenThickness2(0.001*mm), attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"),
         // Water Tank properties
@@ -120,13 +119,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double bremStartPos = detInfo->GetShiftFactor();
   detInfo->setBremStartPosition(bremStartPos);
-  G4double container_z_pos;
+  G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
 
-  if(bremTest)
-    container_z_pos = 1.2192*m + 1.5*m;
-  else
-    container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
-    
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
@@ -137,15 +131,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   if(!detTest)
   {
     chop->Construct(logicWorld, checkOverlaps);
-    // Set up Linac configuration if Brem Test
-
-    if(bremTest)
-    {
-      linac->Construct(logicWorld, checkOverlaps);
-    }
-
-    // ***************************************** End of Brem Test Materials ***************************************** //
-
     collimator->Construct(logicWorld, checkOverlaps);
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();
@@ -433,7 +418,6 @@ physPC = new G4PVPlacement(0,
     G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
     casingOPMPT->DumpTable();
   }
-       // } // for if !bremTest
 
 //always return the physical World!!!
   if(debug)
