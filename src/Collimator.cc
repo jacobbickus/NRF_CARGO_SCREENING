@@ -59,6 +59,10 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   }
 
   G4double rear_col_z_size = 5*cm;
+  if(bremTest)
+  {
+    water_size_y = 50*cm;
+  }
   G4Box *solidCollimatorRear =
                         new G4Box("Collimator",0.3048*m - 2*cm, water_size_y, rear_col_z_size);
   G4LogicalVolume *logicCollimatorRear =
@@ -97,7 +101,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   else
     rearCol_Z_pos = bremStartPos - linac_size - rear_col_z_size;
 
-  // Place Rear collimator for both bremTest and !bremTest 
+  // Place Rear collimator for both bremTest and !bremTest
   new G4PVPlacement(0, G4ThreeVector(0,0,rearCol_Z_pos),
                     logicCollimatorRear, "ColRe-Pb", logicWorld,
                     false, 0, checkOverlaps);
