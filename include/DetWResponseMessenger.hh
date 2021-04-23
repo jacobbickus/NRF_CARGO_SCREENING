@@ -27,13 +27,15 @@
 
 #include "globals.hh"
 #include "DetWResponseFunction.hh"
+#include "DetectorMessenger.hh"
 
 class DetWResponseFunction;
 
-class DetWResponseMessenger: public DetectorMessenger
+class DetWResponseMessenger : public DetectorMessenger
 {
+
 public:
-  DetWResponseMessenger(DetWResponseFunction*);
+   DetWResponseMessenger(DetWResponseFunction*);
   ~DetWResponseMessenger();
   void SetNewValue(G4UIcommand*, G4String);
 
