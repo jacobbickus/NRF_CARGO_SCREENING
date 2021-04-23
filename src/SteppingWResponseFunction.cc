@@ -172,24 +172,6 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
 // *********************************************** Track Chopper Interactions **************************************************** //
 
     // Chopper Analysis
-    if(drawChopperIncDataFlag)
-    {
-      // Gammas Incident Chopper Wheel
-      if(nextStep_VolumeName.compare("Chop") == 0
-         && previousStep_VolumeName.compare("Chop") != 0
-         && theTrack->GetParticleDefinition() == G4Gamma::Definition())
-      {
-        manager->FillNtupleIColumn(1,0, eventID);
-        manager->FillNtupleDColumn(1,1, energy);
-        manager->FillNtupleDColumn(1,2, loc.x());
-        manager->FillNtupleDColumn(1,3, loc.y());
-
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(1,4, weight);
-
-        manager->AddNtupleRow(1);
-      }
-    }
 
     // Gammas Exiting Chopper Wheel
     if(nextStep_VolumeName.compare("Chop") != 0
@@ -208,23 +190,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
         return;
       }
       else
-      {
-        if(drawChopperOutDataFlag)
-        {
-          manager->FillNtupleIColumn(2,0,eventID);
-          manager->FillNtupleDColumn(2,1, energy);
-          manager->FillNtupleDColumn(2,2,theta);
-          manager->FillNtupleDColumn(2,3, phi);
-
-          if(WEIGHTED)
-            manager->FillNtupleDColumn(2,4, weight);
-
-          manager->AddNtupleRow(2);
-          return;
-        }
-        else
-          return;
-      }
+        return;
     }
 
 // *********************************************** Track Interrogation Object Interactions **************************************************** //
@@ -235,20 +201,20 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       if(nextStep_VolumeName.compare("IntObj") == 0
          && previousStep_VolumeName.compare("IntObj") != 0)
       {
-          manager->FillNtupleIColumn(3,0,eventID);
-          manager->FillNtupleIColumn(3,1,trackID);
-          manager->FillNtupleDColumn(3,2, energy);
-          manager->FillNtupleDColumn(3,3, beamEnergy);
-          manager->FillNtupleSColumn(3,4, CPName);
-          manager->FillNtupleDColumn(3,5,theta);
-          manager->FillNtupleDColumn(3,6,phi);
-          manager->FillNtupleDColumn(3,7,theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(3,8,seed);
+          manager->FillNtupleIColumn(1,0,eventID);
+          manager->FillNtupleIColumn(1,1,trackID);
+          manager->FillNtupleDColumn(1,2, energy);
+          manager->FillNtupleDColumn(1,3, beamEnergy);
+          manager->FillNtupleSColumn(1,4, CPName);
+          manager->FillNtupleDColumn(1,5,theta);
+          manager->FillNtupleDColumn(1,6,phi);
+          manager->FillNtupleDColumn(1,7,theTrack->GetGlobalTime());
+          manager->FillNtupleIColumn(1,8,seed);
 
           if(WEIGHTED)
-            manager->FillNtupleDColumn(3,9, weight);
+            manager->FillNtupleDColumn(1,9, weight);
 
-          manager->AddNtupleRow(3);
+          manager->AddNtupleRow(1);
           return;
       }
     }
@@ -267,20 +233,20 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       {
         if(drawIntObjOutDataFlag)
         {
-          manager->FillNtupleIColumn(4,0, eventID);
-          manager->FillNtupleIColumn(4,1, trackID);
-          manager->FillNtupleDColumn(4,2, energy);
-          manager->FillNtupleDColumn(4,3, beamEnergy);
-          manager->FillNtupleSColumn(4,4, CPName);
-          manager->FillNtupleDColumn(4,5, theta);
-          manager->FillNtupleDColumn(4,6, phi);
-          manager->FillNtupleDColumn(4,7, theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(4,8,seed);
+          manager->FillNtupleIColumn(2,0, eventID);
+          manager->FillNtupleIColumn(2,1, trackID);
+          manager->FillNtupleDColumn(2,2, energy);
+          manager->FillNtupleDColumn(2,3, beamEnergy);
+          manager->FillNtupleSColumn(2,4, CPName);
+          manager->FillNtupleDColumn(2,5, theta);
+          manager->FillNtupleDColumn(2,6, phi);
+          manager->FillNtupleDColumn(2,7, theTrack->GetGlobalTime());
+          manager->FillNtupleIColumn(2,8,seed);
 
           if(WEIGHTED)
-            manager->FillNtupleDColumn(4,9, weight);
+            manager->FillNtupleDColumn(2,9, weight);
 
-          manager->AddNtupleRow(4);
+          manager->AddNtupleRow(2);
           return;
         }// end if drawIntObjOutDataFlag
         else
@@ -296,17 +262,17 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       if(nextStep_VolumeName.compare(0,5,"Atten") == 0
           && previousStep_VolumeName.compare("World") == 0)
       {
-        manager->FillNtupleIColumn(5,0, eventID);
-        manager->FillNtupleIColumn(5,1, seed);
-        manager->FillNtupleIColumn(5,2, trackID);
-        manager->FillNtupleDColumn(5,3, energy);
-        manager->FillNtupleDColumn(5,4, beamEnergy);
-        manager->FillNtupleDColumn(5,5, theTrack->GetGlobalTime());
-        manager->FillNtupleSColumn(5,6, CPName);
+        manager->FillNtupleIColumn(3,0, eventID);
+        manager->FillNtupleIColumn(3,1, seed);
+        manager->FillNtupleIColumn(3,2, trackID);
+        manager->FillNtupleDColumn(3,3, energy);
+        manager->FillNtupleDColumn(3,4, beamEnergy);
+        manager->FillNtupleDColumn(3,5, theTrack->GetGlobalTime());
+        manager->FillNtupleSColumn(3,6, CPName);
         if(WEIGHTED)
-          manager->FillNtupleDColumn(5,7, weight);
+          manager->FillNtupleDColumn(3,7, weight);
 
-        manager->AddNtupleRow(5);
+        manager->AddNtupleRow(3);
         return;
       }
     }
@@ -316,20 +282,20 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
         && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
     {
-      manager->FillNtupleIColumn(6,0, eventID);
-      manager->FillNtupleIColumn(6,1, seed);
-      manager->FillNtupleIColumn(6,2, trackID);
-      manager->FillNtupleDColumn(6,3, energy);
-      manager->FillNtupleDColumn(6,4, beamEnergy);
-      manager->FillNtupleDColumn(6,5, theTrack->GetGlobalTime());
-      manager->FillNtupleDColumn(6,6, theta);
-      manager->FillNtupleDColumn(6,7, phi);
-      manager->FillNtupleSColumn(6,8, CPName);
+      manager->FillNtupleIColumn(4,0, eventID);
+      manager->FillNtupleIColumn(4,1, seed);
+      manager->FillNtupleIColumn(4,2, trackID);
+      manager->FillNtupleDColumn(4,3, energy);
+      manager->FillNtupleDColumn(4,4, beamEnergy);
+      manager->FillNtupleDColumn(4,5, theTrack->GetGlobalTime());
+      manager->FillNtupleDColumn(4,6, theta);
+      manager->FillNtupleDColumn(4,7, phi);
+      manager->FillNtupleSColumn(4,8, CPName);
 
       if(WEIGHTED)
-        manager->FillNtupleDColumn(6,9, weight);
+        manager->FillNtupleDColumn(4,9, weight);
 
-      manager->AddNtupleRow(6);
+      manager->AddNtupleRow(4);
 
       kevent->SetIncidentEnergy(energy);
 

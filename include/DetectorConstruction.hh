@@ -79,30 +79,12 @@ virtual ~DetectorConstruction();
 
 virtual G4VPhysicalVolume* Construct();
 
-void SetAttenuatorState(G4bool val)
-{
-  attenuatorState = val;
-}
-void SetAttenuatorThickness(G4double val)
-{
-   attenThickness = val;
-}
-void SetAttenuatorMaterial(G4String val)
-{
-  attenuatorMat = val;
-}
-void SetAttenuatorState2(G4bool val)
-{
-  attenuatorState2 = val;
-}
-void SetAttenuatorThickness2(G4double val)
-{
-   attenThickness2 = val;
-}
-void SetAttenuatorMaterial2(G4String val)
-{
-  attenuatorMat2 = val;
-}
+void SetAttenuatorState(G4bool val){attenuatorState = val;}
+void SetAttenuatorThickness(G4double val){attenThickness = val;}
+void SetAttenuatorMaterial(G4String val){attenuatorMat = val;}
+void SetAttenuatorState2(G4bool val){attenuatorState2 = val;}
+void SetAttenuatorThickness2(G4double val){attenThickness2 = val;}
+void SetAttenuatorMaterial2(G4String val){attenuatorMat2 = val;}
 void SetWaterX(G4double val)
 {
         water_size_x = val;
@@ -187,6 +169,4 @@ G4bool DetectorViewOnly, material_verbose, checkOverlaps;
 DetectorMessenger* detectorM;
 
 };
-
-
 #endif

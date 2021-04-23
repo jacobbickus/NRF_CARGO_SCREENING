@@ -2,6 +2,7 @@
 #include "G4RunManager.hh"
 #include "G4UImanager.hh"
 #include "DetectorConstruction.hh"
+#include "DetWResponseFunction.hh"
 #include "PhysicsListNew.hh"
 #include "ActionInitialization.hh"
 #include "ChopperSetup.hh"
@@ -434,7 +435,12 @@ int main(int argc,char **argv)
   Linac* linac = new Linac();
   Collimator* collimator = new Collimator();
   Cargo* cargo = new Cargo();
-  runManager->SetUserInitialization(new DetectorConstruction(chopper, linac, collimator, cargo));
+
+  if(WResponseFunction)
+    runManager->SetUserInitialization(new DetWResponseFunction(chopper, collimator, cargo));
+  else
+    runManager->SetUserInitialization(new DetectorConstruction(chopper, linac, collimator, cargo));
+
   runManager->SetUserInitialization(new PhysicsListNew(addNRF, use_xsec_tables, use_xsec_integration, force_isotropic, standalone, NRF_Verbose));
   runManager->SetUserInitialization(new ActionInitialization());
 

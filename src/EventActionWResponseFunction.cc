@@ -121,18 +121,18 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
     G4double numCher = r_function->GetCherenkovResponse(incident_energy);
 
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
-    manager->FillNtupleIColumn(7,0, eventID);
-    manager->FillNtupleDColumn(7,1, incident_energy/(MeV));
-    manager->FillNtupleDColumn(7,2, beam_energy);
-    manager->FillNtupleDColumn(7,3, numPE);
-    manager->FillNtupleDColumn(7,4, numPE2);
-    manager->FillNtupleDColumn(7,5, numScint);
-    manager->FillNtupleDColumn(7,6, numCher);
+    manager->FillNtupleIColumn(5,0, eventID);
+    manager->FillNtupleDColumn(5,1, incident_energy/(MeV));
+    manager->FillNtupleDColumn(5,2, beam_energy);
+    manager->FillNtupleDColumn(5,3, numPE);
+    manager->FillNtupleDColumn(5,4, numPE2);
+    manager->FillNtupleDColumn(5,5, numScint);
+    manager->FillNtupleDColumn(5,6, numCher);
 
     if(WEIGHTED)
-      manager->FillNtupleDColumn(7,7, weight);
+      manager->FillNtupleDColumn(5,7, weight);
 
-    manager->AddNtupleRow(7);
+    manager->AddNtupleRow(5);
 
   }
 

@@ -83,15 +83,13 @@ void Analysis::Book()
     if(debug)
       std::cout << "Analysis::Book -> Weighting set to: " << WEIGHTED << std::endl;
     NRF(manager, WEIGHTED); // 0
-    IncidentChopper(manager,WEIGHTED); // 1
-    EmissionChopper(manager,WEIGHTED); // 2
-    IncidentIntObj(manager, WEIGHTED); // 3
-    EmissionIntObj(manager, WEIGHTED); // 4
-    IncidentShielding(manager, WEIGHTED); // 5
-    IncidentPlexiglass(manager, WEIGHTED); // 6
-    DetectorEstimatedInfo(manager, WEIGHTED); // 7
+    IncidentIntObj(manager, WEIGHTED); // 1
+    EmissionIntObj(manager, WEIGHTED); // 2
+    IncidentShielding(manager, WEIGHTED); // 3
+    IncidentPlexiglass(manager, WEIGHTED); // 4
+    DetectorEstimatedInfo(manager, WEIGHTED); // 5
     if(debug)
-      std::cout << "Analysis::Book -> With Detector Response Ntuples 0 - 7" << std::endl;
+      std::cout << "Analysis::Book -> With Detector Response Ntuples 0 - 5" << std::endl;
   }
   // for a simulation without detector response
   else
