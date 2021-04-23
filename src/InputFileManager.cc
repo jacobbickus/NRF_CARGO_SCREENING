@@ -50,7 +50,7 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &tBrems, TG
   fin = TFile::Open(inFile);
   fFileOpen = true;
   fin->cd();
-  fin->ls();
+  //fin->ls();
   fin->GetObject("Graph_from_hBrems",tBrems);
   fin->GetObject("Graph_from_hSample_short",tSample);
   fin->GetObject("hSample_long",hSample);
