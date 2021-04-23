@@ -66,7 +66,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
 
   G4double world_size_x = 2.5*m;
   G4double world_size_y = 2.5*m;
-  G4double world_size_z = 3.5*m;
+  G4double world_size_z = 2.5*m;
 
   G4Box* solidWorld = new G4Box("World", world_size_x, world_size_y, world_size_z);
 
