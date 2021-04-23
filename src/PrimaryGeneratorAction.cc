@@ -55,9 +55,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
   else
   {
     fParticleGun->SetParticleDefinition(G4Gamma::Definition());
-    DetectorInformation* detInfo = DetectorInformation::Instance();
-    G4double shift_factor = detInfo->GetShiftFactor();
-    beamStart = 135.9 - 100.0;
+    beamStart = 0.;
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 
