@@ -88,6 +88,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
 
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double shift_factor = 1*m; // for shifting everything a meter back
+  detInfo->setShiftFactor(shift_factor);
   G4double bremStartPos = 130*cm - shift_factor;
   detInfo->setBremStartPosition(bremStartPos);
   G4double container_z_pos = 1.2192*m + 1.5*m - shift_factor;

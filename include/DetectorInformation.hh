@@ -46,6 +46,8 @@ public:
   }
 
   // Set Data Functions here
+  void setShiftFactor(G4double factor){shift_factor = factor;}
+  G4double GetShiftFactor()const{return shift_factor;}
   void setBremStartPosition(G4double pos){bremStartPos = pos;}
   G4double GetBremStartPosition()const{return bremStartPos;}
   void setLinac_Size(G4double theSize){linac_size = theSize;}
@@ -82,6 +84,8 @@ public:
   void setDistanceToChop(G4double d){distance_to_chop = d;}
   G4double GetDistanceToChop()const{return distance_to_chop;}
 
+private:
+  G4double shift_factor;
   G4double bremStartPos, linac_size, container_z_pos, water_size_y, container_edge_position;
   G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_min_radius, linac_max_radius, distance_to_chop;
   G4double end_linac, brem_target_edge_position;
