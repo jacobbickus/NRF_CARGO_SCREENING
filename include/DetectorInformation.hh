@@ -46,8 +46,18 @@ public:
   }
 
   // Set Data Functions here
-  void setShiftFactor(G4double factor){shift_factor = factor;}
-  G4double GetShiftFactor()const{return shift_factor;}
+  void setShiftFactor(G4double factor)
+  {
+    shift_factor = factor;
+    G4cout << "DetectorInformation::SetShiftFactor Set to: "
+            << shift_factor << " cm" << G4endl;
+  }
+  G4double GetShiftFactor()const
+  {
+    G4cout << "DetectorInformation::GetShiftFactor: "
+            << shift_factor << " cm" << G4endl;
+    return shift_factor;
+  }
   void setBremStartPosition(G4double pos){bremStartPos = pos;}
   G4double GetBremStartPosition()const{return bremStartPos;}
   void setLinac_Size(G4double theSize){linac_size = theSize;}
