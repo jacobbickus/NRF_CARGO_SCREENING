@@ -380,7 +380,7 @@ int main(int argc,char **argv)
   G4UImanager* UI = G4UImanager::GetUIpointer();
   MySession* LoggedSession = new MySession;
 
-  if(macro != "vis_save.mac")
+  if(macro.substr(macro.size() - 3) != "mac")
   {
     output = true;
     UI->SetCoutDestination(LoggedSession);
@@ -445,7 +445,7 @@ int main(int argc,char **argv)
   runManager->SetUserInitialization(new ActionInitialization());
 
 #ifdef G4VIS_USE
-  if(macro == "vis_save.mac")
+  if(macro.substr(macro.size() - 3) == "mac")
   {
     visManager = new G4VisExecutive();
     visManager->Initialize();
@@ -456,7 +456,7 @@ int main(int argc,char **argv)
   UI->ApplyCommand(command+macro);
 
 #ifdef G4VIS_USE
-  if(macro == "vis_save.mac")
+  if(macro.substr(macro.size() - 3) == "mac")
   {
     delete visManager;
   }
