@@ -128,22 +128,15 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     G4RotationMatrix* waterRot = new G4RotationMatrix;
     G4RotationMatrix* waterRot2 = new G4RotationMatrix;
 
-    if(detTest)
-    {
-      new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
-                        "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
-    }
-    else
-    {
-      waterRot->rotateY((180. - theAngle)*deg);
-      waterRot2->rotateY((180. + theAngle)*deg);
-      new G4PVPlacement(waterRot,
-                        G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
-                        "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
-      new G4PVPlacement(waterRot2,
-                        G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
-                        "Attenuator1Lay1R", logicWorld, false, 0, checkOverlaps);
-    }
+    waterRot->rotateY((180. - theAngle)*deg);
+    waterRot2->rotateY((180. + theAngle)*deg);
+    new G4PVPlacement(waterRot,
+                      G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(waterRot2,
+                      G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1Lay1R", logicWorld, false, 0, checkOverlaps);
+
 
   // Option to add second layer of low Z attenuation material
 

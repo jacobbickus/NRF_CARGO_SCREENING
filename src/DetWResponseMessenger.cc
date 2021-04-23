@@ -21,7 +21,7 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "DetectorMessenger.hh"
+#include "DetWResponseMessenger.hh"
 
 
 DetWResponseMessenger::DetWResponseMessenger(DetWResponseFunction* DetectorAction)
