@@ -90,7 +90,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4double world_size_x = 2.5*m;
   G4double world_size_y = 2.5*m;
-  G4double world_size_z = 4.5*m;
+  G4double world_size_z = 2.5*m;
 
   if(detTest)
   {
