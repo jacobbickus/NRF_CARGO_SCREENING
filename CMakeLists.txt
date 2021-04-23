@@ -77,6 +77,7 @@ set(Runtime_SCRIPTS
   mantis.in
   mantisOff.in
   vis_save.mac
+  vis_save_w_response.mac
   )
 
 set(Run_Analysis_SCRIPTS
