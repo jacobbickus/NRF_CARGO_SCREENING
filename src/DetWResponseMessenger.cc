@@ -76,7 +76,7 @@ DetWResponseMessenger::~DetWResponseMessenger()
   delete CmdCheckOverlaps;
 }
 
-void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void DetWResponseMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
   if(command == CmdX)
   {
