@@ -44,9 +44,9 @@ G4VPhysicalVolume* DetBremTest::Construct()
   // ************************************* Set up Materials ***************************************** //
   G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4double world_size_x = .35*m;
-  G4double world_size_y = .65*m;
-  G4double world_size_z = .25*m;
+  G4double world_size_x = .15*m;
+  G4double world_size_y = .15*m;
+  G4double world_size_z = .15*m;
 
   G4Box* solidWorld = new G4Box("World", world_size_x, world_size_y, world_size_z);
 

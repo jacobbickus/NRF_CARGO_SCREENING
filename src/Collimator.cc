@@ -63,12 +63,12 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
 
   if(bremTest)
   {
-    water_size_y = 50*cm;
+    water_size_y = linac_max_radius;
     col_rear_x_size = linac_max_radius;
   }
   else
     col_rear_x_size = 0.3048*m - 2*cm;
-    
+
   G4Box *solidCollimatorRear =
                         new G4Box("Collimator",col_rear_x_size, water_size_y, rear_col_z_size);
   G4LogicalVolume *logicCollimatorRear =
