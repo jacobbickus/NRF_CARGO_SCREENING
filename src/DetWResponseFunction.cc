@@ -110,15 +110,15 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     G4LogicalVolume* logicAttenuator = new G4LogicalVolume(solidAttenuator, attenuator, "Attenuator");
     if(attenuatorState)
     {
-      G4cout << G4endl << "DetectorConstruction::Construct -> Attenuator Information" << G4endl;
+      G4cout << G4endl << "DetWResponseFunction::Construct -> Attenuator Information" << G4endl;
       G4cout << "----------------------------------------------------------------------" << G4endl;
-      G4cout << "DetectorConstruction::Construct -> Attenuator Thickness set to: " << attenThickness << " mm of " << attenuator->GetName() << G4endl;
+      G4cout << "DetWResponseFunction::Construct -> Attenuator Thickness set to: " << attenThickness << " mm of " << attenuator->GetName() << G4endl;
     }
     else
     {
       attenuatorState2 = false;
       attenThickness2 = 0.001*mm; // of air
-      G4cout<< "DetectorConstruction::Construct -> Second Attenuator State automatically set to Off." << G4endl;
+      G4cout<< "DetWResponseFunction::Construct -> Second Attenuator State automatically set to Off." << G4endl;
     }
 
     G4double water_z_pos = detInfo->getRearCollimatorPosition();
@@ -146,7 +146,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     new G4PVPlacement(0,G4ThreeVector(0,0,0), logicSecondAttenuator, "LowZAttenuator", logicAttenuator, false, 0, checkOverlaps);
     if(attenuatorState2)
     {
-      G4cout << "DetectorConstruction::Construct -> Second Attenuator set to: " << attenThickness2 << " mm of " << low_z_attenuator->GetName() << G4endl;
+      G4cout << "DetWResponseFunction::Construct -> Second Attenuator set to: " << attenThickness2 << " mm of " << low_z_attenuator->GetName() << G4endl;
     }
 
   // Make Water Casing (Plexiglass)
@@ -154,17 +154,17 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     G4Box* solidCasing = new G4Box("Plexiglass", water_size_x, water_size_y, water_size_z);
     G4LogicalVolume* logicCasing = new G4LogicalVolume(solidCasing, plexiglass, "Plexiglass");
     new G4PVPlacement(0,G4ThreeVector(0,0,0), logicCasing, "Plexiglass", logicSecondAttenuator, false, 0, checkOverlaps);
-    G4cout << G4endl << "DetectorConstruction::Construct -> Water Tank Information" << G4endl;
+    G4cout << G4endl << "DetWResponseFunction::Construct -> Water Tank Information" << G4endl;
     G4cout << "----------------------------------------------------------------------" << G4endl;
     if(plexiThickness != 0.18*mm)
     {
-      G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: "
+      G4cout << "DetWResponseFunction::Construct -> Plexiglass Thickness Changed to: "
       << plexiThickness << " mm" << G4endl;
     }
     else
     {
       G4cout << G4endl
-      << "DetectorConstruction::Construct -> Plexiglass Thickness set to default: "
+      << "DetWResponseFunction::Construct -> Plexiglass Thickness set to default: "
       << plexiThickness << " mm" << G4endl;
     }
 
