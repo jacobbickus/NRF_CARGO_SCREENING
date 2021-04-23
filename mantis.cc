@@ -3,6 +3,7 @@
 #include "G4UImanager.hh"
 #include "DetectorConstruction.hh"
 #include "DetWResponseFunction.hh"
+#include "DetBremTest.hh"
 #include "PhysicsListNew.hh"
 #include "ActionInitialization.hh"
 #include "ChopperSetup.hh"
