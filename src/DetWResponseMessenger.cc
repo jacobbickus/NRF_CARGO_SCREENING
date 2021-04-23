@@ -25,7 +25,7 @@
 
 
 DetWResponseMessenger::DetWResponseMessenger(DetWResponseFunction* DetAction)
-        : detResA(DetAction)
+: detResA(DetAction)
 {
   myDir = new G4UIdirectory("/mydet/");
   myDir->SetGuidance("Detector Setup Commands");
