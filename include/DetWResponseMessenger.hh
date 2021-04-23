@@ -33,7 +33,6 @@ class DetWResponseFunction;
 
 class DetWResponseMessenger : public DetectorMessenger
 {
-
 public:
    DetWResponseMessenger(DetWResponseFunction*);
   ~DetWResponseMessenger();
