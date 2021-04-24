@@ -78,6 +78,7 @@ set(Runtime_SCRIPTS
   mantisOff.in
   mantis_w_cargo.in
   mantis_w_response.in
+  mantis_build_detector_response.in
   vis_save.mac
   vis_save_w_response.mac
   vis_save_brem_test.mac
