@@ -73,6 +73,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
 public:
 DetectorConstruction(ChopperSetup*, Collimator*, Cargo*);
+DetectorConstruction();
 virtual ~DetectorConstruction();
 
 
@@ -132,20 +133,11 @@ void DefDetPositionConstraintLeft(double, double, double, double);
 void DefDetPositionConstraintRight(double, double, double, double);
 void DefDetPositionConstraintUpper(double, double, double);
 
-private:
+protected:
 // Chopper
 ChopperSetup* chop;
 Collimator* collimator;
 Cargo* cargo;
-
-// Material, Logical and Physical Volumes
-G4Material* PC_mat;
-
-G4LogicalVolume* logicPC;
-G4LogicalVolume* logicPMT;
-G4VPhysicalVolume* physPC;
-G4VPhysicalVolume* physWater;
-G4VPhysicalVolume* physTape;
 
 // Detector Properties
 
@@ -160,14 +152,22 @@ G4double theAngle, water_size_x, water_size_y, water_size_z;
 // Plexi/Tape Properties
 G4double plexiThickness, tapeThick;
 
+// Output Properties
+G4bool DetectorViewOnly, material_verbose, checkOverlaps;
+
+private:
+// Material, Logical and Physical Volumes
+G4Material* PC_mat;
 // PMT Properties
 G4double PMT_rmax;
 G4int nPMT;
 G4String pc_mat;
 
-// Output Properties
-G4bool DetectorViewOnly, material_verbose, checkOverlaps;
-
+G4LogicalVolume* logicPC;
+G4LogicalVolume* logicPMT;
+G4VPhysicalVolume* physPC;
+G4VPhysicalVolume* physWater;
+G4VPhysicalVolume* physTape;
 // Messenger
 DetectorMessenger* detectorM;
 

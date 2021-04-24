@@ -71,27 +71,6 @@ public:
   virtual G4VPhysicalVolume* Construct();
 
 private:
-// Chopper
-ChopperSetup* chop;
-Collimator* collimator;
-Cargo* cargo;
-
-// Detector Properties
-
-// Attenuator Properties
-G4bool attenuatorState, attenuatorState2, attenuatorState3;
-G4double attenThickness, attenThickness2, attenThickness3;
-G4String attenuatorMat, attenuatorMat2, attenuatorMat3;
-
-// Water Tank Properties
-G4double theAngle, water_size_x, water_size_y, water_size_z;
-
-// Plexi/Tape Properties
-G4double plexiThickness;
-
-// Output Properties
-G4bool checkOverlaps;
-
 // Messenger
 DetWResponseMessenger* detectorM;
 

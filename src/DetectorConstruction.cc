@@ -48,6 +48,9 @@ DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Co
   detectorM = new DetectorMessenger(this);
 }
 
+DetectorConstruction::DetectorConstruction()
+{;}
+
 DetectorConstruction::~DetectorConstruction()
 {
   delete detectorM;

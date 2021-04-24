@@ -36,7 +36,9 @@ theAngle(150.0), water_size_x(28*cm), water_size_y(225*cm), water_size_z(1*cm),
 // plexi/tape properties
 plexiThickness(0.18*mm),
 // Output Properties
-checkOverlaps(true)
+checkOverlaps(true),
+// Messenger
+detectorM(NULL)
 {
   detectorM = new DetWResponseMessenger(this);
 }
