@@ -68,7 +68,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 PrimaryGeneratorAction::PrimaryGeneratorAction(G4bool building_response)
 {;}
 
-PrimaryGeneratorAction::SetPGA()
+void PrimaryGeneratorAction::SetPGA()
 {
   fParticleGun = new G4ParticleGun(1);
   // Default Kinematics
@@ -132,7 +132,7 @@ PrimaryGeneratorAction::SetPGA()
   }
 }
 
-PrimaryGeneratorAction::StartUserMacroInputs()
+void PrimaryGeneratorAction::StartUserMacroInputs()
 {
   G4cout << G4endl << "PrimaryGeneratorAction::StartUserMacroInputs" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
