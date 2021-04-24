@@ -76,6 +76,8 @@ target_link_libraries(mantis ${Geant4_LIBRARIES} ${ROOT_LIBRARIES})
 set(Runtime_SCRIPTS
   mantis.in
   mantisOff.in
+  mantis_w_cargo.in
+  mantis_w_response.in
   vis_save.mac
   vis_save_w_response.mac
   vis_save_brem_test.mac

@@ -1,7 +1,6 @@
-
-/chopper/state Off
+/chopper/state On
 /chopper/material Uranium
-/chopper/abundance 99.8
+/chopper/abundance 90
 /IntObj/Material Uranium
 /IntObj/Abundance 90
 
@@ -11,42 +10,37 @@
 /event/verbose 0
 #/PGA/beamSize 2.0
 /mantisevent/eventInfoFreq 10
-/chopper/thickness 37.415
+/chopper/thickness 37
 /chopper/distance 2
 #/IntObj/Radius
 
-/mydet/WaterX 28
-/mydet/WaterY 225
-/mydet/WaterZ 30
-/mydet/Angle 150
-
-/mydet/attenuator Off
-# Attenuator Thickness in mm
+#/mydet/WaterX
+#/mydet/WaterY
+#/mydet/WaterZ
+#/mydet/Angle
+#/mydet/attenuator Off
 #/mydet/attenuatorThickness 1
 #/mydet/attenuatorMaterial G4_Pb
-#/mydet/attenuator2 On
+#/mydet/attenuator2 Off
 #/mydet/attenuatorThickness2 1
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
-#/mydet/PCrad
-#/mydet/PCmat
-/mydet/nPMT 8
+
+#/Cargo/AddSphere true
+#/Cargo/SphereRadius 2
+#/Cargo/SpherePosition 20 0 -50
+#/Cargo/SphereMaterial G4_Pb
+#/Cargo/AddBox true
+#/Cargo/BoxSize 3 3 3
+#/Cargo/BoxPosition -20 -10 50
+#/Cargo/BoxMaterial G4_W
 
 #/material/CheckOverlaps true
-
 /run/initialize
 
-#/output/myoutput ChopIncData
-#/output/myoutput ChopOutData
 #/output/myoutput NRFData
 #/output/myoutput IntObjInData
 #/output/myoutput IntObjOutData
 #/output/myoutput ShieldingData
 #/output/myoutput PlexiData
-#/output/myoutput WaterIncData
-#/output/myoutput ScintillationData
-#/output/myoutput ScintillationData2
-#/output/myoutput CherenkovData
-#/output/myoutput CherenkovData2
-#/output/myoutput DetData
 
 /run/beamOn 100
