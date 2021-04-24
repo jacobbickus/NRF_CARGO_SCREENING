@@ -33,7 +33,7 @@ extern G4bool debug;
 
 DetBuildResPGA::DetBuildResPGA()
         : PrimaryGeneratorAction(), fParticleGun(0),
-          beam_size_x(30.0*cm), beam_size_y(200.0*cm),
+          beam_size_x(30.0*cm), beam_size_y(210.0*cm),
           pgaM(NULL)
 {
   pgaM = new DetBuildResPGAMessenger(this);

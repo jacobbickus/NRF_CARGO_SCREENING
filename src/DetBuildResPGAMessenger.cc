@@ -32,11 +32,11 @@ DetBuildResPGAMessenger::DetBuildResPGAMessenger(DetBuildResPGA* PGA)
   Cmd = new G4UIcmdWithADouble("/PGA/beam_size_x",this);
   Cmd->SetGuidance("Choose Desired Horizontal (x) Beam Size");
   Cmd->SetParameterName("beamSizeX",false);
-  Cmd->SetRange("beamSizeX > 0. && beamSizeX < 80.0");
+  Cmd->SetRange("beamSizeX > 0. && beamSizeX < 100.0");
   Cmd2 = new G4UIcmdWithADouble("/PGA/beam_size_y",this);
   Cmd2->SetGuidance("Choose Desired Vertical (y) Beam Size");
   Cmd2->SetParameterName("beamSizeY",false);
-  Cmd2->SetRange("beamSizeY > 0. && beamSizeY < 80.0");
+  Cmd2->SetRange("beamSizeY > 0. && beamSizeY < 300.0");
 }
 
 DetBuildResPGAMessenger::~DetBuildResPGAMessenger()

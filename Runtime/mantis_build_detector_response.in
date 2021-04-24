@@ -2,7 +2,8 @@
 /tracking/verbose 0
 /run/verbose 0
 /event/verbose 0
-#/PGA/beamSize 2.0
+/PGA/beamSizeX 30.0
+/PGA/beamSizeY 210.0
 /mantisevent/eventInfoFreq 10
 #/mydet/WaterX
 #/mydet/WaterY
