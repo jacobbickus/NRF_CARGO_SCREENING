@@ -134,7 +134,7 @@ Collimator* collimator;
 Cargo* cargo;
 
 protected:
-G4LogicalVolume* ConstructAttenuatorsAndPlexiglass(G4LogicalVolume, G4double, G4Material*, G4Material*, G4Material*);
+G4LogicalVolume* ConstructAttenuatorsAndPlexiglass(G4LogicalVolume*, G4double, G4Material*, G4Material*, G4Material*);
 void ConstructAttenuatorMaterial(G4Material* &attenuator, G4Material* &attenuator2, G4Material* &attenuator3);
 // Attenuator Properties
 G4bool attenuatorState, attenuatorState2, attenuatorState3;
