@@ -22,29 +22,30 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef PGAMessenger_h
-#define PGAMessenger_h 1
+#ifndef DetBuildResPGAMessenger_h
+#define DetBuildResPGAMessenger_h 1
 
 #include "globals.hh"
 #include "G4UImessenger.hh"
 #include "G4UIcmdWithADouble.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "DetBuildResPGA.hh"
 #include "G4UIdirectory.hh"
 
-class PrimaryGeneratorAction;
+class DetBuildResPGA;
 class G4UIcmdWithADouble;
 class G4UIdirectory;
 
-class PGAMessenger: public G4UImessenger
+class DetBuildResPGAMessenger: public G4UImessenger
 {
 public:
-  PGAMessenger(PrimaryGeneratorAction*);
-  ~PGAMessenger();
+  DetBuildResPGAMessenger(DetBuildResPGA*);
+  ~DetBuildResPGAMessenger();
 
   void SetNewValue(G4UIcommand*, G4String); // must always be a string input
 private:
-  PrimaryGeneratorAction* pga;
+  DetBuildResPGA* pga;
   G4UIcmdWithADouble *Cmd;
+  G4UIcmdWithADouble *Cmd2;
   G4UIdirectory *myDir;
 };
 

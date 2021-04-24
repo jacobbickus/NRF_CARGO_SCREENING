@@ -24,7 +24,7 @@
 
 #include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
-#include "DetResponsePrimaryGenerator.hh"
+#include "DetBuildResPGA.hh"
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 #include "SteppingBremTest.hh"
@@ -60,7 +60,7 @@ void ActionInitialization::Build() const
     Analysis* analysis = new Analysis();
 
     if(detTest)
-      SetUserAction(new DetResponsePrimaryGenerator());
+      SetUserAction(new DetBuildResPGA());
     else
       SetUserAction(new PrimaryGeneratorAction());
 

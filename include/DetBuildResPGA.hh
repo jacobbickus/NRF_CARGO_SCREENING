@@ -22,8 +22,8 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef DetResponsePrimaryGenerator_h
-#define DetResponsePrimaryGenerator_h 1
+#ifndef DetBuildResPGA_h
+#define DetBuildResPGA_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorAction.hh"
@@ -39,6 +39,7 @@
 #include "SourceInformation.hh"
 #include "DetectorInformation.hh"
 #include "InputFileManager.hh"
+#include "DetBuildResPGAMessenger.hh"
 
 #include "TFile.h"
 #include "TROOT.h"
@@ -50,20 +51,24 @@
 
 class G4Event;
 class Analysis;
+class DetBuildResPGAMessenger;
 
-class DetResponsePrimaryGenerator : public PrimaryGeneratorAction
+class DetBuildResPGA : public PrimaryGeneratorAction
 {
 
 public:
-DetResponsePrimaryGenerator();
-virtual ~DetResponsePrimaryGenerator();
+DetBuildResPGA();
+virtual ~DetBuildResPGA();
 
 public:
 virtual void GeneratePrimaries(G4Event*);
+void SetBeamSizeX(G4double val){beam_size_x = val;}
+void SetBeamSizeY(G4double val){beam_size_y = val;}
 
 private:
   G4double beam_size_x, beam_size_y;
   G4ParticleGun* fParticleGun;
+  DetBuildResPGAMessenger* pgaM;
 
 };
 

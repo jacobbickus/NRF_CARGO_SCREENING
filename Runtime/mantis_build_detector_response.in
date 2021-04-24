@@ -1,23 +1,12 @@
-/chopper/state On
-/chopper/material Uranium
-/chopper/abundance 90
-/IntObj/Material Uranium
-/IntObj/Abundance 90
-
 /control/verbose 0
 /tracking/verbose 0
 /run/verbose 0
 /event/verbose 0
 #/PGA/beamSize 2.0
 /mantisevent/eventInfoFreq 10
-/chopper/thickness 37
-/chopper/distance 2
-#/IntObj/Radius
-
 #/mydet/WaterX
 #/mydet/WaterY
 #/mydet/WaterZ
-#/mydet/Angle
 #/mydet/attenuator Off
 #/mydet/attenuatorThickness 1
 #/mydet/attenuatorMaterial G4_Pb
@@ -30,11 +19,6 @@
 #/material/CheckOverlaps true
 /run/initialize
 
-#/output/myoutput ChopIncData
-#/output/myoutput ChopOutData
-#/output/myoutput NRFData
-#/output/myoutput IntObjInData
-#/output/myoutput IntObjOutData
 #/output/myoutput ShieldingData
 #/output/myoutput PlexiData
 #/output/myoutput WaterIncData

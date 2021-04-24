@@ -22,7 +22,7 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "DetResponsePrimaryGenerator.hh"
+#include "DetBuildResPGA.hh"
 
 extern G4long seed;
 extern G4String inFile;
@@ -31,14 +31,15 @@ extern G4bool SampleEnergyRangebool;
 extern G4double uniform_width;
 extern G4bool debug;
 
-DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
-        : PrimaryGeneratorAction(), fParticleGun(0)
+DetBuildResPGA::DetBuildResPGA()
+        : PrimaryGeneratorAction(), fParticleGun(0),
+          beam_size_x(30.0*cm), beam_size_y(200.0*cm),
+          pgaM(NULL)
 {
+  pgaM = new DetBuildResPGAMessenger();
   fParticleGun = new G4ParticleGun(1);
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   beamStart = -10.0;
-  beam_size_x = 30.0*cm;
-  beam_size_y = 200.0*cm;
 
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);
@@ -63,7 +64,7 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
 
       if(!tSample || !hSample)
       {
-        G4cerr << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
+        G4cerr << "DetBuildResPGA::DetBuildResPGA() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
         exit(1);
       }
     }
@@ -73,7 +74,7 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
       file_check = true;
 
       if(debug)
-        std::cout << "DetResponsePrimaryGenerator::DetResponsePrimaryGenerator -> Calling CreateInputSpectrum..." << std::endl;
+        std::cout << "DetBuildResPGA::DetBuildResPGA -> Calling CreateInputSpectrum..." << std::endl;
 
       CreateInputSpectrum(tBrems);
     }
@@ -89,17 +90,17 @@ DetResponsePrimaryGenerator::DetResponsePrimaryGenerator()
   G4cout << "----------------------------------------------------------------------" << G4endl;
 }
 
-DetResponsePrimaryGenerator::~DetResponsePrimaryGenerator()
+DetBuildResPGA::~DetBuildResPGA()
 {
   delete fParticleGun;
 }
 
-void DetResponsePrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
+void DetBuildResPGA::GeneratePrimaries(G4Event* anEvent)
 {
   // ******************** Energy Sampling Options *************************** //
 
     if(debug && anEvent->GetEventID() == 0)
-      std::cout << "DetResponsePrimaryGenerator::GeneratePrimaries -> First Primary Generated." << std::endl;
+      std::cout << "DetBuildResPGA::GeneratePrimaries -> First Primary Generated." << std::endl;
 
     G4double w = 1.;
     if(chosen_energy < 0)
@@ -154,5 +155,5 @@ void DetResponsePrimaryGenerator::GeneratePrimaries(G4Event* anEvent)
     anEvent->SetUserInformation(anInfo);
 
     if(debug && anEvent->GetEventID() == 0)
-      std::cout << "DetResponsePrimaryGenerator::GeneratePrimaries -> First Primary Complete." << std::endl;
+      std::cout << "DetBuildResPGA::GeneratePrimaries -> First Primary Complete." << std::endl;
 }
