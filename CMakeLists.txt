@@ -83,6 +83,7 @@ set(Runtime_SCRIPTS
   vis_save.mac
   vis_save_w_response.mac
   vis_save_brem_test.mac
+  vis_save_build_detector_response.mac
   )
 
 set(Run_Analysis_SCRIPTS
