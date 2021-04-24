@@ -127,19 +127,11 @@ void SetDetectorViewOnly(G4bool val){DetectorViewOnly = val;}
 void SetMaterialVerbosity(G4bool val){material_verbose = val;}
 void SetCheckOverlaps(G4bool val){checkOverlaps = val;}
 
-private:
-// Private Member Functions
-void DefDetPositionConstraintLeft(double, double, double, double);
-void DefDetPositionConstraintRight(double, double, double, double);
-void DefDetPositionConstraintUpper(double, double, double);
-
 protected:
 // Chopper
 ChopperSetup* chop;
 Collimator* collimator;
 Cargo* cargo;
-
-// Detector Properties
 
 // Attenuator Properties
 G4bool attenuatorState, attenuatorState2, attenuatorState3;
@@ -153,15 +145,21 @@ G4double theAngle, water_size_x, water_size_y, water_size_z;
 G4double plexiThickness, tapeThick;
 
 // Output Properties
-G4bool DetectorViewOnly, material_verbose, checkOverlaps;
+G4bool checkOverlaps;
 
 private:
+// Private Member Functions
+void DefDetPositionConstraintLeft(double, double, double, double);
+void DefDetPositionConstraintRight(double, double, double, double);
+void DefDetPositionConstraintUpper(double, double, double);
 // Material, Logical and Physical Volumes
 G4Material* PC_mat;
 // PMT Properties
 G4double PMT_rmax;
 G4int nPMT;
 G4String pc_mat;
+
+G4bool DetectorViewOnly, material_verbose;
 
 G4LogicalVolume* logicPC;
 G4LogicalVolume* logicPMT;
