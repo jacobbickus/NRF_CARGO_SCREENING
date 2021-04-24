@@ -143,6 +143,7 @@ G4String attenuatorMat, attenuatorMat2, attenuatorMat3;
 
 // Water Tank Properties
 G4double theAngle, water_size_x, water_size_y, water_size_z;
+G4double water_x_pos, water_y_pos, water_z_pos;
 
 // Plexi/Tape Properties
 G4double plexiThickness, tapeThick;
