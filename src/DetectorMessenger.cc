@@ -49,7 +49,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* DetectorAction)
   CmdAttenMat2 = new G4UIcmdWithAString("/mydet/attenuatorMaterial2",this);
   CmdAttenOn3 = new G4UIcmdWithAString("/mydet/attenuator3",this);
   CmdAttenThick3 = new G4UIcmdWithADouble("/mydet/attenuatorThickness3",this);
-  CmdAttenMat3 = new G4UIcmdWithAString("/mydet/attenuatorMaterial",this);
+  CmdAttenMat3 = new G4UIcmdWithAString("/mydet/attenuatorMaterial3",this);
   CmdPlexi = new G4UIcmdWithADouble("/mydet/PlexiglassThickness",this);
   CmdTape = new G4UIcmdWithADouble("/mydet/OpticalTapeThickness",this);
   CmdVis = new G4UIcmdWithAString("/myvisualization/DetectorViewOnly", this);
