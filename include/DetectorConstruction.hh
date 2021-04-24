@@ -132,7 +132,7 @@ void DefDetPositionConstraintLeft(double, double, double, double);
 void DefDetPositionConstraintRight(double, double, double, double);
 void DefDetPositionConstraintUpper(double, double, double);
 
-protected:
+private:
 // Chopper
 ChopperSetup* chop;
 Collimator* collimator;
@@ -167,7 +167,7 @@ G4String pc_mat;
 
 // Output Properties
 G4bool DetectorViewOnly, material_verbose, checkOverlaps;
-private:
+
 // Messenger
 DetectorMessenger* detectorM;
 
