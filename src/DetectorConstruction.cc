@@ -164,7 +164,7 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
 
   G4Box* solidCasing = new G4Box("Plexiglass", water_size_x, water_size_y, water_size_z);
   G4LogicalVolume* logicCasing = new G4LogicalVolume(solidCasing, plexiglass, "Plexiglass");
-  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicCasing, "Plexiglass", logicSecondAttenuator, false, 0, checkOverlaps);
+  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicCasing, "Plexiglass", logicThirdAttenuator, false, 0, checkOverlaps);
   G4cout << G4endl << "DetectorConstruction::Construct -> Water Tank Information" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
   if(plexiThickness != 0.18*mm)
