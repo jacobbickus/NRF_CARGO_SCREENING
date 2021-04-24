@@ -66,8 +66,8 @@ void SetBeamSizeX(G4double val){beam_size_x = val;}
 void SetBeamSizeY(G4double val){beam_size_y = val;}
 
 private:
-  G4double beam_size_x, beam_size_y;
   G4ParticleGun* fParticleGun;
+  G4double beam_size_x, beam_size_y;
   DetBuildResPGAMessenger* pgaM;
 
 };

@@ -36,7 +36,7 @@ DetBuildResPGA::DetBuildResPGA()
           beam_size_x(30.0*cm), beam_size_y(200.0*cm),
           pgaM(NULL)
 {
-  pgaM = new DetBuildResPGAMessenger();
+  pgaM = new DetBuildResPGAMessenger(this);
   fParticleGun = new G4ParticleGun(1);
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   beamStart = -10.0;
