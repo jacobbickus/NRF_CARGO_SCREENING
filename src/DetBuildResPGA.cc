@@ -32,62 +32,18 @@ extern G4double uniform_width;
 extern G4bool debug;
 
 DetBuildResPGA::DetBuildResPGA()
-        : PrimaryGeneratorAction(), fParticleGun(0),
+        : PrimaryGeneratorAction(true), fParticleGun(0),
           beam_size_x(30.0*cm), beam_size_y(210.0*cm),
           pgaM(NULL)
 {
   pgaM = new DetBuildResPGAMessenger(this);
-  fParticleGun = new G4ParticleGun(1);
+  SetPGA();
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   beamStart = -10.0;
 
   SourceInformation* sInfo = SourceInformation::Instance();
   sInfo->SetSourceZPosition(beamStart);
-  // Default Kinematics
-  fParticleGun->SetParticleTime(0.0*ns);
-
-  if(chosen_energy < 0)
-  {
-    gRandom->SetSeed(seed);
-
-    InputFileManager* ifm = InputFileManager::Instance();
-
-    if(!inFile.compare("brems_distributions.root"))
-    {
-      tBrems = 0;
-      tSample = 0;
-      hSample = 0;
-
-      ifm->ReadWeightedInput(inFile.c_str(), tBrems, tSample, hSample);
-
-      file_check = false;
-
-      if(!tSample || !hSample)
-      {
-        G4cerr << "DetBuildResPGA::DetBuildResPGA() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
-        exit(1);
-      }
-    }
-    else
-    {
-      ifm->ReadNonWeightedInput(inFile.c_str(), tBrems);
-      file_check = true;
-
-      if(debug)
-        std::cout << "DetBuildResPGA::DetBuildResPGA -> Calling CreateInputSpectrum..." << std::endl;
-
-      CreateInputSpectrum(tBrems);
-    }
-
-  } // end of chosen_energy < 0
-  else
-  {
-    file_check = false;
-    sInfo->SetBeamMax(chosen_energy);
-  }
-
-  G4cout << G4endl << "User Macro Inputs" << G4endl;
-  G4cout << "----------------------------------------------------------------------" << G4endl;
+  StartUserMacroInputs();
 }
 
 DetBuildResPGA::~DetBuildResPGA()

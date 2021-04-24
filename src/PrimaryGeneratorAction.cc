@@ -36,7 +36,6 @@ extern G4bool debug;
 PrimaryGeneratorAction::PrimaryGeneratorAction()
         : G4VUserPrimaryGeneratorAction(), pgaM(NULL), fParticleGun(0)
 {
-  fParticleGun = new G4ParticleGun(1);
   if(!bremTest)
     beam_size = 10.0*mm; // optimized beam size for a 4.5cm radius interrogation object
   else
@@ -44,7 +43,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
   // Call messenger after default beams are set that way user can change default
   pgaM = new PGAMessenger(this);
-  DetectorInformation* detInfo = DetectorInformation::Instance();
+  SetPGA();
   if(bremTest)
   {
     fParticleGun->SetParticleDefinition(G4Electron::Definition());
@@ -59,12 +58,22 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
     G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Particle Type set to Gamma!" << G4endl;
   }
 
+  DetectorInformation* detInfo = DetectorInformation::Instance();
   SourceInformation* sInfo = SourceInformation::Instance();
   detInfo->setShiftFactor(beamStart);
   sInfo->SetSourceZPosition(beamStart);
+  StartUserMacroInputs();
+}
+
+PrimaryGeneratorAction::PrimaryGeneratorAction(G4bool building_response)
+{;}
+
+PrimaryGeneratorAction::SetPGA()
+{
+  fParticleGun = new G4ParticleGun(1);
   // Default Kinematics
   fParticleGun->SetParticleTime(0.0*ns);
-
+  SourceInformation* sInfo = SourceInformation::Instance();
   if(chosen_energy < 0 && !resonanceTest)
   {
     gRandom->SetSeed(seed);
@@ -83,10 +92,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
       if(!tSample || !hSample)
       {
-        G4cerr << "PrimaryGeneratorAction::PrimaryGeneratorAction() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
+        G4cerr << "PrimaryGeneratorAction::SetPGA() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
         exit(1);
       }
-      G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading SAMPLED Distribution from: " << inFile << G4endl;
+      G4cout << "PrimaryGeneratorAction::SetPGA() -> Reading SAMPLED Distribution from: " << inFile << G4endl;
     }
     else
     {
@@ -94,34 +103,38 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
       file_check = true;
 
       if(debug)
-        std::cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Calling CreateInputSpectrum..." << std::endl;
+        std::cout << "PrimaryGeneratorAction::SetPGA() -> Calling CreateInputSpectrum..." << std::endl;
 
       CreateInputSpectrum(tBrems);
-      G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
+      G4cout << "PrimaryGeneratorAction::SetPGA() -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
     }
 
     if(!tBrems)
     {
-      G4cerr << "PrimaryGeneratorAction::PrimaryActionGenerator FATAL ERROR -> hBrems Fail." << G4endl;
+      G4cerr << "PrimaryGeneratorAction::SetPGA() FATAL ERROR -> hBrems Fail." << G4endl;
       exit(1);
     }
+
     sInfo->SetBeamMax(TMath::MaxElement(tBrems->GetN(), tBrems->GetX()));
 
   } // end of chosen_energy < 0
   else if(resonanceTest)
   {
     file_check = false;
-    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction Sampling U235 Resonance Energies." << G4endl;
+    G4cout << "PrimaryGeneratorAction::SetPGA() Sampling U235 Resonance Energies." << G4endl;
     sInfo->SetBeamMax(-1.);
   }
   else
   {
     file_check = false;
-    G4cout << "PrimaryGeneratorAction::PrimaryGeneratorAction Chosen Energy set to: " << chosen_energy << " MeV" << G4endl;
+    G4cout << "PrimaryGeneratorAction::SetPGA() Chosen Energy set to: " << chosen_energy << " MeV" << G4endl;
     sInfo->SetBeamMax(chosen_energy);
   }
+}
 
-  G4cout << G4endl << "User Macro Inputs" << G4endl;
+PrimaryGeneratorAction::StartUserMacroInputs()
+{
+  G4cout << G4endl << "PrimaryGeneratorAction::StartUserMacroInputs" << G4endl;
   G4cout << "----------------------------------------------------------------------" << G4endl;
 }
 

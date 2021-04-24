@@ -58,6 +58,7 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 
 public:
 PrimaryGeneratorAction();
+PrimaryGeneratorAction(G4bool);
 virtual ~PrimaryGeneratorAction();
 
 public:
@@ -66,6 +67,9 @@ G4ParticleGun* GetParticleGun()
 {
   return fParticleGun;
 };
+
+void SetPGA();
+void StartUserMacroInputs();
 
 // For PGA Messenger
 void SetBeamSize(G4double x)
@@ -89,7 +93,6 @@ protected:
   TH1D   *hSample;
   TRandom2 Random;
 
-protected:
   void CreateInputSpectrum(TGraph*);
   G4double SampleUResonances();
   G4double SampleEnergyRange(double,double);
