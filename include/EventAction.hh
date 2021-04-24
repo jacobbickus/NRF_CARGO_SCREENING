@@ -74,12 +74,12 @@ void FillDetectorResponse(G4AnalysisManager* manager)
 {
   if(incident_energy > 0)
   {
-    manager->FillNtupleIColumn(1,0, eventID);
-    manager->FillNtupleDColumn(1,1, incident_energy/(MeV));
-    manager->FillNtupleIColumn(1,2, number_detected);
-    manager->FillNtupleIColumn(1,3, s_detected);
-    manager->FillNtupleIColumn(1,4, c_detected);
-    manager->AddNtupleRow(1);
+    manager->FillNtupleIColumn(2,0, eventID);
+    manager->FillNtupleDColumn(2,1, incident_energy/(MeV));
+    manager->FillNtupleIColumn(2,2, number_detected);
+    manager->FillNtupleIColumn(2,3, s_detected);
+    manager->FillNtupleIColumn(2,4, c_detected);
+    manager->AddNtupleRow(2);
   }
 }
 

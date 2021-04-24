@@ -72,8 +72,9 @@ void Analysis::Book()
   // for Creating Detector Response Function
   else if(detTest)
   {
-    IncidentPlexiglass(manager); // 0
-    DetectorResponse(manager); // 1
+    IncidentShielding(manager);  // 0
+    IncidentPlexiglass(manager); // 1
+    DetectorResponse(manager);   // 2
     if(debug)
       std::cout << "Analysis::Book -> Creating Detector Response Function Ntuples 0 - 1" << std::endl;
   }
