@@ -84,6 +84,9 @@ void SetAttenuatorMaterial(G4String val){attenuatorMat = val;}
 void SetAttenuatorState2(G4bool val){attenuatorState2 = val;}
 void SetAttenuatorThickness2(G4double val){attenThickness2 = val;}
 void SetAttenuatorMaterial2(G4String val){attenuatorMat2 = val;}
+void SetAttenuatorState3(G4bool val){attenuatorState3 = val;}
+void SetAttenuatorThickness3(G4double val){attenThickness3 = val;}
+void SetAttenuatorMaterial3(G4double val){attenuatorMat3 = val;}
 void SetWaterX(G4double val)
 {
         water_size_x = val;
@@ -128,6 +131,8 @@ private:
 void DefDetPositionConstraintLeft(double, double, double, double);
 void DefDetPositionConstraintRight(double, double, double, double);
 void DefDetPositionConstraintUpper(double, double, double);
+
+protected:
 // Chopper
 ChopperSetup* chop;
 Collimator* collimator;
@@ -145,9 +150,9 @@ G4VPhysicalVolume* physTape;
 // Detector Properties
 
 // Attenuator Properties
-G4bool attenuatorState, attenuatorState2;
-G4double attenThickness, attenThickness2;
-G4String attenuatorMat, attenuatorMat2;
+G4bool attenuatorState, attenuatorState2, attenuatorState3;
+G4double attenThickness, attenThickness2, attenThickness3;
+G4String attenuatorMat, attenuatorMat2, attenuatorMat3;
 
 // Water Tank Properties
 G4double theAngle, water_size_x, water_size_y, water_size_z;
@@ -162,7 +167,7 @@ G4String pc_mat;
 
 // Output Properties
 G4bool DetectorViewOnly, material_verbose, checkOverlaps;
-
+private:
 // Messenger
 DetectorMessenger* detectorM;
 
