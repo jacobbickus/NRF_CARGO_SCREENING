@@ -68,9 +68,6 @@ G4ParticleGun* GetParticleGun()
   return fParticleGun;
 };
 
-void SetPGA();
-void StartUserMacroInputs();
-
 // For PGA Messenger
 void SetBeamSize(G4double x)
 {
@@ -81,6 +78,8 @@ void SetBeamSize(G4double x)
 private:
   G4double beam_size;
 protected:
+  void SetPGA();
+  void StartUserMacroInputs();
   G4double energy;
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
