@@ -154,8 +154,8 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
 
   // Make third attenuator layer
   G4Box* solidThirdAttenuator = new G4Box("Attenuator3", water_size_x + attenThickness3/2., water_size_y + attenThickness3/2., water_size_z + attenThickness3/2.);
-  G4LogicalVolume* logicThirdAttenuator = new G4LogicalVolume(solidThirdAttenuator, attenuator3, "Attenuator3");
-  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicThirdAttenuator, "Attenuator3", logicSecondAttenuator, false, 0, checkOverlaps);
+  G4LogicalVolume* logicThirdAttenuator = new G4LogicalVolume(solidThirdAttenuator, attenuator3, "LastLayerAttenuator3");
+  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicThirdAttenuator, "LastLayerAttenuator3", logicSecondAttenuator, false, 0, checkOverlaps);
 
   if(attenuatorState3)
     G4cout << "DetectorConstruction::Construct -> Third Attenuator set to: " << attenThickness3 << " mm of " << attenuator3->GetName() << G4endl;

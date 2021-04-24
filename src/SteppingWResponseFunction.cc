@@ -280,7 +280,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
 // *********************************************** Track Plexiglass Interactions **************************************************** //
 
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
-        && previousStep_VolumeName.compare(0,4,"LowZ") == 0)
+        && previousStep_VolumeName.compare(0,4,"Last") == 0)
     {
       manager->FillNtupleIColumn(4,0, eventID);
       manager->FillNtupleIColumn(4,1, seed);
