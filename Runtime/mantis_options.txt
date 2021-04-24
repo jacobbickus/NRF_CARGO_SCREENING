@@ -94,6 +94,9 @@
 #/mydet/attenuatorThickness2 1
 # Second Attenuator Layer (second material to be impacted by particles after first layer
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
 
 # Photocathode Options
 

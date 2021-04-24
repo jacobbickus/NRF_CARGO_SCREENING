@@ -27,6 +27,9 @@
 #/mydet/attenuator2 On
 #/mydet/attenuatorThickness2 1
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
 #/mydet/PCrad
 #/mydet/PCmat
 /mydet/nPMT 8

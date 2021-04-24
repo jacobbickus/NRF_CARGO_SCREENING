@@ -24,6 +24,9 @@
 #/mydet/attenuator2 Off
 #/mydet/attenuatorThickness2 1
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
 
 #/Cargo/AddSphere true
 #/Cargo/SphereRadius 2
