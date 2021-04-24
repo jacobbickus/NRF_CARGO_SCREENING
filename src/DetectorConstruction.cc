@@ -87,7 +87,7 @@ void DetectorConstruction::ConstructAttenuatorMaterial(G4Material* &attenuator, 
   G4cout << "DetectorConstruction::ConstructAttenuatorMaterial -> Complete." << G4endl;
 }
 
-G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4LogicalVolume logicWorld, G4double container_z_pos, G4Material* attenuator, G4Material* attenuator2, G4Material* attenuator3)
+G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4LogicalVolume* logicWorld, G4double container_z_pos, G4Material* attenuator, G4Material* attenuator2, G4Material* attenuator3)
 {
   // First Attenuation Layer
   // THIS IS THE MOTHER VOLUME INSIDE WORLD ALL OTHER DETECTOR VOLUMES ARE DAUGHTERS OF THIS VOLUME
