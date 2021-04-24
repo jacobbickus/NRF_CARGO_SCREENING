@@ -1,0 +1,39 @@
+/control/verbose 0
+/tracking/verbose 0
+/run/verbose 0
+/event/verbose 0
+
+/mydet/attenuator Off
+#/mydet/attenuatorThickness 1
+#/mydet/attenuatorMaterial G4_Pb
+/mydet/attenuator2 Off
+#/mydet/attenuatorThickness2 1
+#/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+/mydet/nPMT 8
+
+#/mydet/WaterX
+#/mydet/WaterY
+#/mydet/WaterZ
+
+/run/initialize
+
+/vis/open VRML2FILE
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/scene/add/hits
+/vis/scene/endOfEventAction accumulate 5000
+
+# Make the "World" box invisible
+/vis/geometry/set/visibility World 0 false
+/vis/viewer/set/background 1 1 1
+
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/set 1 blue
+/vis/modeling/trajectories/drawByCharge-0/set -1 blue
+/vis/modeling/trajectories/drawByCharge-0/set 0 red
+
+/vis/viewer/update
+/vis/viewer/set/autoRefresh true
+/run/beamOn 10
