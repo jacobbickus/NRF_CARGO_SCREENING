@@ -172,12 +172,6 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
     G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: "
     << plexiThickness << " mm" << G4endl;
   }
-  else
-  {
-    G4cout << G4endl
-    << "DetectorConstruction::Construct -> Plexiglass Thickness set to default: "
-    << plexiThickness << " mm" << G4endl;
-  }
 
   return logicCasing;
 }
@@ -266,11 +260,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   if(tapeThick != 0.01*cm)
   {
     G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: "
-    << tapeThick << " cm" << G4endl;
-  }
-  else
-  {
-    G4cout << "DetectorConstruction::Construct -> Optical Tape Wrap set to default: "
     << tapeThick << " cm" << G4endl;
   }
 
