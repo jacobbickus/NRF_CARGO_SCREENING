@@ -87,7 +87,7 @@ void SetAttenuatorThickness2(G4double val){attenThickness2 = val;}
 void SetAttenuatorMaterial2(G4String val){attenuatorMat2 = val;}
 void SetAttenuatorState3(G4bool val){attenuatorState3 = val;}
 void SetAttenuatorThickness3(G4double val){attenThickness3 = val;}
-void SetAttenuatorMaterial3(G4double val){attenuatorMat3 = val;}
+void SetAttenuatorMaterial3(G4String val){attenuatorMat3 = val;}
 void SetWaterX(G4double val)
 {
         water_size_x = val;
