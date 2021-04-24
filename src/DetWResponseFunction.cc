@@ -27,7 +27,7 @@
 extern G4bool debug;
 
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
-: G4VUserDetectorConstruction(),
+: DetectorConstruction(),
 chop(Chopper), collimator(Collimator), cargo(Cargo),
 // Attenuator Properties
 attenuatorState(false), attenuatorState2(false), attenThickness(0.001*mm), attenThickness2(0.001*mm), attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"),
