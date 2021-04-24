@@ -1,0 +1,17 @@
+/chopper/state On
+/chopper/material Uranium
+/chopper/abundance 90
+
+/control/verbose 0
+/tracking/verbose 0
+/run/verbose 0
+/event/verbose 0
+#/PGA/beamSize 2.0
+/mantisevent/eventInfoFreq 10
+/chopper/thickness 37
+/chopper/distance 2
+
+#/material/CheckOverlaps true
+/run/initialize
+
+/run/beamOn 100
