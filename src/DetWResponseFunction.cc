@@ -85,7 +85,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
   cargo->CheckCargoSphereSize();
   // ******************************************************** Begin Detector Construction *************************************************************** //
 
-  G4LogicalVolume* logicCasing = ConstructAttenuatorsAndPlexiglass();
+  G4LogicalVolume* logicCasing = ConstructAttenuatorsAndPlexiglass(logicWorld, container_z_pos, attenuator, attenuator2, attenuator3);
 
   return physWorld;
 }
