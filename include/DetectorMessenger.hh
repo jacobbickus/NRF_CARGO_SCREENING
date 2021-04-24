@@ -67,6 +67,7 @@ protected:
   G4UIcmdWithAString* CmdAttenOn3;
   G4UIcmdWithADouble* CmdAttenThick3;
   G4UIcmdWithAString* CmdAttenMat3;
+  G4bool check_atten3_on = false;
   G4UIcmdWithADouble* CmdPlexi;
   G4UIcmdWithADouble* CmdTape;
   G4UIcmdWithAString* CmdVis;
