@@ -134,6 +134,8 @@ Collimator* collimator;
 Cargo* cargo;
 
 protected:
+G4LogicalVolume* ConstructAttenuatorsAndPlexiglass();
+void ConstructAttenuatorMaterial(G4Material* &attenuator, G4Material* &attenuator2, G4Material* &attenuator3);
 // Attenuator Properties
 G4bool attenuatorState, attenuatorState2, attenuatorState3;
 G4double attenThickness, attenThickness2, attenThickness3;
@@ -150,6 +152,7 @@ private:
 void DefDetPositionConstraintLeft(double, double, double, double);
 void DefDetPositionConstraintRight(double, double, double, double);
 void DefDetPositionConstraintUpper(double, double, double);
+void SetDefaultNistMaterials();
 // Material, Logical and Physical Volumes
 G4Material* PC_mat;
 // PMT Properties
@@ -162,6 +165,12 @@ G4bool DetectorViewOnly, material_verbose;
 protected:
 // Output Properties
 G4bool checkOverlaps;
+G4NistManager* nist;
+G4Material* air;
+G4Material* attenuator;
+G4Material* plexiglass;
+G4Material* PMT_mat;
+G4Material* teflonTape;
 
 private:
 G4LogicalVolume* logicPC;

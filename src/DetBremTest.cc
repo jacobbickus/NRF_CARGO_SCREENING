@@ -27,10 +27,8 @@
 extern G4bool debug;
 
 DetBremTest::DetBremTest(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator)
-        : G4VUserDetectorConstruction(),
-        chop(Chopper), linac(Linac), collimator(Collimator),
-        // Output Properties
-        checkOverlaps(true)
+        : DetectorConstruction(),
+        chop(Chopper), linac(Linac), collimator(Collimator)
 {}
 
 DetBremTest::~DetBremTest()
@@ -38,11 +36,6 @@ DetBremTest::~DetBremTest()
 
 G4VPhysicalVolume* DetBremTest::Construct()
 {
-  // Get nist material manager
-  G4NistManager* nist = G4NistManager::Instance();
-
-  // ************************************* Set up Materials ***************************************** //
-  G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
 
   G4double world_size_x = .15*m;
   G4double world_size_y = .15*m;

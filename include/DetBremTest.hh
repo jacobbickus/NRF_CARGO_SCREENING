@@ -26,6 +26,7 @@
 #define DetBremTest_h 1
 
 #include "G4VUserDetectorConstruction.hh"
+#include "DetectorConstruction.hh"
 #include "ChopperSetup.hh"
 #include "Linac.hh"
 #include "Collimator.hh"
@@ -60,7 +61,7 @@ class G4LogicalVolume;
 class DetectorMessenger;
 
 /// Detector construction class to define materials and geometry.
-class DetBremTest : public G4VUserDetectorConstruction
+class DetBremTest : public DetectorConstruction
 {
 public:
 DetBremTest(ChopperSetup*, Linac*, Collimator*);
@@ -73,7 +74,6 @@ private:
   ChopperSetup* chop;
   Linac* linac;
   Collimator* collimator;
-  G4bool checkOverlaps;
 };
 
 #endif
