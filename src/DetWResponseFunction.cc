@@ -29,14 +29,6 @@ extern G4bool debug;
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
 : DetectorConstruction(),
 chop(Chopper), collimator(Collimator), cargo(Cargo),
-// Attenuator Properties
-attenuatorState(false), attenuatorState2(false), attenThickness(0.001*mm), attenThickness2(0.001*mm), attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"),
-// Water Tank properties
-theAngle(150.0), water_size_x(28*cm), water_size_y(225*cm), water_size_z(1*cm),
-// plexi/tape properties
-plexiThickness(0.18*mm),
-// Output Properties
-checkOverlaps(true),
 // Messenger
 detectorM(NULL)
 {

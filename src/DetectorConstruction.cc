@@ -49,6 +49,16 @@ DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Co
 }
 
 DetectorConstruction::DetectorConstruction()
+:
+        attenuatorState(false), attenuatorState2(false), attenuatorState3(false),
+        attenThickness(0.001*mm), attenThickness2(0.001*mm), attenThickness3(0.001*mm),
+        attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"), attenuatorMat3("G4_AIR"),
+        // Water Tank properties
+        theAngle(150.0), water_size_x(28*cm), water_size_y(225*cm), water_size_z(30*cm),
+        // plexi/tape properties
+        plexiThickness(0.18*mm),
+        // Output Properties
+        checkOverlaps(true)
 {;}
 
 DetectorConstruction::~DetectorConstruction()

@@ -71,6 +71,10 @@ public:
   virtual G4VPhysicalVolume* Construct();
 
 private:
+// Chopper
+ChopperSetup* chop;
+Collimator* collimator;
+Cargo* cargo;
 // Messenger
 DetWResponseMessenger* detectorM;
 
