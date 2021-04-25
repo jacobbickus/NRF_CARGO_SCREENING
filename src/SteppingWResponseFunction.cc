@@ -31,7 +31,7 @@ extern G4long seed;
 extern G4bool output;
 
 SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
-        : SteppingAction(event)
+: SteppingAction(event)
 {
 }
 

@@ -26,6 +26,7 @@
 #define SteppingWResponseFunction_h 1
 
 #include "G4UserSteppingAction.hh"
+#include "EventActionWResponseFunction.hh"
 #include "SteppingAction.hh"
 
 class SteppingWResponseFunction : public SteppingAction
