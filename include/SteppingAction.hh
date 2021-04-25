@@ -62,7 +62,7 @@ class SteppingAction : public G4UserSteppingAction
 {
 public:
   SteppingAction(EventAction*);
-  SteppingAction(EventActionWResponseFunction*);
+  SteppingAction();
   virtual ~SteppingAction();
 
 private:
