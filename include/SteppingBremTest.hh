@@ -26,40 +26,16 @@
 #define SteppingBremTest_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "globals.hh"
-#include <vector>
-#include "G4ThreeVector.hh"
-#include "RunInformation.hh"
-#include "DetectorInformation.hh"
-#include "StackingAction.hh"
-#include "Analysis.hh"
-#include "EventAction.hh"
-#include "DetectorConstruction.hh"
-#include "eventInformation.hh"
+#include "SteppingAction.hh"
 
-#include "G4SteppingManager.hh"
-#include "G4EventManager.hh"
-#include "G4ProcessManager.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4Event.hh"
-#include "G4StepPoint.hh"
-#include "G4TrackStatus.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTypes.hh"
 
-#include "G4RunManager.hh"
-#include "G4ParticleGun.hh"
-#include "G4SystemOfUnits.hh"
-
-class SteppingBremTest : public G4UserSteppingAction
+class SteppingBremTest : public SteppingAction
 {
 public:
   SteppingBremTest(EventAction*);
   virtual ~SteppingBremTest();
 
-  // method from the base class
+private:
   virtual void UserSteppingAction(const G4Step*);
 
 };

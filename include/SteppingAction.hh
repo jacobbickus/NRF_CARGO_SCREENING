@@ -60,39 +60,56 @@ class StepMessenger;
 class SteppingAction : public G4UserSteppingAction
 {
 public:
-SteppingAction(EventAction*);
-virtual ~SteppingAction();
-
-// method from the base class
-virtual void UserSteppingAction(const G4Step*);
-
-public:
-
-void SetChopperIncDataFlag(G4int val){drawChopperIncDataFlag = val;}
-void SetChopperOutDataFlag(G4int val){drawChopperOutDataFlag = val;}
-void SetNRFDataFlag(G4int val){drawNRFDataFlag = val;}
-void SetIntObjInDataFlag(G4int val){drawIntObjInDataFlag = val;}
-void SetIntObjOutDataFlag(G4int val){drawIntObjOutDataFlag = val;}
-void SetShieldingIncDataFlag(G4int val){drawShieldingIncDataFlag = val;}
-void SetPlexiIncDataFlag(G4int val){drawPlexiIncDataFlag = val;}
-void SetWaterIncDataFlag(G4int val){drawWaterIncDataFlag = val;}
-void SetScintillationDataFlag(G4int val){drawScintillationDataFlag = val;}
-void SetScintillation2DataFlag(G4int val){drawScintillation2DataFlag = val;}
-void SetCherenkovDataFlag(G4int val){drawCherenkovDataFlag = val;}
-void SetCherenkov2DataFlag(G4int val){drawCherenkov2DataFlag = val;}
-void SetDetDataFlag(G4int val){drawDetDataFlag = val;}
+  SteppingAction(EventAction*);
+  virtual ~SteppingAction();
 
 private:
-G4double weight;
-EventAction* kevent;
-G4OpBoundaryProcessStatus fExpectedNextStatus;
-G4String procCount;
-G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag;
-G4int drawIntObjInDataFlag, drawIntObjOutDataFlag, drawShieldingIncDataFlag, drawPlexiIncDataFlag;
-G4int drawWaterIncDataFlag, drawScintillationDataFlag, drawScintillation2DataFlag;
-G4int drawCherenkovDataFlag, drawCherenkov2DataFlag, drawDetDataFlag;
-G4bool WEIGHTED;
-StepMessenger* stepM;
+  virtual void UserSteppingAction(const G4Step*);
+
+public:
+  void SetChopperIncDataFlag(G4int val){drawChopperIncDataFlag = val;}
+  void SetChopperOutDataFlag(G4int val){drawChopperOutDataFlag = val;}
+  void SetNRFDataFlag(G4int val){drawNRFDataFlag = val;}
+  void SetIntObjInDataFlag(G4int val){drawIntObjInDataFlag = val;}
+  void SetIntObjOutDataFlag(G4int val){drawIntObjOutDataFlag = val;}
+  void SetShieldingIncDataFlag(G4int val){drawShieldingIncDataFlag = val;}
+  void SetPlexiIncDataFlag(G4int val){drawPlexiIncDataFlag = val;}
+  void SetWaterIncDataFlag(G4int val){drawWaterIncDataFlag = val;}
+  void SetScintillationDataFlag(G4int val){drawScintillationDataFlag = val;}
+  void SetScintillation2DataFlag(G4int val){drawScintillation2DataFlag = val;}
+  void SetCherenkovDataFlag(G4int val){drawCherenkovDataFlag = val;}
+  void SetCherenkov2DataFlag(G4int val){drawCherenkov2DataFlag = val;}
+  void SetDetDataFlag(G4int val){drawDetDataFlag = val;}
+
+protected:
+  void FillChopperInc(G4int, G4double, G4double);
+  void FillChopperOut(G4int);
+  void FillNRF(G4int, G4double, const G4TrackVector*);
+  void FillIntObjIn(G4int);
+  void FillIntObjOut(G4int);
+  void FillShielding(G4int);
+  void FillPlexi(G4int);
+  void FillWater(G4int);
+  void FillScintAndCherenkov(G4int, G4int, const std::vector<const G4Track*>*);
+  void FillDetected(G4int, G4double);
+  void FillIncDetector(G4int, G4double);
+
+  RunInformation* krun;
+  DetectorInformation* kdet;
+  G4AnalysisManager* manager;
+  G4double energy, beamEnergy, theta, phi;
+  G4String nextStep_VolumeName, previousStep_VolumeName, CPName;
+  G4int eventID, trackID;
+  G4double weight;
+  EventAction* kevent;
+  G4OpBoundaryProcessStatus fExpectedNextStatus;
+  G4String procCount;
+  G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag;
+  G4int drawIntObjInDataFlag, drawIntObjOutDataFlag, drawShieldingIncDataFlag, drawPlexiIncDataFlag;
+  G4int drawWaterIncDataFlag, drawScintillationDataFlag, drawScintillation2DataFlag;
+  G4int drawCherenkovDataFlag, drawCherenkov2DataFlag, drawDetDataFlag;
+  G4bool WEIGHTED;
+  StepMessenger* stepM;
 };
 
 #endif

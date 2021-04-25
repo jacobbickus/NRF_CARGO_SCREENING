@@ -26,46 +26,16 @@
 #define SteppingDetTest_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "globals.hh"
-#include <vector>
-#include "G4ThreeVector.hh"
-#include "RunInformation.hh"
-#include "DetectorInformation.hh"
-#include "G4OpBoundaryProcess.hh"
-#include "StackingAction.hh"
-#include "Analysis.hh"
-#include "EventAction.hh"
-#include "DetectorConstruction.hh"
-#include "eventInformation.hh"
+#include "SteppingAction.hh"
 
-#include "G4SteppingManager.hh"
-#include "G4EventManager.hh"
-#include "G4ProcessManager.hh"
-#include "G4Track.hh"
-#include "G4Step.hh"
-#include "G4Event.hh"
-#include "G4StepPoint.hh"
-#include "G4TrackStatus.hh"
-#include "G4VPhysicalVolume.hh"
-#include "G4ParticleDefinition.hh"
-#include "G4ParticleTypes.hh"
-
-#include "G4RunManager.hh"
-#include "G4ParticleGun.hh"
-#include "G4SystemOfUnits.hh"
-
-class SteppingDetTest: public G4UserSteppingAction
+class SteppingDetTest: public SteppingAction
 {
 public:
   SteppingDetTest(EventAction*);
   virtual ~SteppingDetTest();
 
-  // method from the base class
-  virtual void UserSteppingAction(const G4Step*);
 private:
-  EventAction* kevent;
-  G4OpBoundaryProcessStatus fExpectedNextStatus;
-  G4double weight;
+  virtual void UserSteppingAction(const G4Step*);
 
 };
 

@@ -28,8 +28,10 @@ extern G4bool output;
 extern G4bool debug;
 
 SteppingBremTest::SteppingBremTest(EventAction* event)
-: G4UserSteppingAction()
-{}
+: SteppingAction(event)
+{
+  WEIGHTED = false;
+}
 SteppingBremTest::~SteppingBremTest()
 {}
 
@@ -53,13 +55,10 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   }
   eventInformation* info =
             (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
-  G4double beamEnergy = info->GetBeamEnergy()/(MeV);
+  beamEnergy = info->GetBeamEnergy()/(MeV);
 
-  RunInformation* krun = RunInformation::Instance();
-  DetectorInformation* kdet = DetectorInformation::Instance();
-
-  G4String nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
-  G4String previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
+  nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
+  previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
 
   G4double EndChop = kdet->getEndChop();
   if(theTrack->GetPosition().z() > EndChop)
@@ -77,22 +76,17 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
     return;
   }
 
-  G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-  G4int trackID = theTrack->GetTrackID();
-  G4double energy = theTrack->GetKineticEnergy()/(MeV);
+  eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+  trackID = theTrack->GetTrackID();
+  energy = theTrack->GetKineticEnergy()/(MeV);
 
-  G4AnalysisManager* manager = G4AnalysisManager::Instance();
-
-  G4String CPName = "beam";
+  CPName = "beam";
   if(theTrack->GetCreatorProcess() !=0)
     CPName = theTrack->GetCreatorProcess()->GetProcessName();
 
   G4ThreeVector p = startPoint->GetMomentum();
-  // sin(theta) = (vector magnitude in XY plane)/(total vector magnitude)
-  // polar angle measured between the positive Z axis and the vector
-  G4double theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
-  // sin(phi) -> angle in the XY plane reference to the positive X axis
-  G4double phi = std::asin(p.y()/p.mag());
+  theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
+  phi = std::asin(p.y()/p.mag());
   G4ThreeVector loc = theTrack->GetPosition();
 
   // exiting Brem Radiator cuts
