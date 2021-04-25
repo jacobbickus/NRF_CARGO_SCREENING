@@ -86,7 +86,6 @@ protected:
   void FillShielding(G4int);
   void FillPlexi(G4int);
   void FillWater(G4int);
-  void FillScintAndCherenkov(G4int, G4int, const std::vector<const G4Track*>*);
   void FillDetected(G4int, G4double);
   void FillIncDetector(G4int, G4double);
 

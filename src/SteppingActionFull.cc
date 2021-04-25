@@ -341,3 +341,68 @@ void SteppingActionFull::UserSteppingAction(const G4Step* aStep)
       } // for if statement if first time in photocathode
     } // for if at boundary
 } // end of user stepping action function
+
+void SteppingActionFull::FillScintAndCherenkov(G4int num, G4int num2, const std::vector<const G4Track*>* secondaries)
+{
+  for(unsigned int i=0; i<secondaries->size(); ++i)
+  {
+    if(secondaries->at(i)->GetParentID()>0)
+    {
+        if(secondaries->at(i)->GetDynamicParticle()->GetParticleDefinition() == G4OpticalPhoton::OpticalPhotonDefinition())
+        {
+          if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Scintillation")
+          {
+            // for event level scintillation photon data
+            if(drawScintillationDataFlag)
+            {
+              kevent->ScintillationEnergy(energy);
+              kevent->ScintillationAddSecondary();
+            }
+            // for individual scintillation photon data
+            if(drawScintillation2DataFlag)
+            {
+              manager->FillNtupleIColumn(num,0, eventID);
+              manager->FillNtupleDColumn(num,1, secondaries->at(i)->GetKineticEnergy()/(MeV));
+              G4ThreeVector p_scint = secondaries->at(i)->GetMomentum();
+              G4double phi_scint = std::asin(p_scint.y()/p_scint.mag());
+              G4double theta_scint = std::asin(std::sqrt(std::pow(p_scint.x(),2)+std::pow(p_scint.y(),2))/p_scint.mag());
+              manager->FillNtupleDColumn(num,2, phi_scint);
+              manager->FillNtupleDColumn(num,3, theta_scint);
+              if(WEIGHTED)
+                manager->FillNtupleDColumn(num,4, weight);
+
+              manager->AddNtupleRow(num);
+            }
+            krun->AddScintillationEnergy(secondaries->at(i)->GetKineticEnergy());
+            krun->AddScintillation();
+          }
+          if(secondaries->at(i)->GetCreatorProcess()->GetProcessName() == "Cerenkov")
+          {
+            // for event level cherenkov photon data
+            if(drawCherenkovDataFlag)
+            {
+              kevent->CherenkovEnergy(energy);
+              kevent->CherenkovAddSecondary();
+            }
+            // for individual cherenkov photon data
+            if(drawCherenkov2DataFlag)
+            {
+              manager->FillNtupleIColumn(num2,0, eventID);
+              manager->FillNtupleDColumn(num2,1,secondaries->at(i)->GetKineticEnergy()/(MeV));
+              G4ThreeVector p_cher = secondaries->at(i)->GetMomentum();
+              G4double phi_cher = std::asin(p_cher.y()/p_cher.mag());
+              manager->FillNtupleDColumn(num2,2,phi_cher);
+
+              if(WEIGHTED)
+                manager->FillNtupleDColumn(num2,3, weight);
+
+              manager->AddNtupleRow(num2);
+            }
+            krun->AddCerenkovEnergy(secondaries->at(i)->GetKineticEnergy());
+            krun->AddCerenkov();
+          }// end if cherenkov
+
+        } // end if optical photon
+      } // end if parentID > 0
+    } // end for loop
+} // end of Fill function

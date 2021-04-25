@@ -87,7 +87,7 @@ void ActionInitialization::Build() const
     }
 
     if(bremTest)
-      SetUserAction(new SteppingBremTest(event));
+      SetUserAction(new SteppingBremTest());
     else if(detTest)
       SetUserAction(new SteppingDetTest(event));
     else if(WResponseFunction)
