@@ -27,30 +27,8 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorAction.hh"
-#include "Analysis.hh"
-#include "globals.hh"
-#include <vector>
-#include "G4ParticleGun.hh"
-#include "Randomize.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4Event.hh"
-#include "G4Gamma.hh"
-#include "eventInformation.hh"
-#include "SourceInformation.hh"
-#include "DetectorInformation.hh"
-#include "InputFileManager.hh"
 #include "DetBuildResPGAMessenger.hh"
 
-#include "TFile.h"
-#include "TROOT.h"
-#include "TH1D.h"
-#include "TGraph.h"
-#include "TRandom2.h"
-#include "TSystem.h"
-#include "TMath.h"
-
-class G4Event;
-class Analysis;
 class DetBuildResPGAMessenger;
 
 class DetBuildResPGA : public PrimaryGeneratorAction
