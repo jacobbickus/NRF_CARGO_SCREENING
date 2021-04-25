@@ -23,7 +23,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "ActionInitialization.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "PGA.hh"
+#include "PGABremTest.hh"
+#include "PGADetResponseTest.hh"
 #include "DetBuildResPGA.hh"
 #include "RunAction.hh"
 #include "SteppingActionFull.hh"
@@ -60,9 +62,11 @@ void ActionInitialization::Build() const
     Analysis* analysis = new Analysis();
 
     if(detTest)
-      SetUserAction(new DetBuildResPGA());
+      SetUserAction(new PGADetResponseTest());
+    else if(bremTest)
+      SetUserAction(new PGABremTest());
     else
-      SetUserAction(new PrimaryGeneratorAction());
+      SetUserAction(new PGA());
 
     SetUserAction(new RunAction(analysis));
 
