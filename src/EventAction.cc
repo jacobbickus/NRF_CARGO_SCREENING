@@ -71,12 +71,12 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     // Deal with Detected per Event
     if(detTest)
     {
-      FillDetectorResponse(manager);
+      FillDetectorResponse();
     }
     else
     {
-      FillScintillationPerEvent(manager, weight);
-      FillCherenkovPerEvent(manager, weight);
+      FillScintillationPerEvent(weight);
+      FillCherenkovPerEvent(weight);
     }
 
     if(debug && eventID == 0)
