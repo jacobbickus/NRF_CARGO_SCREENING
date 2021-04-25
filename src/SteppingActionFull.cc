@@ -25,6 +25,7 @@
 #include "SteppingActionFull.hh"
 
 extern G4bool output;
+extern G4bool addNRF;
 
 SteppingActionFull::SteppingActionFull(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)

@@ -37,6 +37,7 @@ public:
 
 private:
     void FillScintAndCherenkov(G4int, G4int, const std::vector<const G4Track*>*);
+    EventAction* kevent;
 };
 
 #endif
