@@ -32,6 +32,8 @@ extern G4bool output;
 SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
+  if(debug)
+    G4cout << "SteppingWResponseFunction::SteppingWResponseFunction Initialized." << G4endl;
 }
 
 SteppingWResponseFunction::~SteppingWResponseFunction()

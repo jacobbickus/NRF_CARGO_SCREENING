@@ -39,7 +39,7 @@ BaseSteppingAction::BaseSteppingAction()
   stepM(NULL)
 {
   if(debug)
-    std::cout << "BaseSteppingAction::BaseSteppingAction With Response Function Initialized." << std::endl;
+    std::cout << "BaseSteppingAction::BaseSteppingAction Initialized." << std::endl;
 
   stepM = new StepMessenger(this);
   krun = RunInformation::Instance();

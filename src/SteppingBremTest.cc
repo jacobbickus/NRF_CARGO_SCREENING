@@ -31,6 +31,8 @@ SteppingBremTest::SteppingBremTest()
 : G4UserSteppingAction(), BaseSteppingAction()
 {
   WEIGHTED = false;
+  if(debug)
+    G4cout << "SteppingBremTest::SteppingBremTest Initialized." << G4endl;
 }
 
 SteppingBremTest::~SteppingBremTest()

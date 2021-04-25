@@ -26,6 +26,7 @@
 
 extern G4bool output;
 extern G4long seed;
+extern G4bool debug;
 
 
 SteppingDetTest::SteppingDetTest(EventAction* event)
@@ -33,6 +34,8 @@ SteppingDetTest::SteppingDetTest(EventAction* event)
 {
   fExpectedNextStatus = Undefined;
   WEIGHTED = false;
+  if(debug)
+    G4cout << "SteppingDetTest::SteppingDetTest Initialized." << G4endl;
 }
 
 SteppingDetTest::~SteppingDetTest()

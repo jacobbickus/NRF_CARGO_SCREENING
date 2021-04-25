@@ -26,10 +26,14 @@
 
 extern G4bool output;
 extern G4bool addNRF;
+extern G4bool debug;
 
 SteppingActionFull::SteppingActionFull(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
-{}
+{
+  if(debug)
+    G4cout << "SteppingActionFull::SteppingActionFull Initialized." << G4endl;
+}
 
 SteppingActionFull::~SteppingActionFull()
 {}
