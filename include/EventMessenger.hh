@@ -4,28 +4,23 @@
 #include "globals.hh"
 #include "G4UImessenger.hh"
 #include "G4UIcmdWithADouble.hh"
-#include "EventAction.hh"
-#include "EventActionWResponseFunction.hh"
+#include "BaseEventAction.hh"
 #include "G4UIdirectory.hh"
 
-class EventAction;
-class EventActionWResponseFunction;
+class BaseEventAction;
 class G4UIcmdWithADouble;
 class G4UIdirectory;
 
 class EventMessenger: public G4UImessenger
 {
 public:
-  EventMessenger(EventAction*);
-  EventMessenger(EventActionWResponseFunction*);
+  EventMessenger(BaseEventAction*);
   ~EventMessenger();
 
   void SetNewValue(G4UIcommand*, G4String); // must always be a string input
 private:
-  EventAction* EventA;
-  EventActionWResponseFunction* EventAWResponse;
+  BaseEventAction* EventA;
   G4UIcmdWithADouble* Cmd;
-  G4UIcmdWithADouble* Cmd2;
   G4UIdirectory *myDir;
 };
 
