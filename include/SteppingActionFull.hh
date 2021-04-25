@@ -33,7 +33,7 @@ class SteppingActionFull : public G4UserSteppingAction, public BaseSteppingActio
 public:
   SteppingActionFull(EventAction*);
   virtual ~SteppingActionFull();
-  virtual UserSteppingAction(G4Step*);
+  virtual void UserSteppingAction(const G4Step*);
 
 private:
     void FillScintAndCherenkov(G4int, G4int, const std::vector<const G4Track*>*);
