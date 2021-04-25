@@ -35,7 +35,7 @@ SteppingDetTest::SteppingDetTest(EventAction* event)
   fExpectedNextStatus = Undefined;
   WEIGHTED = false;
   if(debug)
-    G4cout << "SteppingDetTest::SteppingDetTest Initialized." << G4endl;
+    std::cout << "SteppingDetTest::SteppingDetTest Initialized." << std::endl;
 }
 
 SteppingDetTest::~SteppingDetTest()

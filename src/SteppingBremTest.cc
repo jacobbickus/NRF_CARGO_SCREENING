@@ -32,7 +32,7 @@ SteppingBremTest::SteppingBremTest()
 {
   WEIGHTED = false;
   if(debug)
-    G4cout << "SteppingBremTest::SteppingBremTest Initialized." << G4endl;
+    std::cout << "SteppingBremTest::SteppingBremTest Initialized." << std::endl;
 }
 
 SteppingBremTest::~SteppingBremTest()

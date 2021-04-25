@@ -32,7 +32,7 @@ SteppingActionFull::SteppingActionFull(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   if(debug)
-    G4cout << "SteppingActionFull::SteppingActionFull Initialized." << G4endl;
+    std::cout << "SteppingActionFull::SteppingActionFull Initialized." << std::endl;
 }
 
 SteppingActionFull::~SteppingActionFull()

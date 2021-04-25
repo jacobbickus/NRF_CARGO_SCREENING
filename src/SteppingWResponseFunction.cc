@@ -33,7 +33,7 @@ SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunctio
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   if(debug)
-    G4cout << "SteppingWResponseFunction::SteppingWResponseFunction Initialized." << G4endl;
+    std::cout << "SteppingWResponseFunction::SteppingWResponseFunction Initialized." << std::endl;
 }
 
 SteppingWResponseFunction::~SteppingWResponseFunction()
