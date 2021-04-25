@@ -59,6 +59,23 @@ BaseSteppingAction::~BaseSteppingAction()
   delete stepM;
 }
 
+void BaseSteppingAction::FillBremRadiator(G4int num)
+{
+  manager->FillNtupleIColumn(num,0, eventID);
+  manager->FillNtupleDColumn(num,1, energy);
+  manager->FillNtupleDColumn(num,2, theta);
+  manager->FillNtupleDColumn(num,3, phi);
+  manager->AddNtupleRow(num);
+}
+
+void BaseSteppingAction::FillBremBacking(G4int num)
+{
+  manager->FillNtupleIColumn(num,0, eventID);
+  manager->FillNtupleDColumn(num,1, energy);
+  manager->FillNtupleDColumn(num,2, theta);
+  manager->FillNtupleDColumn(num,3, phi);
+  manager->AddNtupleRow(num);
+}
 
 void BaseSteppingAction::FillChopperInc(G4int num, G4double locx, G4double locy)
 {

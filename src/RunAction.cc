@@ -27,6 +27,7 @@
 extern G4bool output;
 extern G4bool debug;
 extern G4bool WResponseFunction;
+extern G4bool bremTest;
 
 RunAction::RunAction(Analysis* histoAnalysis)
         : G4UserRunAction(), fAnalysis(histoAnalysis)
@@ -55,7 +56,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   InputFileManager *ifm = InputFileManager::Instance();
   ifm->CloseInputFile();
   G4cout << G4endl << "RunAction::EndOfRunAction -> Input File Closed." << G4endl;
-  
+
   if(WResponseFunction)
   {
     DetectorResponseFunction* dResponse = DetectorResponseFunction::Instance();
@@ -90,14 +91,19 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
     << TotNbofEvents << G4endl;
   G4cout << "Total number of Surface Events:                              "
     << fTotalSurface << G4endl;
-  G4cout << "Total number of NRF Photons:                                 "
-    << fNRF << G4endl;
-  G4cout << "Total number of Cherenkov Photons:                           "
-    << fCerenkovCount << G4endl;
-  G4cout << "Total number of Scintillation Photons:                       "
-    << fScintCount << G4endl;
-  G4cout << "Total number of Optical Photons:                             "
-    << fCerenkovCount + fScintCount << G4endl;
+
+  if(!bremTest)
+  {
+    G4cout << "Total number of NRF Photons:                                 "
+      << fNRF << G4endl;
+    G4cout << "Total number of Cherenkov Photons:                           "
+      << fCerenkovCount << G4endl;
+    G4cout << "Total number of Scintillation Photons:                       "
+      << fScintCount << G4endl;
+    G4cout << "Total number of Optical Photons:                             "
+      << fCerenkovCount + fScintCount << G4endl;
+  }
+
   G4cout << "Total number of Tracks Cut Based on Position:                "
     << fStatusKilledPosition << G4endl;
   G4cout << "Total number of Tracks Cut Based on Process:                 "
@@ -109,21 +115,27 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   G4cout << "Total number of Tracks Cut Based on Phi Emission Angle:      "
     << fStatusKilledPhiAngle << G4endl;
 
-  if (fCerenkovCount > 0)
+  if(!bremTest && !WResponseFunction)
   {
-    G4cout << "Average Cherenkov Photon energy emitted:            "
-           << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
+    if (fCerenkovCount > 0)
+    {
+      G4cout << "Average Cherenkov Photon energy emitted:                  "
+             << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
+    }
+
+    if (fScintCount > 0)
+    {
+      G4cout << "Average Scintillation Photon energy emitted:              "
+             << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
+    }
   }
 
-  if (fScintCount > 0)
+  if(bremTest)
   {
-    G4cout << "Average Scintillation Photon energy emitted:        "
-           << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
-  }
-
-  if(fBremBackingCount > 0)
-  {
-    G4cout << "Total Number of Brem Backing Hits:                         " << fBremBackingCount << G4endl;
+    if(fBremBackingCount > 0)
+    {
+      G4cout << "Total Number of Brem Backing Hits:                         " << fBremBackingCount << G4endl;
+    }
   }
 
   G4cout << "----------------------------------------------------------------------" << G4endl;

@@ -26,6 +26,7 @@
 
 extern G4bool output;
 extern G4bool debug;
+extern G4bool addNRF;
 
 SteppingBremTest::SteppingBremTest()
 : G4UserSteppingAction(), BaseSteppingAction()
@@ -92,6 +93,25 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   phi = std::asin(p.y()/p.mag());
   G4ThreeVector loc = theTrack->GetPosition();
 
+// **************************************************** Track NRF Materials **************************************************** //
+
+  const G4VProcess* process = endPoint->GetProcessDefinedStep();
+
+  if(addNRF)
+  {
+    // Keep track of Any NRF Created
+    if(drawNRFDataFlag)
+    {
+      if(process->GetProcessName() == "NRF")
+      {
+        krun->AddNRF();
+        const G4TrackVector* emitted_nrf = aStep->GetSecondary();
+        FillNRF(0, loc.z(), emitted_nrf);
+      } // end of process->GetProcessName() == "NRF"
+    } // end of if drawNRFDataFlag
+  } // end of if addNRF
+
+// **************************************************** Track Linac Interactions **************************************************** //
   // exiting Brem Radiator cuts
   if(nextStep_VolumeName.compare("Brem") != 0
       && previousStep_VolumeName.compare("Brem") == 0)
@@ -110,11 +130,7 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    manager->FillNtupleIColumn(0,0, eventID);
-    manager->FillNtupleDColumn(0,1, energy);
-    manager->FillNtupleDColumn(0,2, theta);
-    manager->FillNtupleDColumn(0,3, phi);
-    manager->AddNtupleRow(0);
+    FillBremRadiator(1);
   }
   // exiting BremBacking
   if(nextStep_VolumeName.compare("CBack") != 0
@@ -142,15 +158,12 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
     }
     else
     {
-      manager->FillNtupleIColumn(1,0, eventID);
-      manager->FillNtupleDColumn(1,1, energy);
-      manager->FillNtupleDColumn(1,2, theta);
-      manager->FillNtupleDColumn(1,3, phi);
-      manager->AddNtupleRow(1);
+      FillBremBacking(2);
       return;
     } // end else
   } // end if exiting brem backing
 
+// **************************************************** Track Chopper Interactions  **************************************************** //
   // Gammas Incident Chopper Wheel
   if(nextStep_VolumeName.compare("Chop") == 0
      && previousStep_VolumeName.compare("Chop") != 0
@@ -164,13 +177,17 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    manager->FillNtupleIColumn(2,0, eventID);
-    manager->FillNtupleDColumn(2,1, energy);
-    manager->FillNtupleDColumn(2,2, loc.x());
-    manager->FillNtupleDColumn(2,3, loc.y());
-    manager->AddNtupleRow(2);
-    // Once Incident Chopper record data and kill for brem test
+    FillChopperInc(3, loc.x(), loc.y());
+    return;
+  }
+
+  // Gammas Exiting Chopper Wheel
+  if(nextStep_VolumeName.compare("Chop") != 0
+     && previousStep_VolumeName.compare("Chop") == 0)
+  {
+    FillChopperOut(4);
     theTrack->SetTrackStatus(fStopAndKill);
     return;
   }
+
 }// end of user stepping function

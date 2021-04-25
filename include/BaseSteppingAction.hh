@@ -78,6 +78,8 @@ public:
   void SetDetDataFlag(G4int val){drawDetDataFlag = val;}
 
 protected:
+  void FillBremRadiator(G4int);
+  void FillBremBacking(G4int);
   void FillChopperInc(G4int, G4double, G4double);
   void FillChopperOut(G4int);
   void FillNRF(G4int, G4double, const G4TrackVector*);
