@@ -28,7 +28,10 @@ extern G4bool detTest;
 
 EventAction::EventAction()
 : G4UserEventAction(), BaseEventAction()
-{}
+{
+  if(debug)
+    std::cout << "EventAction::EventAction Initialized." << std::endl;
+}
 
 EventAction::~EventAction()
 {}

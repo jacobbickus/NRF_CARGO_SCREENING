@@ -32,6 +32,9 @@ BaseEventAction::BaseEventAction()
 :eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
 totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
 {
+  if(debug)
+    std::cout << "BaseEventAction::BaseEventAction Initialized." << std::endl;
+    
   eventM = new EventMessenger(this);
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;

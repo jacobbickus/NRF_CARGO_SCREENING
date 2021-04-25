@@ -29,7 +29,10 @@ extern G4String inFile;
 
 EventActionWResponseFunction::EventActionWResponseFunction()
 : G4UserEventAction(), BaseEventAction()
-{}
+{
+  if(debug)
+    std::cout << "EventActionWResponseFunction::EventActionWResponseFunction Initialized." << std::endl;
+}
 
 EventActionWResponseFunction::~EventActionWResponseFunction()
 {}
