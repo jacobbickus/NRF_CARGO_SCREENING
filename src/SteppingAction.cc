@@ -57,7 +57,7 @@ SteppingAction::SteppingAction(EventAction* event)
 }
 
 SteppingAction::SteppingAction()
-: drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
+: G4UserSteppingAction(), drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
   drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
   drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
   drawScintillationDataFlag(0), drawScintillation2DataFlag(0),

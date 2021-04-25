@@ -29,9 +29,7 @@
 #include "SteppingAction.hh"
 #include "EventActionWResponseFunction.hh"
 
-class SteppingAction;
-
-class SteppingWResponseFunction : public SteppingAction, public G4UserSteppingAction
+class SteppingWResponseFunction : public SteppingAction
 {
 public:
   SteppingWResponseFunction(EventActionWResponseFunction*);
