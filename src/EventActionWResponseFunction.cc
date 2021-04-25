@@ -22,25 +22,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "EventActionWResponseFunction.hh"
-#include <ctime>
 
 extern G4bool debug;
 extern G4bool printEvents;
 extern G4String inFile;
 
 EventActionWResponseFunction::EventActionWResponseFunction()
-:eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
-totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
-{
-  eventM = new EventMessenger(this);
-  if(!inFile.compare("brems_distributions.root"))
-    WEIGHTED = true;
-}
+: G4UserEventAction(), BaseEventAction()
+{}
 
 EventActionWResponseFunction::~EventActionWResponseFunction()
-{
-  delete eventM;
-}
+{}
 
 void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
 {
@@ -48,56 +40,7 @@ void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
   if(debug && eventID == 0)
       std::cout << "EventActionWResponseFunction::BeginOfEventAction -> Beginning" << std::endl;
 
-  if(eventID == 0)
-  {
-    std::cout << "Tracking Events... " << std::endl;
-    G4cout << "Tracking Events: " << G4endl;
-    totalEventsToRun = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
-  }
-  else if(eventID % eventInfoFreq == 0)
-  {
-    G4RunManager *runMgr = G4RunManager::GetRunManager();
-    if(runMgr->GetCurrentRun()->GetRunID()!=runID)
-    {
-      prevRunTime = clock()*1.0/CLOCKS_PER_SEC;
-      runID++;
-    }
-
-    // Calculate the rate [particles tracked / s] and the estimated
-    // time to completion of the present run [m,s]
-    runTime = clock()*1.0/CLOCKS_PER_SEC - prevRunTime;
-    eventsPerSec = eventID*1.0/runTime;  // [s]
-    timeToFinish = (totalEventsToRun-eventID)/eventsPerSec; // [s]
-
-    // Output the event variables in scientific notation using
-    // std::stringstreams to avoid screwing up G4cout formatting
-    std::stringstream eventSS;
-    eventSS.precision(3);
-    eventSS << std::scientific << (double)eventID;
-    std::stringstream tEventSS;
-    tEventSS.precision(3);
-    tEventSS << std::scientific << totalEventsToRun;
-
-    if(printEvents)
-    {
-      std::cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
-                << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
-                << std::setprecision(2) << "Time2Finish ["
-                << ((int)timeToFinish)/3600  << "h "
-                << ((int)timeToFinish%3600)/60 << "m "
-                << ((int)timeToFinish%3600)%60 << "s]"
-                << std::setprecision(6) << std::flush;
-    }
-
-    G4cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
-              << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
-              << std::setprecision(2) << "Time2Finish ["
-              << ((int)timeToFinish)/3600  << "h "
-              << ((int)timeToFinish%3600)/60 << "m "
-              << ((int)timeToFinish%3600)%60 << "s]"
-              << std::setprecision(6) << std::flush;
-  } // end else if eventID %
-
+  EventActionPrint();
   incident_energy = 0.;
 
   if(debug && eventID == 0)

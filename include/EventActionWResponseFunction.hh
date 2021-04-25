@@ -26,24 +26,9 @@
 #define EventActionWResponseFunction_h 1
 
 #include "G4UserEventAction.hh"
-#include "globals.hh"
-#include "G4Types.hh"
-#include "G4EventManager.hh"
-#include "eventInformation.hh"
-#include "Analysis.hh"
-#include "G4RunManager.hh"
-#include "G4Event.hh"
-#include "G4ios.hh"
-#include "G4UImanager.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4Run.hh"
-#include "EventMessenger.hh"
-#include "DetectorResponseFunction.hh"
+#include "BaseEventAction.hh"
 
-class G4Event;
-class EventMessenger;
-
-class EventActionWResponseFunction : public G4UserEventAction
+class EventActionWResponseFunction : public G4UserEventAction, public BaseEventAction
 {
 public:
 EventActionWResponseFunction();
@@ -52,17 +37,6 @@ EventActionWResponseFunction();
 public:
 void BeginOfEventAction(const G4Event*);
 void EndOfEventAction(const G4Event*);
-
-void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
-void SetIncidentEnergy(G4double e){incident_energy = e;}
-
-private:
-G4int eventInfoFreq, runID;
-G4int eventID;
-G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
-G4bool WEIGHTED;
-EventMessenger* eventM;
-G4double incident_energy;
 
 };
 
