@@ -31,17 +31,43 @@ extern G4bool output;
 extern G4bool resonanceTest;
 
 SteppingAction::SteppingAction(EventAction* event)
-        : G4UserSteppingAction(), kevent(event),
-        drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
-        drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
-        drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
-        drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
-        drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
-        WEIGHTED(false),
-        stepM(NULL)
+: G4UserSteppingAction(), kevent(event),
+  drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
+  drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
+  drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
+  drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
+  drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
+  WEIGHTED(false),
+  stepM(NULL)
 {
   if(debug)
     std::cout << "SteppingAction::SteppingAction -> Initialized." << std::endl;
+
+  stepM = new StepMessenger(this);
+  krun = RunInformation::Instance();
+  kdet = DetectorInformation::Instance();
+  manager = G4AnalysisManager::Instance();
+  fExpectedNextStatus = Undefined;
+
+  if(!inFile.compare("brems_distributions.root"))
+    WEIGHTED = true;
+
+  if(resonanceTest)
+    WEIGHTED = false;
+}
+
+SteppingAction::SteppingAction(EventActionWResponseFunction* event)
+: G4UserSteppingAction(), kevent(event),
+  drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
+  drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
+  drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
+  drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
+  drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
+  WEIGHTED(false),
+  stepM(NULL)
+{
+  if(debug)
+    std::cout << "SteppingAction::SteppingAction With Response Function Initialized." << std::endl;
 
   stepM = new StepMessenger(this);
   krun = RunInformation::Instance();

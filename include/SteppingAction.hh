@@ -36,6 +36,7 @@
 #include "Analysis.hh"
 #include "StepMessenger.hh"
 #include "EventAction.hh"
+#include "EventActionWResponseFunction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"
 
@@ -61,6 +62,7 @@ class SteppingAction : public G4UserSteppingAction
 {
 public:
   SteppingAction(EventAction*);
+  SteppingAction(EventActionWResponseFunction*);
   virtual ~SteppingAction();
 
 private:
@@ -97,7 +99,7 @@ protected:
   RunInformation* krun;
   DetectorInformation* kdet;
   G4AnalysisManager* manager;
-  G4double energy, beamEnergy, theta, phi;
+  G4double energy, beamEnergy, theta, phi, gtime;
   G4String nextStep_VolumeName, previousStep_VolumeName, CPName;
   G4int eventID, trackID;
   G4double weight;

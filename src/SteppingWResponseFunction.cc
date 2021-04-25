@@ -31,26 +31,12 @@ extern G4long seed;
 extern G4bool output;
 
 SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
-        : G4UserSteppingAction(), kevent(event),
-        drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
-        drawIntObjInDataFlag(0), drawIntObjOutDataFlag(0), drawShieldingIncDataFlag(0),
-        drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
-        drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
-        drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
-        WEIGHTED(false),
-        stepM(NULL)
+        : SteppingAction(event)
 {
-  if(debug)
-    std::cout << "SteppingWResponseFunction::SteppingWResponseFunction -> Initialized." << std::endl;
-  stepM = new StepMessenger(this);
-
-  if(!inFile.compare("brems_distributions.root"))
-    WEIGHTED = true;
 }
 
 SteppingWResponseFunction::~SteppingWResponseFunction()
 {
-  delete stepM;
 }
 
 void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
@@ -76,16 +62,13 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     // Grab Relevant event information including the particle weight
     eventInformation* info =
               (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
-    G4double beamEnergy = info->GetBeamEnergy()/(MeV);
+    beamEnergy = info->GetBeamEnergy()/(MeV);
 
     if(WEIGHTED)
       weight = info->GetWeight();
 
-    RunInformation* krun = RunInformation::Instance();
-    DetectorInformation* kdet = DetectorInformation::Instance();
-
-    G4String nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
-    G4String previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
+    nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
+    previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
     // kill photons past IntObj
     G4double EndIntObj = kdet->getEndIntObj();
 
@@ -114,22 +97,18 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       return;
     }
 
-    G4int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-    G4int trackID = theTrack->GetTrackID();
-    G4double energy = theTrack->GetKineticEnergy()/(MeV);
+    eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    trackID = theTrack->GetTrackID();
+    energy = theTrack->GetKineticEnergy()/(MeV);
 // ************************************************* Checks and Cuts Complete ************************************************** //
-    G4AnalysisManager* manager = G4AnalysisManager::Instance();
 
-    G4String CPName = "beam";
+    CPName = "beam";
     if(theTrack->GetCreatorProcess() !=0)
       CPName = theTrack->GetCreatorProcess()->GetProcessName();
 
     G4ThreeVector p = startPoint->GetMomentum();
-    // sin(theta) = (vector magnitude in XY plane)/(total vector magnitude)
-    // polar angle measured between the positive Z axis and the vector
-    G4double theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
-    // sin(phi) -> angle in the XY plane reference to the positive X axis
-    G4double phi = std::asin(p.y()/p.mag());
+    theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
+    phi = std::asin(p.y()/p.mag());
     G4ThreeVector loc = theTrack->GetPosition();
 // **************************************************** Track NRF Materials **************************************************** //
 
@@ -144,27 +123,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
         {
           krun->AddNRF();
           const G4TrackVector* emitted_nrf = aStep->GetSecondary();
-          for(unsigned int i=0;i<emitted_nrf->size();++i)
-          {
-            if(emitted_nrf->at(i)->GetCreatorProcess()->GetProcessName() == "NRF")
-            {
-              manager->FillNtupleIColumn(0,0, eventID);
-              manager->FillNtupleDColumn(0,1, energy);
-              manager->FillNtupleSColumn(0,2, nextStep_VolumeName);
-              manager->FillNtupleDColumn(0,3, loc.z()/(cm));
-              G4ThreeVector p_nrf = emitted_nrf->at(i)->GetMomentum();
-              G4double theta_nrf = std::asin(std::sqrt(std::pow(p_nrf.x(),2)+std::pow(p_nrf.y(),2))/p_nrf.mag());
-              G4double phi_nrf = std::asin(p_nrf.y()/p_nrf.mag());
-              manager->FillNtupleDColumn(0,4, theta_nrf);
-              manager->FillNtupleDColumn(0,5, phi_nrf);
-              manager->FillNtupleIColumn(0,6, seed);
-
-              if(WEIGHTED)
-                manager->FillNtupleDColumn(0,7,weight);
-
-              manager->AddNtupleRow(0);
-            } // end if emitted_nrf->at(i)->GetCreatorProcess()
-          } // end of for loop
+          FillNRF(0, loc.z(), emitted_nrf);
         } // end of process->GetProcessName() == "NRF"
       } // end of if drawNRFDataFlag
     } // end of if addNRF
@@ -201,21 +160,8 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       if(nextStep_VolumeName.compare("IntObj") == 0
          && previousStep_VolumeName.compare("IntObj") != 0)
       {
-          manager->FillNtupleIColumn(1,0,eventID);
-          manager->FillNtupleIColumn(1,1,trackID);
-          manager->FillNtupleDColumn(1,2, energy);
-          manager->FillNtupleDColumn(1,3, beamEnergy);
-          manager->FillNtupleSColumn(1,4, CPName);
-          manager->FillNtupleDColumn(1,5,theta);
-          manager->FillNtupleDColumn(1,6,phi);
-          manager->FillNtupleDColumn(1,7,theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(1,8,seed);
-
-          if(WEIGHTED)
-            manager->FillNtupleDColumn(1,9, weight);
-
-          manager->AddNtupleRow(1);
-          return;
+        FillIntObjIn(1);
+        return;
       }
     }
 
@@ -233,20 +179,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       {
         if(drawIntObjOutDataFlag)
         {
-          manager->FillNtupleIColumn(2,0, eventID);
-          manager->FillNtupleIColumn(2,1, trackID);
-          manager->FillNtupleDColumn(2,2, energy);
-          manager->FillNtupleDColumn(2,3, beamEnergy);
-          manager->FillNtupleSColumn(2,4, CPName);
-          manager->FillNtupleDColumn(2,5, theta);
-          manager->FillNtupleDColumn(2,6, phi);
-          manager->FillNtupleDColumn(2,7, theTrack->GetGlobalTime());
-          manager->FillNtupleIColumn(2,8,seed);
-
-          if(WEIGHTED)
-            manager->FillNtupleDColumn(2,9, weight);
-
-          manager->AddNtupleRow(2);
+          FillIntObjOut(2);
           return;
         }// end if drawIntObjOutDataFlag
         else
@@ -262,17 +195,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       if(nextStep_VolumeName.compare(0,5,"Atten") == 0
           && previousStep_VolumeName.compare("World") == 0)
       {
-        manager->FillNtupleIColumn(3,0, eventID);
-        manager->FillNtupleIColumn(3,1, seed);
-        manager->FillNtupleIColumn(3,2, trackID);
-        manager->FillNtupleDColumn(3,3, energy);
-        manager->FillNtupleDColumn(3,4, beamEnergy);
-        manager->FillNtupleDColumn(3,5, theTrack->GetGlobalTime());
-        manager->FillNtupleSColumn(3,6, CPName);
-        if(WEIGHTED)
-          manager->FillNtupleDColumn(3,7, weight);
-
-        manager->AddNtupleRow(3);
+        FillShielding(3);
         return;
       }
     }
@@ -282,23 +205,8 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     if(nextStep_VolumeName.compare(0,4,"Plex") == 0
         && previousStep_VolumeName.compare(0,4,"Last") == 0)
     {
-      manager->FillNtupleIColumn(4,0, eventID);
-      manager->FillNtupleIColumn(4,1, seed);
-      manager->FillNtupleIColumn(4,2, trackID);
-      manager->FillNtupleDColumn(4,3, energy);
-      manager->FillNtupleDColumn(4,4, beamEnergy);
-      manager->FillNtupleDColumn(4,5, theTrack->GetGlobalTime());
-      manager->FillNtupleDColumn(4,6, theta);
-      manager->FillNtupleDColumn(4,7, phi);
-      manager->FillNtupleSColumn(4,8, CPName);
-
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(4,9, weight);
-
-      manager->AddNtupleRow(4);
-
+      FillPlexi(4);
       kevent->SetIncidentEnergy(energy);
-
       krun->AddStatusKilledPosition();
       theTrack->SetTrackStatus(fStopAndKill);
       return;
