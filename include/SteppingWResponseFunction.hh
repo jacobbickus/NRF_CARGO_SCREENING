@@ -25,6 +25,7 @@
 #ifndef SteppingWResponseFunction_h
 #define SteppingWResponseFunction_h 1
 
+#include "G4UserSteppingAction.hh"
 #include "SteppingAction.hh"
 #include "EventActionWResponseFunction.hh"
 
