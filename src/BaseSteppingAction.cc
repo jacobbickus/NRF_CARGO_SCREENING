@@ -194,18 +194,11 @@ void BaseSteppingAction::FillWater(G4int num)
   manager->AddNtupleRow(num);
 }
 
-void BaseSteppingAction::FillDetected(G4int num, G4double p_energy)
+void BaseSteppingAction::FillDetected(G4int num, G4double p_energy, G4String creatorProcess)
 {
   manager->FillNtupleIColumn(num,0,eventID);
   manager->FillNtupleDColumn(num,1, p_energy);
   manager->FillNtupleDColumn(num,2, beamEnergy);
-  G4String creatorProcess;
-
-  if(theTrack->GetCreatorProcess() !=0)
-      creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
-  else
-      creatorProcess = "Brem";
-
   manager->FillNtupleSColumn(num,3, creatorProcess);
   manager->FillNtupleDColumn(num,4, gtime); // time units is nanoseconds
   manager->FillNtupleIColumn(num,5, seed);

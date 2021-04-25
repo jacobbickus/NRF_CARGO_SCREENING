@@ -86,7 +86,7 @@ protected:
   void FillShielding(G4int);
   void FillPlexi(G4int);
   void FillWater(G4int);
-  void FillDetected(G4int, G4double);
+  void FillDetected(G4int, G4double, G4String);
   void FillIncDetector(G4int, G4double);
 
   RunInformation* krun;

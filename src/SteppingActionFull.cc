@@ -301,8 +301,15 @@ void SteppingActionFull::UserSteppingAction(const G4Step* aStep)
             // Keep track of detected photons
             if(theStatus == Detection)
             {
+              G4String creatorProcess;
+
+              if(theTrack->GetCreatorProcess() !=0)
+                  creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
+              else
+                  creatorProcess = "Brem";
+
               procCount = "Det";
-              FillDetected(12, theParticle->GetKineticEnergy()/(MeV));
+              FillDetected(12, theParticle->GetKineticEnergy()/(MeV), creatorProcess);
             }
             else if(theStatus == Transmission)
               procCount = "Trans";
