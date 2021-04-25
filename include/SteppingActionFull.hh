@@ -22,23 +22,18 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef SteppingWResponseFunction_h
-#define SteppingWResponseFunction_h 1
+#ifndef SteppingActionFull_h
+#define SteppingActionFull_h 1
 
 #include "G4UserSteppingAction.hh"
 #include "BaseSteppingAction.hh"
 
-
-class SteppingWResponseFunction : public G4UserSteppingAction, public BaseSteppingAction
+class SteppingActionFull : public G4UserSteppingAction, public BaseSteppingAction
 {
 public:
-  SteppingWResponseFunction(EventActionWResponseFunction*);
-  virtual ~SteppingWResponseFunction();
-  virtual void UserSteppingAction(const G4Step*);
-
-private:
-  EventActionWResponseFunction* kevent;
-
+  SteppingActionFull(EventAction*);
+  virtual ~SteppingActionFull();
+  virtual UserSteppingAction(G4Step*);
 };
 
 #endif

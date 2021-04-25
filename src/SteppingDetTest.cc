@@ -29,7 +29,7 @@ extern G4long seed;
 
 
 SteppingDetTest::SteppingDetTest(EventAction* event)
-: SteppingAction(event)
+: G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
   WEIGHTED = false;

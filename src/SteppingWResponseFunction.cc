@@ -23,16 +23,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "SteppingWResponseFunction.hh"
-#include "SteppingAction.hh"
 
 extern G4bool debug;
-extern G4String inFile;
 extern G4bool addNRF;
 extern G4long seed;
 extern G4bool output;
 
 SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
-: SteppingAction(), kevent(event)
+: G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
 }
 

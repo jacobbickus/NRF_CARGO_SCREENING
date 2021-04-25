@@ -26,7 +26,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetBuildResPGA.hh"
 #include "RunAction.hh"
-#include "SteppingAction.hh"
+#include "SteppingActionFull.hh"
 #include "SteppingBremTest.hh"
 #include "SteppingDetTest.hh"
 #include "SteppingWResponseFunction.hh"
@@ -97,7 +97,7 @@ void ActionInitialization::Build() const
         SetUserAction(new SteppingWResponseFunction(eventWResponseFunction));
     }
     else
-      SetUserAction(new SteppingAction(event));
+      SetUserAction(new SteppingActionFull(event));
 
     SetUserAction(new StackingAction());
 

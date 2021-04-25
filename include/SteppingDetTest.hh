@@ -26,16 +26,17 @@
 #define SteppingDetTest_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "SteppingAction.hh"
+#include "BaseSteppingAction.hh"
 
-class SteppingDetTest: public SteppingAction
+class SteppingDetTest: public G4UserSteppingAction, public BaseSteppingAction
 {
 public:
   SteppingDetTest(EventAction*);
   virtual ~SteppingDetTest();
+  virtual void UserSteppingAction(const G4Step*);
 
 private:
-  virtual void UserSteppingAction(const G4Step*);
+  EventAction* kevent;
 
 };
 

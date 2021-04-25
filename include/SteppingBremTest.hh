@@ -26,16 +26,14 @@
 #define SteppingBremTest_h 1
 
 #include "G4UserSteppingAction.hh"
-#include "SteppingAction.hh"
+#include "BaseSteppingAction.hh"
 
 
-class SteppingBremTest : public SteppingAction
+class SteppingBremTest : public G4UserSteppingAction, public BaseSteppingAction
 {
 public:
-  SteppingBremTest(EventAction*);
+  SteppingBremTest();
   virtual ~SteppingBremTest();
-
-private:
   virtual void UserSteppingAction(const G4Step*);
 
 };

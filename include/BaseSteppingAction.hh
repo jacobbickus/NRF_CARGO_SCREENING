@@ -22,20 +22,19 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef SteppingAction_h
-#define SteppingAction_h 1
+#ifndef BaseSteppingAction_h
+#define BaseSteppingAction_h 1
 
-#include "G4UserSteppingAction.hh"
 #include "globals.hh"
 #include <vector>
 #include "G4ThreeVector.hh"
 #include "G4OpBoundaryProcess.hh"
 #include "RunInformation.hh"
 #include "DetectorInformation.hh"
-#include "StackingAction.hh"
 #include "Analysis.hh"
 #include "StepMessenger.hh"
 #include "EventAction.hh"
+#include "EventActionWResponseFunction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"
 
@@ -57,15 +56,11 @@
 
 class StepMessenger;
 
-class SteppingAction : public G4UserSteppingAction
+class BaseSteppingAction
 {
 public:
-  SteppingAction(EventAction*);
-  SteppingAction();
-  virtual ~SteppingAction();
-
-private:
-  virtual void UserSteppingAction(const G4Step*);
+  BaseSteppingAction();
+  ~BaseSteppingAction();
 
 public:
   void SetChopperIncDataFlag(G4int val){drawChopperIncDataFlag = val;}
@@ -102,7 +97,6 @@ protected:
   G4String nextStep_VolumeName, previousStep_VolumeName, CPName;
   G4int eventID, trackID;
   G4double weight;
-  EventAction* kevent;
   G4OpBoundaryProcessStatus fExpectedNextStatus;
   G4String procCount;
   G4int drawChopperIncDataFlag, drawChopperOutDataFlag, drawNRFDataFlag;

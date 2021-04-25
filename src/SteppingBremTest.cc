@@ -27,11 +27,12 @@
 extern G4bool output;
 extern G4bool debug;
 
-SteppingBremTest::SteppingBremTest(EventAction* event)
-: SteppingAction(event)
+SteppingBremTest::SteppingBremTest()
+: G4UserSteppingAction(), BaseSteppingAction()
 {
   WEIGHTED = false;
 }
+
 SteppingBremTest::~SteppingBremTest()
 {}
 
