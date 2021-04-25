@@ -22,10 +22,9 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef PrimaryGeneratorAction_h
-#define PrimaryGeneratorAction_h 1
+#ifndef BasePGA_h
+#define BasePGA_h 1
 
-#include "G4VUserPrimaryGeneratorAction.hh"
 #include "Analysis.hh"
 #include "PGAMessenger.hh"
 #include "globals.hh"
@@ -53,48 +52,41 @@ class G4Event;
 class Analysis;
 class PGAMessenger;
 
-class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class BasePGA
 {
-
 public:
-PrimaryGeneratorAction();
-PrimaryGeneratorAction(G4bool);
-virtual ~PrimaryGeneratorAction();
+  BasePGA();
+  ~BasePGA();
 
-public:
-virtual void GeneratePrimaries(G4Event*);
-G4ParticleGun* GetParticleGun()
-{
-  return fParticleGun;
-};
+  G4ParticleGun* GetParticleGun()
+  {
+    return fParticleGun;
+  };
 
-// For PGA Messenger
-void SetBeamSize(G4double x)
-{
-  beam_size = x;
-  G4cout << "PrimaryGeneratorAction::BeamSize set to: " << beam_size << " mm" << G4endl;
-}
+  // For PGA Messenger
+  void SetBeamSize(G4double x){beam_size = x;}
+  void SetBeamSizeX(G4double val){beam_size_x = val;}
+  void SetBeamSizeY(G4double val){beam_size_y = val;}
 
-private:
-  G4double beam_size;
 protected:
-  void SetPGA();
+  void CreateInputSpectrum(TGraph*);
+  G4double SampleEnergyRange(double, double);
+  G4double SampleUResonances();
   void StartUserMacroInputs();
-  G4double energy;
+  void ReadWeighted();
+  void ReadNonWeighted();
+  void SetUserEnergy();
+  void SetupNonBremTest();
+  const float pi=acos(-1);
+  G4double beam_size, energy, beamStart, beam_size_x, beam_size_y;
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
-  G4double beamStart;
-
   G4bool file_check;
   // ROOT
   TGraph *tBrems;
   TGraph *tSample;
   TH1D   *hSample;
   TRandom2 Random;
-
-  void CreateInputSpectrum(TGraph*);
-  G4double SampleUResonances();
-  G4double SampleEnergyRange(double,double);
   std::vector<double> energies, N;
 
 };

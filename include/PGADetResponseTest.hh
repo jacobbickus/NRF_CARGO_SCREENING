@@ -22,32 +22,17 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef DetBuildResPGA_h
-#define DetBuildResPGA_h 1
+#ifndef PGADetResponseTest_h
+#define PGADetResponseTest_h 1
 
-#include "G4VUserPrimaryGeneratorAction.hh"
-#include "PrimaryGeneratorAction.hh"
-#include "DetBuildResPGAMessenger.hh"
+#include "G4UserPrimaryGeneratorAction.hh"
+#include "BasePGA.hh"
 
-class DetBuildResPGAMessenger;
-
-class DetBuildResPGA : public PrimaryGeneratorAction
+class PGADetResponseTest : public G4UserPrimaryGeneratorAction, public BasePGA
 {
-
-public:
-DetBuildResPGA();
-virtual ~DetBuildResPGA();
-
-public:
-virtual void GeneratePrimaries(G4Event*);
-void SetBeamSizeX(G4double val){beam_size_x = val;}
-void SetBeamSizeY(G4double val){beam_size_y = val;}
-
-private:
-  G4ParticleGun* fParticleGun;
-  G4double beam_size_x, beam_size_y;
-  DetBuildResPGAMessenger* pgaM;
-
+  PGADetResponseTest();
+  ~PGADetResponseTest();
+  virtual void GeneratePrimaries(G4Event*);
 };
 
 #endif

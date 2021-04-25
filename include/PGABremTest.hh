@@ -22,31 +22,17 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef DetBuildResPGAMessenger_h
-#define DetBuildResPGAMessenger_h 1
+#ifndef PGABremTest_h
+#define PGABremTest_h 1
 
-#include "globals.hh"
-#include "G4UImessenger.hh"
-#include "G4UIcmdWithADouble.hh"
-#include "DetBuildResPGA.hh"
-#include "G4UIdirectory.hh"
+#include "G4UserPrimaryGeneratorAction.hh"
+#include "BasePGA.hh"
 
-class DetBuildResPGA;
-class G4UIcmdWithADouble;
-class G4UIdirectory;
-
-class DetBuildResPGAMessenger: public G4UImessenger
+class PGABremTest : public G4UserPrimaryGeneratorAction, public BasePGA
 {
-public:
-  DetBuildResPGAMessenger(DetBuildResPGA*);
-  ~DetBuildResPGAMessenger();
-
-  void SetNewValue(G4UIcommand*, G4String); // must always be a string input
-private:
-  DetBuildResPGA* pga;
-  G4UIcmdWithADouble *Cmd;
-  G4UIcmdWithADouble *Cmd2;
-  G4UIdirectory *myDir;
+  PGABremTest();
+  ~PGABremTest();
+  virtual void GeneratePrimaries(G4Event*);
 };
 
 #endif

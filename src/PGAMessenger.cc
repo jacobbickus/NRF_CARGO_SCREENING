@@ -25,7 +25,7 @@
 #include "PGAMessenger.hh"
 
 
-PGAMessenger::PGAMessenger(PrimaryGeneratorAction* pga_in)
+PGAMessenger::PGAMessenger(BasePGA* pga_in)
         : pga(pga_in)
 {
   myDir = new G4UIdirectory("/PGA/");
@@ -34,11 +34,21 @@ PGAMessenger::PGAMessenger(PrimaryGeneratorAction* pga_in)
   Cmd->SetGuidance("Choose Desired Beam Size");
   Cmd->SetParameterName("beamSize",false);
   Cmd->SetRange("beamSize > 0. && beamSize < 80.0");
+  Cmd2 = new G4UIcmdWithADouble("/PGA/beam_size_x",this);
+  Cmd2->SetGuidance("Choose Desired Horizontal (x) Beam Size");
+  Cmd2->SetParameterName("beamSizeX",false);
+  Cmd2->SetRange("beamSizeX > 0. && beamSizeX < 100.0");
+  Cmd3 = new G4UIcmdWithADouble("/PGA/beam_size_y",this);
+  Cmd3->SetGuidance("Choose Desired Vertical (y) Beam Size");
+  Cmd3->SetParameterName("beamSizeY",false);
+  Cmd3->SetRange("beamSizeY > 0. && beamSizeY < 300.0");
 }
 
 PGAMessenger::~PGAMessenger()
 {
   delete Cmd;
+  delete Cmd2;
+  delete Cmd3;
 }
 
 
@@ -49,8 +59,16 @@ void PGAMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     G4double theCommand = Cmd->GetNewDoubleValue(newValue);
     pga->SetBeamSize(theCommand);
   }
-  else
+  if(command == Cmd2)
   {
-    G4cerr << "ERROR PGAMessenger::SetNewValue -> command != Cmd" << G4endl;
+    G4double theCommand = Cmd2->GetNewDoubleValue(newValue);
+    pga->SetBeamSizeX(theCommand);
+    G4cout << "PGAMEssenger::SetBeamSizeX: " << theCommand << G4endl;
+  }
+  else if(command == Cmd3)
+  {
+    G4double theCommand = Cmd3->GetNewDoubleValue(newValue);
+    pga->SetBeamSizeY(theCommand);
+    G4cout << "PGAMessenger::SetBeamSizeY: " << theCommand << G4endl;
   }
 }
