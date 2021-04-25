@@ -24,8 +24,6 @@
 
 #include "StepMessenger.hh"
 
-extern G4bool WResponseFunction;
-
 StepMessenger::StepMessenger(BaseSteppingAction* stepAction)
         : stepA(stepAction)
 {
