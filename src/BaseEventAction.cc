@@ -34,10 +34,12 @@ totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
 {
   if(debug)
     std::cout << "BaseEventAction::BaseEventAction Initialized." << std::endl;
-    
+
   eventM = new EventMessenger(this);
   if(!inFile.compare("brems_distributions.root"))
     WEIGHTED = true;
+
+  manager = G4AnalysisManager::Instance();
 }
 
 BaseEventAction::~BaseEventAction()
@@ -98,7 +100,7 @@ void BaseEventAction::EventActionPrint()
   } // end else if eventID %
 } // end of Print function
 
-void BaseEventAction::FillDetectorResponse(G4AnalysisManager* manager)
+void BaseEventAction::FillDetectorResponse()
 {
   if(incident_energy > 0)
   {
@@ -111,7 +113,7 @@ void BaseEventAction::FillDetectorResponse(G4AnalysisManager* manager)
   }
 }
 
-void BaseEventAction::FillScintillationPerEvent(G4AnalysisManager* manager, G4double weight=0.)
+void BaseEventAction::FillScintillationPerEvent(G4double weight=1.)
 {
   if(s_secondaries > 0)
   {
@@ -129,7 +131,7 @@ void BaseEventAction::FillScintillationPerEvent(G4AnalysisManager* manager, G4do
   }
 }
 
-void BaseEventAction::FillCherenkovPerEvent(G4AnalysisManager* manager, G4double weight=0.)
+void BaseEventAction::FillCherenkovPerEvent(G4double weight=1.)
 {
   if(c_secondaries > 0)
   {

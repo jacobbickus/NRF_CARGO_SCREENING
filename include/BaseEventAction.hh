@@ -68,9 +68,10 @@ public:
 protected:
   void EventActionPrint();
   void FillDetectorResponse();
-  void FillScintillationPerEvent();
-  void FillCherenkovPerEvent();
+  void FillScintillationPerEvent(G4double weight=1.);
+  void FillCherenkovPerEvent(G4double weight=1.);
 
+  G4AnalysisManager* manager;
   G4int eventInfoFreq, runID;
   G4int eventID;
   G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
