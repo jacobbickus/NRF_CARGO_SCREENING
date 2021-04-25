@@ -23,6 +23,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "SteppingWResponseFunction.hh"
+#include "G4UserSteppingAction.hh"
+#include "SteppingAction.hh"
 
 extern G4bool debug;
 extern G4String inFile;

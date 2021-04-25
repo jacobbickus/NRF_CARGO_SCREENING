@@ -36,7 +36,6 @@
 #include "Analysis.hh"
 #include "StepMessenger.hh"
 #include "EventAction.hh"
-#include "EventActionWResponseFunction.hh"
 #include "DetectorConstruction.hh"
 #include "eventInformation.hh"
 
