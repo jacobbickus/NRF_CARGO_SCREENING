@@ -63,9 +63,12 @@ void Analysis::Book()
   // For Bremsstrahlung Test
   if(bremTest)
   {
-    BremRadiator(manager); // 0
-    BremBacking(manager); // 1
-    IncidentChopper(manager); // 2
+    NRF(manager); //             0
+    BremRadiator(manager); //    1
+    BremBacking(manager); //     2
+    IncidentChopper(manager); // 3
+    EmissionChopper(manager); // 4
+
     if(debug)
       std::cout << "Analysis::Book -> Brem Test Ntuples 0 - 2" << std::endl;
   }

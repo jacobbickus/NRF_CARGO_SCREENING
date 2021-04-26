@@ -69,6 +69,7 @@ public:
   void SetBeamSizeY(G4double val){beam_size_y = val;}
 
 protected:
+  void CallMessenger();
   void CreateInputSpectrum(TGraph*);
   G4double SampleEnergyRange(double, double);
   G4double SampleUResonances();

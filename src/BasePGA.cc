@@ -34,7 +34,6 @@ BasePGA::BasePGA()
 {
   fParticleGun = new G4ParticleGun(1);
   fParticleGun->SetParticleTime(0.0*ns);
-  pgaM = new PGAMessenger(this);
   gRandom->SetSeed(seed);
   sInfo = SourceInformation::Instance();
   detInfo = DetectorInformation::Instance();
@@ -44,6 +43,11 @@ BasePGA::~BasePGA()
 {
   delete pgaM;
   delete fParticleGun;
+}
+
+void BasePGA::CallMessenger()
+{
+  pgaM = new PGAMessenger(this);
 }
 
 void BasePGA::CreateInputSpectrum(TGraph* tBrems_in)

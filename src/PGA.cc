@@ -52,6 +52,7 @@ PGA::PGA()
   else if(chosen_energy > 0)
     SetUserEnergy();
 
+  CallMessenger();
   StartUserMacroInputs();
 }
 

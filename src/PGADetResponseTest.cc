@@ -53,6 +53,7 @@ PGADetResponseTest::PGADetResponseTest()
   else if(chosen_energy > 0)
     SetUserEnergy();
 
+  CallMessenger();
   StartUserMacroInputs();
 }
 
