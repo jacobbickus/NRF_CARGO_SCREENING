@@ -128,61 +128,58 @@ void SetDetectorViewOnly(G4bool val){DetectorViewOnly = val;}
 void SetMaterialVerbosity(G4bool val){material_verbose = val;}
 void SetCheckOverlaps(G4bool val){checkOverlaps = val;}
 
-private:
-// Chopper
-ChopperSetup* chop;
-Collimator* collimator;
-Cargo* cargo;
-Linac* linac;
-
 protected:
-G4LogicalVolume* ConstructAttenuatorsAndPlexiglass(G4LogicalVolume*, G4double, G4Material*, G4Material*, G4Material*);
-void ConstructAttenuatorMaterial(G4Material* &attenuator, G4Material* &attenuator2, G4Material* &attenuator3);
-// Attenuator Properties
-G4bool attenuatorState, attenuatorState2, attenuatorState3;
-G4double attenThickness, attenThickness2, attenThickness3;
-G4String attenuatorMat, attenuatorMat2, attenuatorMat3;
+  ChopperSetup* chop;
+  Collimator* collimator;
+  Cargo* cargo;
+  Linac* linac;
+  G4LogicalVolume* ConstructAttenuatorsAndPlexiglass(G4LogicalVolume*, G4double, G4Material*, G4Material*, G4Material*);
+  void ConstructAttenuatorMaterial(G4Material* &attenuator, G4Material* &attenuator2, G4Material* &attenuator3);
+  // Attenuator Properties
+  G4bool attenuatorState, attenuatorState2, attenuatorState3;
+  G4double attenThickness, attenThickness2, attenThickness3;
+  G4String attenuatorMat, attenuatorMat2, attenuatorMat3;
 
-// Water Tank Properties
-G4double theAngle, water_size_x, water_size_y, water_size_z;
-G4double water_x_pos, water_y_pos, water_z_pos;
+  // Water Tank Properties
+  G4double theAngle, water_size_x, water_size_y, water_size_z;
+  G4double water_x_pos, water_y_pos, water_z_pos;
 
-// Plexi/Tape Properties
-G4double plexiThickness, tapeThick;
+  // Plexi/Tape Properties
+  G4double plexiThickness, tapeThick;
 
-private:
-// Private Member Functions
-void DefDetPositionConstraintLeft(double, double, double, double);
-void DefDetPositionConstraintRight(double, double, double, double);
-void DefDetPositionConstraintUpper(double, double, double);
-void SetDefaultNistMaterials();
-// Material, Logical and Physical Volumes
-G4Material* PC_mat;
-// PMT Properties
-G4double PMT_rmax;
-G4int nPMT;
-G4String pc_mat;
+  private:
+  // Private Member Functions
+  void DefDetPositionConstraintLeft(double, double, double, double);
+  void DefDetPositionConstraintRight(double, double, double, double);
+  void DefDetPositionConstraintUpper(double, double, double);
+  void SetDefaultNistMaterials();
+  // Material, Logical and Physical Volumes
+  G4Material* PC_mat;
+  // PMT Properties
+  G4double PMT_rmax;
+  G4int nPMT;
+  G4String pc_mat;
 
-G4bool DetectorViewOnly, material_verbose;
+  G4bool DetectorViewOnly, material_verbose;
 
-protected:
-// Output Properties
-G4bool checkOverlaps;
-G4NistManager* nist;
-G4Material* air;
-G4Material* attenuator;
-G4Material* plexiglass;
-G4Material* PMT_mat;
-G4Material* teflonTape;
+  protected:
+  // Output Properties
+  G4bool checkOverlaps;
+  // Messenger
+  DetectorMessenger* detectorM;
+  G4NistManager* nist;
+  G4Material* air;
+  G4Material* attenuator;
+  G4Material* plexiglass;
+  G4Material* PMT_mat;
+  G4Material* teflonTape;
 
-private:
-G4LogicalVolume* logicPC;
-G4LogicalVolume* logicPMT;
-G4VPhysicalVolume* physPC;
-G4VPhysicalVolume* physWater;
-G4VPhysicalVolume* physTape;
-// Messenger
-DetectorMessenger* detectorM;
+  private:
+  G4LogicalVolume* logicPC;
+  G4LogicalVolume* logicPMT;
+  G4VPhysicalVolume* physPC;
+  G4VPhysicalVolume* physWater;
+  G4VPhysicalVolume* physTape;
 
 };
 #endif
