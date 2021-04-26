@@ -89,11 +89,11 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
     << G4endl;
   G4cout << "Total Number of Events:                                      "
     << TotNbofEvents << G4endl;
-  G4cout << "Total number of Surface Events:                              "
-    << fTotalSurface << G4endl;
 
   if(!bremTest)
   {
+    G4cout << "Total number of Surface Events:                              "
+      << fTotalSurface << G4endl;
     G4cout << "Total number of NRF Photons:                                 "
       << fNRF << G4endl;
     G4cout << "Total number of Cherenkov Photons:                           "
