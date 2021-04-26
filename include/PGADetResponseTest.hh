@@ -25,7 +25,8 @@
 #ifndef PGADetResponseTest_h
 #define PGADetResponseTest_h 1
 
-#include "G4UserPrimaryGeneratorAction.hh"
+
+#include "G4VUserPrimaryGeneratorAction.hh"
 #include "BasePGA.hh"
 
 class PGADetResponseTest : public G4UserPrimaryGeneratorAction, public BasePGA

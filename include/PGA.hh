@@ -25,7 +25,8 @@
 #ifndef PGA_h
 #define PGA_h 1
 
-#include "G4UserPrimaryGeneratorAction.hh"
+
+#include "G4VUserPrimaryGeneratorAction.hh"
 #include "BasePGA.hh"
 
 class PGA : public G4UserPrimaryGeneratorAction, public BasePGA

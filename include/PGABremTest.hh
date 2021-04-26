@@ -25,7 +25,8 @@
 #ifndef PGABremTest_h
 #define PGABremTest_h 1
 
-#include "G4UserPrimaryGeneratorAction.hh"
+
+#include "G4VUserPrimaryGeneratorAction.hh"
 #include "BasePGA.hh"
 
 class PGABremTest : public G4UserPrimaryGeneratorAction, public BasePGA
