@@ -73,7 +73,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 {
 
 public:
-DetectorConstruction(ChopperSetup*, Collimator*, Cargo* Cargo=0, Linac* Linac=0);
+DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo=0, Linac* Linac=0);
 virtual ~DetectorConstruction();
 
 

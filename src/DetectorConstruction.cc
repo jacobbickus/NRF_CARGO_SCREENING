@@ -27,7 +27,7 @@
 extern G4bool detTest;
 extern G4bool debug;
 
-DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo=0, Linac* Linac=0)
+DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo, Linac* Linac)
         : G4VUserDetectorConstruction(),
         chop(Chopper), collimator(Collimator), cargo(Cargo), linac(Linac),
         // Attenuator Properties
