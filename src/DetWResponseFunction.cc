@@ -27,8 +27,7 @@
 extern G4bool debug;
 
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
-: DetectorConstruction(Chopper, Collimator, Cargo),
-chop(Chopper), collimator(Collimator), cargo(Cargo)
+: DetectorConstruction(Chopper, Collimator, Cargo)
 {
 }
 
