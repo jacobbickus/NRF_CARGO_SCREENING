@@ -31,6 +31,7 @@
 
 class PGADetResponseTest : public G4UserPrimaryGeneratorAction, public BasePGA
 {
+public:
   PGADetResponseTest();
   ~PGADetResponseTest();
   virtual void GeneratePrimaries(G4Event*);

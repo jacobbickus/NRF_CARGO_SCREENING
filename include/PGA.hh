@@ -31,6 +31,7 @@
 
 class PGA : public G4UserPrimaryGeneratorAction, public BasePGA
 {
+public:
   PGA();
   ~PGA();
   virtual void GeneratePrimaries(G4Event*);

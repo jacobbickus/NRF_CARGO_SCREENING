@@ -25,6 +25,7 @@
 #include "BasePGA.hh"
 
 extern G4long seed;
+extern G4bool debug;
 
 BasePGA::BasePGA()
 : pgaM(NULL), fParticleGun(0)

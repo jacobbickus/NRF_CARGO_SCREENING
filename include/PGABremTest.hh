@@ -31,6 +31,7 @@
 
 class PGABremTest : public G4UserPrimaryGeneratorAction, public BasePGA
 {
+public:
   PGABremTest();
   ~PGABremTest();
   virtual void GeneratePrimaries(G4Event*);
