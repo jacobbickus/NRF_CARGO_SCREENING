@@ -266,6 +266,11 @@ Description:
 
 Samples from a normal distribution centered on user's energy.
 
+-t5 --Run_Without_Chopper=false
+
+Description:
+
+Runs simulation with the beam set directly in front of interrogation object. User should input an incident interrogation object spectrum derived from another simulation. Useful for increased efficiency simulations. 
 
 __Inputs for Macro File Input__
 
