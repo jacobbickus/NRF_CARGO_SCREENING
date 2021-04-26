@@ -57,7 +57,7 @@ PGADetResponseTest::PGADetResponseTest()
 PGADetResponseTest::~PGADetResponseTest()
 {}
 
-void PGADetResponseTest::GeneratePrimaries()
+void PGADetResponseTest::GeneratePrimaries(G4Event* anEvent)
 {
   if(debug && anEvent->GetEventID() == 0)
     std::cout << "PGADetResponseTest::GeneratePrimaries -> First Primary Generated." << std::endl;

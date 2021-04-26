@@ -24,6 +24,10 @@
 
 #include "PGABremTest.hh"
 
+extern G4double chosen_energy;
+extern G4double uniform_width;
+extern G4bool debug;
+
 PGABremTest::PGABremTest()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
