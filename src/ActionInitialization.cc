@@ -26,7 +26,6 @@
 #include "PGA.hh"
 #include "PGABremTest.hh"
 #include "PGADetResponseTest.hh"
-#include "DetBuildResPGA.hh"
 #include "RunAction.hh"
 #include "SteppingActionFull.hh"
 #include "SteppingBremTest.hh"
