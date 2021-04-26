@@ -126,4 +126,3 @@ void PGA::GeneratePrimaries(G4Event* anEvent)
   if(debug && anEvent->GetEventID() == 0)
     std::cout << "PGA::GeneratePrimaries -> First Primary Complete." << std::endl;
 }
-importance_sampling_input
