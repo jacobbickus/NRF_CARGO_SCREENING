@@ -26,6 +26,8 @@
 
 extern G4long seed;
 extern G4bool debug;
+extern G4String inFile;
+extern G4double chosen_energy;
 
 BasePGA::BasePGA()
 : pgaM(NULL), fParticleGun(0)
