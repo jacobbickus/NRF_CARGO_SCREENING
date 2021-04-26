@@ -64,14 +64,6 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
   previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
 
-  G4double EndChop = kdet->getEndChop();
-  if(theTrack->GetPosition().z() > EndChop)
-  {
-    theTrack->SetTrackStatus(fStopAndKill);
-    krun->AddStatusKilledPosition();
-    return;
-  }
-
   // Run Time Cut
   if(theTrack->GetGlobalTime() > 250) // cut placed on particles time greater than 250 ns
   {
@@ -187,6 +179,7 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   {
     FillChopperOut(4);
     theTrack->SetTrackStatus(fStopAndKill);
+    krun->AddStatusKilledPosition();
     return;
   }
 

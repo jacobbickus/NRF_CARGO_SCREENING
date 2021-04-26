@@ -25,6 +25,7 @@
 #include "StackingAction.hh"
 extern G4bool detTest;
 extern G4bool debug;
+extern G4bool bremTest;
 
 StackingAction::StackingAction()
 {
@@ -38,7 +39,7 @@ StackingAction::~StackingAction()
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* currentTrack)
 {
-  if(!detTest)
+  if(!detTest && !bremTest)
   {
 
     DetectorInformation* detInfo = DetectorInformation::Instance();
