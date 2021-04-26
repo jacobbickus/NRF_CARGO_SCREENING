@@ -63,14 +63,14 @@ namespace
   void PrintUsage()
   {
     std::cerr << "Usage: " << std::endl
-    << "Example:  ./mantis --macro mantis.in --file_to_sample brems_distributions.root -r --detector_response_file DetectorResponse.root"
+    << "Example:  ./mantis --macro mantis.in --file_to_sample importance_sampling_input.root -r --detector_response_file DetectorResponse.root"
     << std::endl << std::endl <<  "Would run a simulation using a detector response function found in DetectorResponse.root to predict the detector counts." << std::endl
-    << "The input spectrum would be a weighted spectrum read from brems_distributions.root." << std::endl
+    << "The input spectrum would be a weighted spectrum read from importance_sampling_input.root." << std::endl
     << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl << std::endl
 
     << "mantis [-h --help]                                     Prints this Usage Screen" << std::endl
     << "      [--Macro=mantis.in]                              Macro File to be read for user input options" << std::endl
-    << "      [--File_To_Sample=brems_distributions.root]      Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from." << std::endl
+    << "      [--File_To_Sample]                               Input File Containing input spectrum (ROOT Format TH1D*) to sample from. Importance sampling filename must be importance_sampling_input.root." << std::endl
     << "      [--Seed=1]                                       Simulation Seed." << std::endl
     << "      [--Output_Filename=test.root]                    Data will be written to this file." << std::endl
     << "      [--Energy]                                       Sets the energy of the primary particle to the user's value in MeV" << std::endl
@@ -126,7 +126,7 @@ int main(int argc,char **argv)
   macro = "mantis.in";
   root_output_name = "test.root";
   seed = 1;
-  inFile = "brems_distributions.root";
+  inFile = "importance_sampling_input.root";
   response_function_file = "DetectorResponse.root";
   G4String debug_in = "false";
   debug = false;
