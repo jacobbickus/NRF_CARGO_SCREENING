@@ -92,16 +92,19 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
   if(!bremTest)
   {
-    G4cout << "Total number of Surface Events:                              "
-      << fTotalSurface << G4endl;
+    if(!WResponseFunction)
+    {
+      G4cout << "Total number of Surface Events:                              "
+        << fTotalSurface << G4endl;
+      G4cout << "Total number of Cherenkov Photons:                           "
+        << fCerenkovCount << G4endl;
+      G4cout << "Total number of Scintillation Photons:                       "
+        << fScintCount << G4endl;
+      G4cout << "Total number of Optical Photons:                             "
+        << fCerenkovCount + fScintCount << G4endl;
+    }
     G4cout << "Total number of NRF Photons:                                 "
       << fNRF << G4endl;
-    G4cout << "Total number of Cherenkov Photons:                           "
-      << fCerenkovCount << G4endl;
-    G4cout << "Total number of Scintillation Photons:                       "
-      << fScintCount << G4endl;
-    G4cout << "Total number of Optical Photons:                             "
-      << fCerenkovCount + fScintCount << G4endl;
   }
 
   G4cout << "Total number of Tracks Cut Based on Position:                "
