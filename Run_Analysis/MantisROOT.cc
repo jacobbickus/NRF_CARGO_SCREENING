@@ -49,8 +49,8 @@ public:
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
     void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
-    void Sampling(const char*, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
-    void SimpleSampling(const char*, const char* obj="ChopIn", bool Weighted=false, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false);
+    void Sampling(const char*, const char*, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
+    void SimpleSampling(const char*, const char*, bool, double, double, double, double, double, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
     void CheckAngles(const char*, const char*, const char*, int estimate=-1);
@@ -64,7 +64,7 @@ public:
     double Energy2Wave(double, string unit="eV");
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, bool correct=true, int estimate=-1);
-    void PrepInputSpectrum(const char*, const char* object="ChopIn", bool Weighted=false, double deltaE=1.0e-3, string outfile="brem.root");
+    void PrepInputSpectrum(const char*, const char* object="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=1.0e-3);
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
@@ -207,7 +207,7 @@ private:
     TH1D* BuildBremSampling(const std::vector<double>, double, double, double, double);
     TH1D* BuildSimpleSample(const char*, double, double, double, double, double);
     void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
-    TGraph* PrepInputSpectrum(const char*, bool, const char*, double);
+    TGraph* PrepInputSpectrum(const char*, const char*, bool, double);
 
     string EraseSubStr(string&, const string&);
 
@@ -2680,7 +2680,7 @@ double MantisROOT::ReturnBremMax(const char* bremInputFilename)
   return Emax;
 }
 
-TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
+TH1D* MantisROOT::BuildSimpleSample(const char* InputFilename, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
 {
   if(cut_energy1 > cut_energy2)
   {
@@ -2688,7 +2688,7 @@ TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE
     exit(1);
   }
 
-  double Emax = ReturnBremMax(bremInputFilename);
+  double Emax = ReturnBremMax(InputFilename);
 
   int nbins = Emax/deltaE;
   string hName;
@@ -2873,7 +2873,7 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
 }
 
-TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename, bool Weighted, const char* obj="ChopIn", double deltaE)
+TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename,  const char* obj, bool Weighted, double deltaE)
 {
   CheckFile(InputFilename);
   TFile *f = new TFile(InputFilename);
@@ -2901,7 +2901,7 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename, bool Weighted, 
   return g_input;
 }
 
-void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", bool Weighted=false, double deltaE=10.0e-3, string outfile="brem.root")
+void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3)
 {
   CheckFile(InputFilename);
   TFile *f = new TFile(InputFilename);
@@ -2936,7 +2936,7 @@ void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="C
   f->Close();
 }
 
-void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj="ChopIn", bool Weighted=false, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)
+void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool Weighted, double deltaE, double cut_energy1, double cut_energy2, double weight, double weight2, bool checkZero=false, bool drawWeights=false)
 {
 	TGraph *g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, 10.0e-3);
   TH1D* h_sample_long = BuildSimpleSample(InputFilename, deltaE, cut_energy1, cut_energy2, weight, weight2);
@@ -2985,10 +2985,10 @@ void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj="Chop
 
 }
 
-void MantisROOT::Sampling(const char *InputFilename, const char* obj="ChopIn", bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
+void MantisROOT::Sampling(const char *InputFilename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
 {
 	// Convert Input Bremsstrahlung Spectrum Histogram to TGraph
-	CheckFile(bremInputFilename);
+	CheckFile(InputFilename);
 
   TGraph* g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, 10.0e-3);
   double Emax = ReturnBremMax(InputFilename);
