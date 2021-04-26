@@ -50,7 +50,7 @@ public:
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
     void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
     void Sampling(const char*, const char*, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
-    void SimpleSampling(const char*, const char*, bool, double, double, double, double, double, double, bool checkZero=false, bool drawWeights=false);
+    void SimpleSampling(const char*, const char*, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
     void CheckAngles(const char*, const char*, const char*, int estimate=-1);
@@ -2955,7 +2955,7 @@ void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="C
   f->Close();
 }
 
-void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool Weighted, double deltaE, double deltaE_short, double cut_energy1, double cut_energy2, double weight, double weight2, bool checkZero=false, bool drawWeights=false)
+void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false)
 {
 	TGraph *g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, deltaE_short);
   TH1D* h_sample_long = BuildSimpleSample(InputFilename, obj, deltaE, cut_energy1, cut_energy2, weight, weight2);
