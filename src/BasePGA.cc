@@ -166,7 +166,7 @@ void BasePGA::SetupNonBremTest()
   beam_size = 10.0*mm;
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   beamStart = -100.;
-  G4cout << "BasePGA::SetUniformSamplingTestPGA -> Particle Type set to Gamma!" << G4endl;
+  G4cout << "BasePGA::SetupNonBremTest -> Particle Type set to Gamma!" << G4endl;
   sInfo->SetBeamMax(-1.);
   sInfo->SetSourceZPosition(beamStart);
   detInfo->setShiftFactor(beamStart);

@@ -63,7 +63,7 @@ void PGAMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
   {
     G4double theCommand = Cmd2->GetNewDoubleValue(newValue);
     pga->SetBeamSizeX(theCommand);
-    G4cout << "PGAMEssenger::SetBeamSizeX: " << theCommand << G4endl;
+    G4cout << "PGAMessenger::SetBeamSizeX: " << theCommand << G4endl;
   }
   else if(command == Cmd3)
   {
