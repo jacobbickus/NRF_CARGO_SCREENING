@@ -27,7 +27,7 @@
 extern G4bool debug;
 
 DetBremTest::DetBremTest(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator)
-        : DetectorConstruction(),
+        : DetectorConstruction(Chopper, Collimator, 0, Linac),
         chop(Chopper), linac(Linac), collimator(Collimator)
 {}
 
