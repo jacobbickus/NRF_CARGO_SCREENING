@@ -54,7 +54,7 @@ void PGABremTest::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
   eventInformation *anInfo = new eventInformation(anEvent);
-  anInfo->SetWeight(w);
+  anInfo->SetWeight(1.);
   anInfo->SetBeamEnergy(energy);
   anEvent->SetUserInformation(anInfo);
 

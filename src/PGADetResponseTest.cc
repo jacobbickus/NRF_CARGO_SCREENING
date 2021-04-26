@@ -29,6 +29,7 @@ extern G4double chosen_energy;
 extern G4bool SampleEnergyRangebool;
 extern G4bool resonanceTest;
 extern G4bool debug;
+extern G4double uniform_width;
 
 PGADetResponseTest::PGADetResponseTest()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
