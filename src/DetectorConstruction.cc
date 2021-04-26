@@ -26,6 +26,7 @@
 
 extern G4bool detTest;
 extern G4bool debug;
+extern G4bool run_without_chopper;
 
 DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo, Linac* Linac)
         : G4VUserDetectorConstruction(),
@@ -232,8 +233,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   if(!detTest)
   {
-    chop->Construct(logicWorld, checkOverlaps);
-    collimator->Construct(logicWorld, checkOverlaps);
+    if(!run_without_chopper)
+    {
+      chop->Construct(logicWorld, checkOverlaps);
+      collimator->Construct(logicWorld, checkOverlaps);
+    }
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();
 

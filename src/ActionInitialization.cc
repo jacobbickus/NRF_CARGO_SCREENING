@@ -26,6 +26,7 @@
 #include "PGA.hh"
 #include "PGABremTest.hh"
 #include "PGADetResponseTest.hh"
+#include "PGAIntObj.hh"
 #include "RunAction.hh"
 #include "SteppingActionFull.hh"
 #include "SteppingBremTest.hh"
@@ -43,6 +44,7 @@ extern G4bool debug;
 extern G4bool detTest;
 extern G4bool bremTest;
 extern G4bool WResponseFunction;
+extern G4bool run_without_chopper;
 
 ActionInitialization::ActionInitialization()
         : G4VUserActionInitialization()
@@ -64,6 +66,8 @@ void ActionInitialization::Build() const
       SetUserAction(new PGADetResponseTest());
     else if(bremTest)
       SetUserAction(new PGABremTest());
+    else if(run_without_chopper)
+      SetUserAction(new PGAIntObj());
     else
       SetUserAction(new PGA());
 

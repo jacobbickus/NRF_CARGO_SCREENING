@@ -41,12 +41,12 @@ PGADetResponseTest::PGADetResponseTest()
 
     if(!inFile.compare("brems_distributions.root"))
     {
-      ReadWeighted();
+      ReadBremWeighted();
       file_check = false;
     }
     else
     {
-      ReadNonWeighted();
+      ReadBremNonWeighted();
       file_check = true;
     }
   }

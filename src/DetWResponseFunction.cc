@@ -25,6 +25,7 @@
 #include "DetWResponseFunction.hh"
 
 extern G4bool debug;
+extern G4bool run_without_chopper;
 
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
 : DetectorConstruction(Chopper, Collimator, Cargo)
@@ -65,7 +66,11 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double bremStartPos = detInfo->GetShiftFactor();
   detInfo->setBremStartPosition(bremStartPos);
-  G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
+  G4double container_z_pos = 0.;
+
+  if(!run_without_chopper)
+    container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
+    
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
@@ -73,8 +78,12 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
   detInfo->setLinac_Size(linac_size);
   detInfo->setWaterSizeY(water_size_y);
 
-  chop->Construct(logicWorld, checkOverlaps);
-  collimator->Construct(logicWorld, checkOverlaps);
+  if(!run_without_chopper)
+  {
+    chop->Construct(logicWorld, checkOverlaps);
+    collimator->Construct(logicWorld, checkOverlaps);
+  }
+
   cargo->Construct(logicWorld, checkOverlaps);
   cargo->CheckCargoSphereSize();
   // ******************************************************** Begin Detector Construction *************************************************************** //

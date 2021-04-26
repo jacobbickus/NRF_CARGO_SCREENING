@@ -22,55 +22,20 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef InputFileManager_h
-#define InputFileManager_h 1
-
-#include "globals.hh"
-#include "G4Types.hh"
-#include "G4ios.hh"
-#include "G4SystemOfUnits.hh"
-
-#include "TFile.h"
-#include "TROOT.h"
-#include "TH1D.h"
-#include "TGraph.h"
-#include "TRandom2.h"
-#include "TSystem.h"
-#include "TMath.h"
+#ifndef PGAIntObj_h
+#define PGAIntObj_h 1
 
 
-class InputFileManager
+#include "G4VUserPrimaryGeneratorAction.hh"
+#include "BasePGA.hh"
+
+class PGAIntObj : public G4VUserPrimaryGeneratorAction, public BasePGA
 {
-  static InputFileManager *instance;
-
-  InputFileManager();
 public:
-  static InputFileManager *Instance()
-  {
-    if(!instance)
-    {
-      instance = new InputFileManager;
-    }
-    return instance;
-  }
-
-  void CloseInputFile()
-  {
-    if(fFileOpen) fin->Close();
-    fFileOpen = false;
-  }
-
-  void CheckFile(const char*);
-  void ReadWeightedBremInput(const char*, TGraph* &tBrems, TGraph* &tSample, TH1D* &hSample);
-  void ReadNonWeightedBremInput(const char*, TGraph* &tBrems);
-  void ReadNonWeightedIntObjInput(const char*, TGraph* &tIntObj);
-
-private:
-
-TFile *fin;
-G4bool fFileOpen;
-
-~InputFileManager();
+  PGAIntObj();
+  ~PGAIntObj();
+  virtual void GeneratePrimaries(G4Event*);
+ 
 };
 
 #endif

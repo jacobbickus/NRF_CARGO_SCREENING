@@ -67,6 +67,7 @@ public:
   void SetBeamSize(G4double x){beam_size = x*cm;}
   void SetBeamSizeX(G4double val){beam_size_x = val*cm;}
   void SetBeamSizeY(G4double val){beam_size_y = val*cm;}
+  void SetBeamStartPos(G4double val){beamStart = val*cm;}
 
 protected:
   void CallMessenger();
@@ -74,8 +75,9 @@ protected:
   G4double SampleEnergyRange(double, double);
   G4double SampleUResonances();
   void StartUserMacroInputs();
-  void ReadWeighted();
-  void ReadNonWeighted();
+  void ReadBremWeighted();
+  void ReadBremNonWeighted();
+  void ReadIntObjNonWeighted();
   void SetUserEnergy();
   void SetupNonBremTest();
   const float pi=acos(-1);
@@ -87,6 +89,7 @@ protected:
   G4bool file_check;
   // ROOT
   TGraph *tBrems;
+  TGraph *tIntObj;
   TGraph *tSample;
   TH1D   *hSample;
   TRandom2 Random;

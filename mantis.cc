@@ -41,7 +41,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile, response_function_file;
 // boolean global variables
-G4bool WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool run_without_chopper, WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -83,11 +83,12 @@ namespace
     << "      [-r --Detector_Response_Input=false]             Runs Mantis Simulation with Detector Response Function Input" << std::endl
     << "      [-s --Print_Standalone_Data=false]               Calls G4NRF to print a file of NRF Energies (takes up to 15 min)" << std::endl
     << "      [-v --Verbose=false]                             Sets NRF Physics Verbosity" << std::endl
-    << std::endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test, Sample from Normal Distribution" << std::endl << std::endl
+    << std::endl << "Testing Options: Detector Response, Bremsstrahlung Test, Resonance Test, Sample from Normal Distribution, Run Without ChopperSetup" << std::endl << std::endl
     << "      [-t1 --Detector_Response_Test=false]             Create Detector Response Function" << std::endl
     << "      [-t2 --Brem_Test=false]                          For creating a bremsstrahlung beam for a secondary simulation input. Requires energy flag to be passed with max bremsstrahlung energy" << std::endl
     << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
     << "      [-t4 --Sample_Energy_Range=false]                Samples from a uniform distribution centered on user's energy." << std::endl
+    << "      [-t5 --Run_Without_Chopper=false]                Runs Simulation Without Chopper Setup by starting beam directly in front of interrogation object. (Requires Incident IntObj Spectrum as Input)." << std::endl
     << std::endl << std::endl;
     exit(1);
   }
@@ -143,6 +144,8 @@ int main(int argc,char **argv)
   G4String SampleEnergyRange_in = "false";
   SampleEnergyRangebool = false;
   uniform_width = 0.005; // units MeV
+  G4String RunWithoutChopper_in = "false";
+  run_without_chopper = false;
 
   // Output Defaults
   output = false;
@@ -352,6 +355,17 @@ int main(int argc,char **argv)
       {
         uniform_width = std::stod(argv[i+1]);
         std::cout << "Uniform Width Set to: " << uniform_width << std::endl;
+      }
+      else if (G4String(input) == "-t5")
+      {
+        run_without_chopper = true;
+        i=i-1;
+      }
+      else if (G4String(input) == "--Run_Without_Chopper")
+      {
+        RunWithoutChopper_in = argv[i+1];
+        if(RunWithoutChopper_in == "True" || RunWithoutChopper_in == "true")
+          run_without_chopper = true;
       }
       else
       {

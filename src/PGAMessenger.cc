@@ -42,6 +42,10 @@ PGAMessenger::PGAMessenger(BasePGA* pga_in)
   Cmd3->SetGuidance("Choose Desired Vertical (y) Beam Size (cm)");
   Cmd3->SetParameterName("beamSizeY",false);
   Cmd3->SetRange("beamSizeY > 0. && beamSizeY < 300.0");
+  Cmd4 = new G4UIcmdWithADouble("/PGA/beamStartPos",this);
+  Cmd4->SetGuidance("Choose Desired Beam Start Position (cm)");
+  Cmd4->SetParameterName("beamStart",false);
+  Cmd4->SetRange("beamStart > -60 && beamStart < 60");
 }
 
 PGAMessenger::~PGAMessenger()
@@ -49,6 +53,7 @@ PGAMessenger::~PGAMessenger()
   delete Cmd;
   delete Cmd2;
   delete Cmd3;
+  delete Cmd4;
 }
 
 
@@ -71,5 +76,11 @@ void PGAMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     G4double theCommand = Cmd3->GetNewDoubleValue(newValue);
     pga->SetBeamSizeY(theCommand);
     G4cout << "PGAMessenger::SetBeamSizeY: " << theCommand << " cm" << G4endl;
+  }
+  else if(command == Cmd4)
+  {
+    G4double theCommand = Cmd4->GetNewDoubleValue(newValue);
+    pga->SetBeamStartPos(theCommand);
+    G4cout << "PGAMessenger::SetBeamStartPos: " << theCommand << " cm" << G4endl;
   }
 }

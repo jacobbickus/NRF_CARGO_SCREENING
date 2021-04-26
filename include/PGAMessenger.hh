@@ -47,6 +47,7 @@ private:
   G4UIcmdWithADouble *Cmd;
   G4UIcmdWithADouble *Cmd2;
   G4UIcmdWithADouble *Cmd3;
+  G4UIcmdWithADouble *Cmd4;
   G4UIdirectory *myDir;
 };
 
