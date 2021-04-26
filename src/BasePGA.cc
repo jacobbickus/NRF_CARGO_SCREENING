@@ -126,45 +126,34 @@ void BasePGA::StartUserMacroInputs()
   G4cout << "----------------------------------------------------------------------" << G4endl;
 }
 
-void BasePGA::ReadBremWeighted()
+void BasePGA::ReadWeighted()
 {
   InputFileManager* ifm = InputFileManager::Instance();
 
-  tBrems = 0;
-  tSample = 0;
-  hSample = 0;
+  g_input = 0;
+  g_sample = 0;
+  h_sample = 0;
 
-  ifm->ReadWeightedBremInput(inFile.c_str(), tBrems, tSample, hSample);
-  if(!tSample || !hSample)
+  ifm->ReadWeightedInput(inFile.c_str(), g_input, g_sample, h_sample);
+  if(!g_sample || !h_sample)
   {
-    G4cerr << "BasePGA::ReadBremWeighted() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
+    G4cerr << "BasePGA::ReadWeighted() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
     exit(1);
   }
-  G4cout << "BasePGA::ReadBremWeighted() -> Reading SAMPLED Distribution from: " << inFile << G4endl;
+  G4cout << "BasePGA::ReadWeighted() -> Reading SAMPLED Distribution from: " << inFile << G4endl;
 }
 
-void BasePGA::ReadBremNonWeighted()
+void BasePGA::ReadNonWeighted()
 {
   InputFileManager* ifm = InputFileManager::Instance();
-  ifm->ReadNonWeightedBremInput(inFile.c_str(), tBrems);
+  ifm->ReadNonWeightedInput(inFile.c_str(), g_input);
 
   if(debug)
-    std::cout << "BasePGA::ReadBremNonWeighted() -> Calling CreateInputSpectrum..." << std::endl;
+    std::cout << "BasePGA::ReadNonWeighted() -> Calling CreateInputSpectrum..." << std::endl;
 
-  CreateInputSpectrum(tBrems);
-  sInfo->SetBeamMax(TMath::MaxElement(tBrems->GetN(), tBrems->GetX()));
-  G4cout << "BasePGA::ReadBremNonWeighted() -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
-}
-
-void BasePGA::ReadIntObjNonWeighted()
-{
-  InputFileManager* ifm = InputFileManager::Instance();
-  ifm->ReadNonWeightedIntObjInput(inFile.c_str(), tIntObj);
-  if(debug)
-    std::cout << "BasePGA::ReadIntObjNonWeighted -> Calling CreateInputSpectrum..." << std::endl;
-  CreateInputSpectrum(tIntObj);
-  sInfo->SetBeamMax(TMath::MaxElement(tIntObj->GetN(), tIntObj->GetX()));
-  G4cout << "BasePGA::ReadIntObjNonWeighted -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
+  CreateInputSpectrum(g_input);
+  sInfo->SetBeamMax(TMath::MaxElement(g_input->GetN(), g_input->GetX()));
+  G4cout << "BasePGA::ReadNonWeighted() -> Reading NON-SAMPLED Distribution from: " << inFile << G4endl;
 }
 
 void BasePGA::SetUserEnergy()

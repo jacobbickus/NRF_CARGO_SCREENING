@@ -75,9 +75,8 @@ protected:
   G4double SampleEnergyRange(double, double);
   G4double SampleUResonances();
   void StartUserMacroInputs();
-  void ReadBremWeighted();
-  void ReadBremNonWeighted();
-  void ReadIntObjNonWeighted();
+  void ReadWeighted();
+  void ReadNonWeighted();
   void SetUserEnergy();
   void SetupNonBremTest();
   const float pi=acos(-1);
@@ -88,10 +87,9 @@ protected:
   G4ParticleGun* fParticleGun;
   G4bool file_check;
   // ROOT
-  TGraph *tBrems;
-  TGraph *tIntObj;
-  TGraph *tSample;
-  TH1D   *hSample;
+  TGraph *g_input;
+  TGraph *g_sample;
+  TH1D   *h_sample;
   TRandom2 Random;
   std::vector<double> energies, N;
 

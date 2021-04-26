@@ -41,7 +41,7 @@ InputFileManager::~InputFileManager()
 }
 
 
-void InputFileManager::ReadWeightedBremInput(const char* inFile, TGraph* &tBrems, TGraph* &tSample, TH1D* &hSample)
+void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &g_input, TGraph* &g_sample, TH1D* &h_sample)
 {
   if(debug)
     std::cout << "InputFileManager::ReadWeightedBremInput -> Importing weighted data..." << std::endl;
@@ -51,12 +51,12 @@ void InputFileManager::ReadWeightedBremInput(const char* inFile, TGraph* &tBrems
   fFileOpen = true;
   fin->cd();
   //fin->ls();
-  fin->GetObject("Graph_from_hBrems",tBrems);
-  fin->GetObject("Graph_from_hSample_short",tSample);
-  fin->GetObject("hSample_long",hSample);
+  fin->GetObject("Graph_from_h_input",g_input);
+  fin->GetObject("Graph_from_h_sample_short",g_sample);
+  fin->GetObject("h_sample_long",h_sample);
 }
 
-void InputFileManager::ReadNonWeightedBremInput(const char* inFile, TGraph* &tBrems)
+void InputFileManager::ReadNonWeightedInput(const char* inFile, TGraph* &g_input)
 {
   if(debug)
     std::cout << "InputFileManager::ReadNonWeightedBremInput -> Importing non-weighted data..." << std::endl;
@@ -65,19 +65,7 @@ void InputFileManager::ReadNonWeightedBremInput(const char* inFile, TGraph* &tBr
   fin = TFile::Open(inFile);
   fFileOpen = true;
   fin->cd();
-  fin->GetObject("Graph_from_hBrems",tBrems);
-}
-
-void InputFileManager::ReadNonWeightedIntObjInput(const char* inFile, TGraph* &tIntObj)
-{
-  if(debug)
-    std::cout << "InputFileManager::ReadNonWeightedIntObjInput -> Importing non weighted incident interrogation object data..." << std::endl;
-
-  CheckFile(inFile);
-  fin = TFile::Open(inFile);
-  fFileOpen = true;
-  fin->cd();
-  fin->GetObject("Graph_from_hIntObj", tIntObj);
+  fin->GetObject("Graph_from_h_input",g_input);
 }
 
 void InputFileManager::CheckFile(const char* filename)

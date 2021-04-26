@@ -61,9 +61,8 @@ public:
   }
 
   void CheckFile(const char*);
-  void ReadWeightedBremInput(const char*, TGraph* &tBrems, TGraph* &tSample, TH1D* &hSample);
-  void ReadNonWeightedBremInput(const char*, TGraph* &tBrems);
-  void ReadNonWeightedIntObjInput(const char*, TGraph* &tIntObj);
+  void ReadWeightedInput(const char*, TGraph* &g_input, TGraph* &g_sample, TH1D* &h_sample);
+  void ReadNonWeightedInput(const char*, TGraph* &g_input);
 
 private:
 

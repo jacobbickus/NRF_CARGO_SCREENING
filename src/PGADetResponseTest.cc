@@ -41,12 +41,12 @@ PGADetResponseTest::PGADetResponseTest()
 
     if(!inFile.compare("brems_distributions.root"))
     {
-      ReadBremWeighted();
+      ReadWeighted();
       file_check = false;
     }
     else
     {
-      ReadBremNonWeighted();
+      ReadNonWeighted();
       file_check = true;
     }
   }
@@ -71,9 +71,9 @@ void PGADetResponseTest::GeneratePrimaries(G4Event* anEvent)
     // User IS USING importance sampling
     if(!file_check)
     {
-      energy = hSample->GetRandom()*MeV;
-      G4double dNdE = tBrems->Eval(energy);
-      G4double importanceSampling = tSample->Eval(energy);
+      energy = h_sample->GetRandom()*MeV;
+      G4double dNdE = g_input->Eval(energy);
+      G4double importanceSampling = g_sample->Eval(energy);
       w = dNdE/importanceSampling;
     }
     // User IS NOT USING importance sampling

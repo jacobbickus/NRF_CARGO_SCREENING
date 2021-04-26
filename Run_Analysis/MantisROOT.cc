@@ -2873,54 +2873,54 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
 }
 
-TGraph* MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE)
+TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename, double deltaE)
 {
-  CheckFile(bremInputFilename);
-  TFile *f = new TFile(bremInputFilename);
+  CheckFile(InputFilename);
+  TFile *f = new TFile(InputFilename);
   f->cd();
-  TTree* tBrem;
-  f->GetObject("ChopIn", tBrem);
-  double maxE = tBrem->GetMaximum("Energy");
-  double minE = tBrem->GetMinimum("Energy");
+  TTree* tin;
+  f->GetObject("ChopIn", tin);
+  double maxE = tin->GetMaximum("Energy");
+  double minE = tin->GetMinimum("Energy");
   int nbins = (maxE - minE)/deltaE;
 
-  TH1D* hBrems = new TH1D("hBrems","Bremsstrahlung Input Spectrum", nbins, minE, maxE);
-  tBrem->Draw("Energy>>hBrems","","goff");
-  hBrems->Scale(1./hBrems->Integral());
-  hBrems->GetXaxis()->SetTitle("Energy [MeV]");
+  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+  tin->Draw("Energy>>h_input","","goff");
+  h_input->Scale(1./h_input->Integral());
+  h_input->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  hBrems->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* gBrems = new TGraph(hBrems);
+  h_input->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* g_input = new TGraph(h_input);
   f->Close();
-  return gBrems;
+  return g_input;
 }
 
-void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* obj="ChopIn", double deltaE=10.0e-3, string outfile="brem.root")
+void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", double deltaE=10.0e-3, string outfile="brem.root")
 {
-  CheckFile(bremInputFilename);
-  TFile *f = new TFile(bremInputFilename);
+  CheckFile(InputFilename);
+  TFile *f = new TFile(InputFilename);
   f->cd();
-  TTree* tBrem;
-  f->GetObject(obj, tBrem);
-  double maxE = tBrem->GetMaximum("Energy");
-  double minE = tBrem->GetMinimum("Energy");
+  TTree* tin;
+  f->GetObject(obj, tin);
+  double maxE = tin->GetMaximum("Energy");
+  double minE = tin->GetMinimum("Energy");
 
   int nbins = (maxE - minE)/deltaE;
 
-  TH1D* hBrems = new TH1D("hBrems","Bremsstrahlung Input Spectrum", nbins, minE, maxE);
-  tBrem->Draw("Energy>>hBrems","","goff");
-  hBrems->Scale(1./hBrems->Integral());
-  hBrems->GetXaxis()->SetTitle("Energy [MeV]");
+  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+  tin->Draw("Energy>>h_input","","goff");
+  h_input->Scale(1./h_input->Integral());
+  h_input->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  hBrems->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* gBrems = new TGraph(hBrems);
+  h_input->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* g_input = new TGraph(h_input);
   TFile *fout = new TFile(outfile.c_str(),"RECREATE");
   fout->cd();
-  hBrems->Write();
-  gBrems->Write();
-  std::cout << "MantisROOT::PrepInputSpectrum -> Bremsstrahlung Spectra written to " << outfile << std::endl;
+  h_input->Write();
+  g_input->Write();
+  std::cout << "MantisROOT::PrepInputSpectrum -> Spectra written to " << outfile << std::endl;
   fout->Close();
   f->cd();
   f->Close();

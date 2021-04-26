@@ -31,7 +31,7 @@ PGAIntObj::PGAIntObj()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
   SetupNonBremTest();
-  ReadIntObjNonWeighted();
+  ReadNonWeighted();
   CallMessenger();
   StartUserMacroInputs();
 }
