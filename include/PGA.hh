@@ -29,7 +29,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "BasePGA.hh"
 
-class PGA : public G4UserPrimaryGeneratorAction, public BasePGA
+class PGA : public G4VUserPrimaryGeneratorAction, public BasePGA
 {
 public:
   PGA();

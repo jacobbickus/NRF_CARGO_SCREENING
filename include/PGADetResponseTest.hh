@@ -29,7 +29,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "BasePGA.hh"
 
-class PGADetResponseTest : public G4UserPrimaryGeneratorAction, public BasePGA
+class PGADetResponseTest : public G4VUserPrimaryGeneratorAction, public BasePGA
 {
 public:
   PGADetResponseTest();
