@@ -78,6 +78,8 @@ protected:
   void SetUserEnergy();
   void SetupNonBremTest();
   const float pi=acos(-1);
+  DetectorInformation* detInfo;
+  SourceInformation* sInfo;
   G4double beam_size, energy, beamStart, beam_size_x, beam_size_y;
   PGAMessenger* pgaM;
   G4ParticleGun* fParticleGun;
