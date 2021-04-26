@@ -28,6 +28,7 @@ extern G4long seed;
 extern G4bool debug;
 extern G4String inFile;
 extern G4double chosen_energy;
+extern G4bool detTest;
 
 BasePGA::BasePGA()
 : pgaM(NULL), fParticleGun(0)
@@ -167,7 +168,10 @@ void BasePGA::SetupNonBremTest()
   beam_size_x = 10.0*mm;
   beam_size_y = 10.0*mm;
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
-  beamStart = -100.;
+  if(!detTest)
+    beamStart = -100.;
+  else
+    beamStart = -50.;
   G4cout << "BasePGA::SetupNonBremTest -> Particle Type set to Gamma!" << G4endl;
   sInfo->SetBeamMax(-1.);
   sInfo->SetSourceZPosition(beamStart);
