@@ -162,7 +162,7 @@ Description:
 
 Macro File to be read for user input options -> Required!
 
---File_To_Sample=brems_distributions.root      
+--File_To_Sample=importance_sampling_input.root      
 Description:
 
 Input File Containing hBrems bremsstrahlung input spectrum (ROOT Format TH1D*) to sample from.
