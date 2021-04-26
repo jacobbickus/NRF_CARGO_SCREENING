@@ -134,7 +134,7 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   {
     if(fBremBackingCount > 0)
     {
-      G4cout << "Total Number of Brem Backing Hits:                         " << fBremBackingCount << G4endl;
+      G4cout << "Total Number of Brem Backing Hits:                           " << fBremBackingCount << G4endl;
     }
   }
 
