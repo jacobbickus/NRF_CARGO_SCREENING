@@ -38,7 +38,7 @@ PGA::PGA()
   if(chosen_energy < 0 && !resonanceTest && !SampleEnergyRangebool)
   {
 
-    if(!inFile.compare("brems_distributions.root"))
+    if(!inFile.compare("importance_sampling_input.root"))
     {
       ReadWeighted();
       file_check = false;
@@ -126,3 +126,4 @@ void PGA::GeneratePrimaries(G4Event* anEvent)
   if(debug && anEvent->GetEventID() == 0)
     std::cout << "PGA::GeneratePrimaries -> First Primary Complete." << std::endl;
 }
+importance_sampling_input

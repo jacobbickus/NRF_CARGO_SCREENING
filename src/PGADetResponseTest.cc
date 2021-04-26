@@ -39,7 +39,7 @@ PGADetResponseTest::PGADetResponseTest()
   if(chosen_energy < 0 && !resonanceTest && !SampleEnergyRangebool)
   {
 
-    if(!inFile.compare("brems_distributions.root"))
+    if(!inFile.compare("importance_sampling_input.root"))
     {
       ReadWeighted();
       file_check = false;

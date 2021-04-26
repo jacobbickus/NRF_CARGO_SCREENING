@@ -31,7 +31,18 @@ PGAIntObj::PGAIntObj()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
   SetupNonBremTest();
-  ReadNonWeighted();
+
+  if(!inFile.compare("importance_sampling_input.root"))
+  {
+    ReadWeighted();
+    file_check = false;
+  }
+  else
+  {
+    ReadNonWeighted();
+    file_check = true;
+  }
+
   CallMessenger();
   StartUserMacroInputs();
 }
@@ -44,16 +55,30 @@ void PGAIntObj::GeneratePrimaries(G4Event* anEvent)
   if(debug && anEvent->GetEventID() == 0)
     std::cout << "PGAIntObj::GeneratePrimaries -> First Primary Generated." << std::endl;
 
-  double random = G4UniformRand()*N[N.size() - 1];
-  for(unsigned int i=0;i<N.size();++i)
+  G4double w = 1.;
+  // User IS USING importance sampling
+  if(!file_check)
   {
-    if(N[i] > random)
+    energy = h_sample->GetRandom()*MeV;
+    G4double dNdE = g_input->Eval(energy);
+    G4double importanceSampling = g_sample->Eval(energy);
+    w = dNdE/importanceSampling;
+  }
+  // User IS NOT USING importance sampling
+  else
+  {
+    double random = G4UniformRand()*N[N.size() - 1];
+    for(unsigned int i=0;i<N.size();++i)
     {
-      double f = (random - N[i - 1]) / (N[i] - N[i - 1]);
-      energy = f*energies[i] + (1 - f)*energies[i - 1];
-      break;
-    } // end of if(N[i] > random )
-  } // end of for
+      if(N[i] > random)
+      {
+        double f = (random - N[i - 1]) / (N[i] - N[i - 1]);
+        energy = f*energies[i] + (1 - f)*energies[i - 1];
+        break;
+      } // end of if(N[i] > random )
+    } // end of for
+  } // end else
+
   energy = energy*MeV;
 
 // ************************************************************************************ //
@@ -68,7 +93,7 @@ void PGAIntObj::GeneratePrimaries(G4Event* anEvent)
 
 // Pass the event information
   eventInformation *anInfo = new eventInformation(anEvent);
-  anInfo->SetWeight(1.);
+  anInfo->SetWeight(w);
   anInfo->SetBeamEnergy(energy);
   anEvent->SetUserInformation(anInfo);
 

@@ -35,7 +35,7 @@ extern G4String inFile;
 Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
 {
   start_time = time(0);
-  if(!inFile.compare("brems_distributions.root"))
+  if(!inFile.compare("importance_sampling_input.root"))
     WEIGHTED = true;
 
   if(resonanceTest)

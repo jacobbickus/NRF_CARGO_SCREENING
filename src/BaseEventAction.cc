@@ -36,7 +36,7 @@ totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
     std::cout << "BaseEventAction::BaseEventAction Initialized." << std::endl;
 
   eventM = new EventMessenger(this);
-  if(!inFile.compare("brems_distributions.root"))
+  if(!inFile.compare("importance_sampling_input.root"))
     WEIGHTED = true;
 
   manager = G4AnalysisManager::Instance();

@@ -47,7 +47,7 @@ BaseSteppingAction::BaseSteppingAction()
   manager = G4AnalysisManager::Instance();
   fExpectedNextStatus = Undefined;
 
-  if(!inFile.compare("brems_distributions.root"))
+  if(!inFile.compare("importance_sampling_input.root"))
     WEIGHTED = true;
 
   if(resonanceTest)
