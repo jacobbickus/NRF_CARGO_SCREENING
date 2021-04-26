@@ -64,9 +64,9 @@ public:
   };
 
   // For PGA Messenger
-  void SetBeamSize(G4double x){beam_size = x;}
-  void SetBeamSizeX(G4double val){beam_size_x = val;}
-  void SetBeamSizeY(G4double val){beam_size_y = val;}
+  void SetBeamSize(G4double x){beam_size = x*cm;}
+  void SetBeamSizeX(G4double val){beam_size_x = val*cm;}
+  void SetBeamSizeY(G4double val){beam_size_y = val*cm;}
 
 protected:
   void CallMessenger();
