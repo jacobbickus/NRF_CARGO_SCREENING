@@ -28,17 +28,12 @@ extern G4bool debug;
 
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
 : DetectorConstruction(),
-chop(Chopper), collimator(Collimator), cargo(Cargo),
-// Messenger
-detectorM(NULL)
+chop(Chopper), collimator(Collimator), cargo(Cargo)
 {
-  detectorM = new DetWResponseMessenger(this);
 }
 
 DetWResponseFunction::~DetWResponseFunction()
-{
-  delete detectorM;
-}
+{}
 
 G4VPhysicalVolume* DetWResponseFunction::Construct()
 {

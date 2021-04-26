@@ -27,40 +27,6 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "DetectorConstruction.hh"
-#include "ChopperSetup.hh"
-#include "Collimator.hh"
-#include "Cargo.hh"
-#include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4LogicalVolume.hh"
-#include "G4ThreeVector.hh"
-#include "G4PVPlacement.hh"
-#include "G4PVReplica.hh"
-#include "globals.hh"
-#include "G4UImanager.hh"
-#include "G4PhysicalConstants.hh"
-
-#include "G4GeometryManager.hh"
-#include "G4SolidStore.hh"
-#include "G4LogicalVolumeStore.hh"
-#include "G4PhysicalVolumeStore.hh"
-
-#include "G4Box.hh" //for box
-#include "G4Sphere.hh" //for sphere
-#include "G4Tubs.hh" // for tube/cylinder
-
-#include "DetWResponseMessenger.hh"
-#include "G4RunManager.hh"
-#include "G4NistManager.hh"
-#include "G4RotationMatrix.hh"
-#include "DetectorInformation.hh"
-
-
-class G4VPhysicalVolume;
-class G4LogicalVolume;
-class DetWResponseMessenger;
-
-/// Detector construction class to define materials and geometry.
 
 class DetWResponseFunction : public DetectorConstruction
 {
@@ -69,14 +35,6 @@ public:
   virtual ~DetWResponseFunction();
 
   virtual G4VPhysicalVolume* Construct();
-
-private:
-// Chopper
-ChopperSetup* chop;
-Collimator* collimator;
-Cargo* cargo;
-// Messenger
-DetWResponseMessenger* detectorM;
 
 };
 

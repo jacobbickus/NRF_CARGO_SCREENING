@@ -29,6 +29,7 @@
 #include "ChopperSetup.hh"
 #include "Collimator.hh"
 #include "Cargo.hh"
+#include "Linac.hh"
 #include "MaterialProperties.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
@@ -132,6 +133,7 @@ private:
 ChopperSetup* chop;
 Collimator* collimator;
 Cargo* cargo;
+Linac* linac;
 
 protected:
 G4LogicalVolume* ConstructAttenuatorsAndPlexiglass(G4LogicalVolume*, G4double, G4Material*, G4Material*, G4Material*);
