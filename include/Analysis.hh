@@ -246,7 +246,7 @@ void PCDetection(G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentPC()
+void IncidentPC(G4bool Weight=false)
 {
   manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
   manager->CreateNtupleIColumn("EventID");
