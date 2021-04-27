@@ -84,7 +84,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     collimator->Construct(logicWorld, checkOverlaps);
   }
   else
-    detInfo->setRearCollimatorPosition(container_edge_position - 50.*cm);
+    detInfo->setRearCollimatorPosition(-100*cm - linac_size - 50.*cm);
 
   cargo->Construct(logicWorld, checkOverlaps);
   cargo->CheckCargoSphereSize();
