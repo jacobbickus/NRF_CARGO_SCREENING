@@ -208,6 +208,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     {
       FillPlexi(4);
       kevent->SetIncidentEnergy(energy);
+      krun->AddTotalSurface();
       krun->AddStatusKilledPosition();
       theTrack->SetTrackStatus(fStopAndKill);
       return;

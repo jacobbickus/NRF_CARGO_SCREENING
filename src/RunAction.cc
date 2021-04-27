@@ -92,10 +92,10 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
   if(!bremTest)
   {
+    G4cout << "Total number of Surface Events:                              "
+      << fTotalSurface << G4endl;
     if(!WResponseFunction)
     {
-      G4cout << "Total number of Surface Events:                              "
-        << fTotalSurface << G4endl;
       G4cout << "Total number of Cherenkov Photons:                           "
         << fCerenkovCount << G4endl;
       G4cout << "Total number of Scintillation Photons:                       "
