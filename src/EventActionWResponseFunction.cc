@@ -55,7 +55,7 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
   if(debug && eventID == 0)
       std::cout << "EventActionWResponseFunction::EndOfEventActionWResponseFunction -> Beginning" << std::endl;
 
-  if(incident_energy > 0.)
+  if(incident_energy > 0.00001)
   {
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double beam_energy = info->GetBeamEnergy();

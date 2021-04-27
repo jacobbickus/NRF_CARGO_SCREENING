@@ -207,7 +207,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
         && previousStep_VolumeName.compare(0,4,"Last") == 0)
     {
       FillPlexi(4);
-      kevent->SetIncidentEnergy(energy);
+      kevent->SetIncidentEnergy(energy/(MeV));
       krun->AddTotalSurface();
       krun->AddStatusKilledPosition();
       theTrack->SetTrackStatus(fStopAndKill);
