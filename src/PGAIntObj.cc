@@ -31,6 +31,7 @@ PGAIntObj::PGAIntObj()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
   SetupNonBremTest();
+  beamStart = -10*cm;
 
   if(!inFile.compare("importance_sampling_input.root"))
   {
