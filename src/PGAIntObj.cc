@@ -32,6 +32,8 @@ PGAIntObj::PGAIntObj()
 {
   SetupNonBremTest();
   beamStart = -10*cm;
+  sInfo->SetSourceZPosition(beamStart);
+  detInfo->setShiftFactor(beamStart);
 
   if(!inFile.compare("importance_sampling_input.root"))
   {

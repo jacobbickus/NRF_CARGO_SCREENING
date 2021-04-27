@@ -101,6 +101,13 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
   water_z_pos = detInfo->getRearCollimatorPosition();
   G4double myangle = (180. - theAngle)*pi/180.;
   water_x_pos = tan(myangle)*(container_z_pos - water_z_pos);
+
+  if(debug)
+  {
+    std::cout << "DetectorConstruction::ConstructAttenuatorsAndPlexiglass -> Water X Position: " << water_x_pos/(cm) << " cm" << std::endl
+    << "DetectorConstruction::ConstructAttenuatorsAndPlexiglass -> Water Z Position: " << water_z_pos/(cm) << " cm" << std::endl;
+  }
+
   G4double detDistance = water_x_pos/sin(myangle) + water_size_z;
   G4RotationMatrix* waterRot = new G4RotationMatrix;
   G4RotationMatrix* waterRot2 = new G4RotationMatrix;
