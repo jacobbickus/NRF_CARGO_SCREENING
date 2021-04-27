@@ -31,7 +31,7 @@ PGAIntObj::PGAIntObj()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
   SetupNonBremTest();
-  beamStart = -10*cm;
+  beamStart = -20*cm;
   sInfo->SetSourceZPosition(beamStart);
   detInfo->setShiftFactor(beamStart);
 

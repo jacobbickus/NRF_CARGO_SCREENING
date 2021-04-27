@@ -140,6 +140,7 @@ void BasePGA::ReadWeighted()
     G4cerr << "BasePGA::ReadWeighted() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
     exit(1);
   }
+  sInfo->SetBeamMax(TMath::MaxElement(g_input->GetN(), g_input->GetX()));
   G4cout << "BasePGA::ReadWeighted() -> Reading SAMPLED Distribution from: " << inFile << G4endl;
 }
 
