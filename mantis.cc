@@ -359,6 +359,7 @@ int main(int argc,char **argv)
       else if (G4String(input) == "-t5")
       {
         run_without_chopper = true;
+        std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
         i=i-1;
       }
       else if (G4String(input) == "--Run_Without_Chopper")
@@ -366,6 +367,7 @@ int main(int argc,char **argv)
         RunWithoutChopper_in = argv[i+1];
         if(RunWithoutChopper_in == "True" || RunWithoutChopper_in == "true")
           run_without_chopper = true;
+        std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
       }
       else
       {
