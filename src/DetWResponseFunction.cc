@@ -70,7 +70,7 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
 
   if(!run_without_chopper)
     container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
-    
+
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
@@ -83,6 +83,8 @@ G4VPhysicalVolume* DetWResponseFunction::Construct()
     chop->Construct(logicWorld, checkOverlaps);
     collimator->Construct(logicWorld, checkOverlaps);
   }
+  else
+    detInfo->setRearCollimatorPosition(container_edge_position);
 
   cargo->Construct(logicWorld, checkOverlaps);
   cargo->CheckCargoSphereSize();
