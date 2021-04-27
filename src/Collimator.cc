@@ -118,7 +118,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
                       logicBremCollimator, "BremCollimator",logicWorld,
                       false, 0, checkOverlaps);
     SourceInformation* sInfo = SourceInformation::Instance();
-    if((rearCol_Z_pos + rear_col_z_size/2.)/(cm) > sInfo->GetSourceZPosition())
+    if((rearCol_Z_pos + rear_col_z_size/2.)/(cm) > sInfo->GetSourceZPosition()/(cm))
     {
       G4cerr << "Collimator::Construct -> Rear Collimator Edge Position: " << (rearCol_Z_pos + rear_col_z_size/2.)/(cm) << " cm" << G4endl;
       G4cerr << "Collimator::Construct -> Source Position: " << sInfo->GetSourceZPosition() << " cm" << G4endl;
