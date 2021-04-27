@@ -42,7 +42,7 @@ void finish();     // close root file
 void Book();
 
 private:
-void IncidentChopper(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentChopper(G4bool Weight=false)
 {
   manager->CreateNtuple("ChopIn", "Chopper Wheel Incident Data");
   manager->CreateNtupleIColumn("EventID");
@@ -56,7 +56,7 @@ void IncidentChopper(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void EmissionChopper(G4AnalysisManager* manager, G4bool Weight=false)
+void EmissionChopper(G4bool Weight=false)
 {
   // Create ID 1 Ntuple for Exiting Chopper Data
   manager->CreateNtuple("ChopOut", "Chopper Wheel Exiting Radiation Data");
@@ -71,7 +71,7 @@ void EmissionChopper(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void NRF(G4AnalysisManager* manager, G4bool Weight=false)
+void NRF(G4bool Weight=false)
 {
   // Create ID 2 Ntuple for NRF Materials
   manager->CreateNtuple("NRF","NRF Data");
@@ -89,7 +89,7 @@ void NRF(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentIntObj(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentIntObj(G4bool Weight=false)
 {
   manager->CreateNtuple("IntObjIn","Incident Interrogation Object Data");
   manager->CreateNtupleIColumn("EventID");
@@ -108,7 +108,7 @@ void IncidentIntObj(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void EmissionIntObj(G4AnalysisManager* manager, G4bool Weight=false)
+void EmissionIntObj(G4bool Weight=false)
 {
   manager->CreateNtuple("IntObjOut","Interrogation Object Emission Data");
   manager->CreateNtupleIColumn("EventID");
@@ -127,7 +127,7 @@ void EmissionIntObj(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentShielding(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentShielding(G4bool Weight=false)
 {
   manager->CreateNtuple("Shielding","Incident Outer Shielding Layer");
   manager->CreateNtupleIColumn("EventID");
@@ -144,7 +144,7 @@ void IncidentShielding(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentPlexiglass(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentPlexiglass(G4bool Weight=false)
 {
   manager->CreateNtuple("Plexiglass", "Incident Plexiglass Layer");
   manager->CreateNtupleIColumn("EventID");
@@ -163,7 +163,7 @@ void IncidentPlexiglass(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentWater(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentWater(G4bool Weight=false)
 {
   manager->CreateNtuple("Water","Incident Water Tank Data");
   manager->CreateNtupleIColumn("EventID");
@@ -177,7 +177,7 @@ void IncidentWater(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void ScintillationPerEvent(G4AnalysisManager* manager, G4bool Weight=false)
+void ScintillationPerEvent(G4bool Weight=false)
 {
   manager->CreateNtuple("Scintillation","Scintillation per Event Water Data");
   manager->CreateNtupleIColumn("EventID");
@@ -190,7 +190,7 @@ void ScintillationPerEvent(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void SteppingScintillation(G4AnalysisManager* manager, G4bool Weight=false)
+void SteppingScintillation(G4bool Weight=false)
 {
   manager->CreateNtuple("Scintillation2","Scintillation in Water Optical Photon Data");
   manager->CreateNtupleIColumn("EventID");
@@ -204,7 +204,7 @@ void SteppingScintillation(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void CherenkovPerEvent(G4AnalysisManager* manager, G4bool Weight=false)
+void CherenkovPerEvent(G4bool Weight=false)
 {
   manager->CreateNtuple("Cherenkov","Cherenkov per Event Water Data");
   manager->CreateNtupleIColumn("EventID");
@@ -217,7 +217,7 @@ void CherenkovPerEvent(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void SteppingCherenkov(G4AnalysisManager* manager, G4bool Weight=false)
+void SteppingCherenkov(G4bool Weight=false)
 {
   manager->CreateNtuple("Cherenkov2","Cherenkov in Water Optical Photon Data");
   manager->CreateNtupleIColumn("EventID");
@@ -230,7 +230,7 @@ void SteppingCherenkov(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void PCDetection(G4AnalysisManager* manager, G4bool Weight=false)
+void PCDetection(G4bool Weight=false)
 {
   manager->CreateNtuple("DetInfo","Detected Information");
   manager->CreateNtupleIColumn("EventID");
@@ -246,7 +246,7 @@ void PCDetection(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void IncidentPC(G4AnalysisManager* manager, G4bool Weight=false)
+void IncidentPC()
 {
   manager->CreateNtuple("IncDetInfo","Incident Detector Process Information");
   manager->CreateNtupleIColumn("EventID");
@@ -261,7 +261,7 @@ void IncidentPC(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void BremBacking(G4AnalysisManager* manager)
+void BremBacking()
 {
   manager->CreateNtuple("Backing","Bremsstrahlung Beam from Backing");
   manager->CreateNtupleIColumn("EventID");
@@ -271,7 +271,7 @@ void BremBacking(G4AnalysisManager* manager)
   manager->FinishNtuple();
 }
 
-void BremRadiator(G4AnalysisManager* manager)
+void BremRadiator()
 {
   manager->CreateNtuple("Radiator","Bremsstrahlung Beam from Radiator");
   manager->CreateNtupleIColumn("EventID");
@@ -281,7 +281,7 @@ void BremRadiator(G4AnalysisManager* manager)
   manager->FinishNtuple();
 }
 
-void DetectorEstimatedInfo(G4AnalysisManager* manager, G4bool Weight=false)
+void DetectorEstimatedInfo(G4bool Weight=false)
 {
   manager->CreateNtuple("DetInfo","Estimation of Detected Counts from Response Function");
   manager->CreateNtupleIColumn("EventID");
@@ -298,7 +298,7 @@ void DetectorEstimatedInfo(G4AnalysisManager* manager, G4bool Weight=false)
   manager->FinishNtuple();
 }
 
-void DetectorResponse(G4AnalysisManager* manager)
+void DetectorResponse()
 {
   manager->CreateNtuple("DetResponse","Detector Response Function");
   manager->CreateNtupleIColumn("EventID");
@@ -312,6 +312,7 @@ void DetectorResponse(G4AnalysisManager* manager)
 private:
 G4bool fFactoryOn, WEIGHTED;
 G4int start_time, stop_time;
+G4AnalysisManager* manager;
 };
 
 #endif

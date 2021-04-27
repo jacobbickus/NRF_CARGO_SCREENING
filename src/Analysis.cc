@@ -40,6 +40,8 @@ Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
 
   if(resonanceTest)
     WEIGHTED = false;
+
+  manager = G4AnalysisManager::Instance();
 }
 
 Analysis::~Analysis()
@@ -63,35 +65,37 @@ void Analysis::Book()
   // For Bremsstrahlung Test
   if(bremTest)
   {
-    NRF(manager); //             0
-    BremRadiator(manager); //    1
-    BremBacking(manager); //     2
-    IncidentChopper(manager); // 3
-    EmissionChopper(manager); // 4
+    NRF(); //             0
+    BremRadiator(); //    1
+    BremBacking(); //     2
+    IncidentChopper(); // 3
+    EmissionChopper(); // 4
 
     if(debug)
-      std::cout << "Analysis::Book -> Brem Test Ntuples 0 - 2" << std::endl;
+      std::cout << "Analysis::Book -> Brem Test Ntuples 0 - 4" << std::endl;
   }
   // for Creating Detector Response Function
   else if(detTest)
   {
-    IncidentShielding(manager);  // 0
-    IncidentPlexiglass(manager); // 1
-    DetectorResponse(manager);   // 2
+    IncidentShielding();  // 0
+    IncidentPlexiglass(); // 1
+    DetectorResponse();   // 2
     if(debug)
-      std::cout << "Analysis::Book -> Creating Detector Response Function Ntuples 0 - 1" << std::endl;
+      std::cout << "Analysis::Book -> Creating Detector Response Function Ntuples 0 - 2" << std::endl;
   }
   // for a Simulation with Detector Response
   else if(WResponseFunction)
   {
     if(debug)
       std::cout << "Analysis::Book -> Weighting set to: " << WEIGHTED << std::endl;
-    NRF(manager, WEIGHTED); // 0
-    IncidentIntObj(manager, WEIGHTED); // 1
-    EmissionIntObj(manager, WEIGHTED); // 2
-    IncidentShielding(manager, WEIGHTED); // 3
-    IncidentPlexiglass(manager, WEIGHTED); // 4
-    DetectorEstimatedInfo(manager, WEIGHTED); // 5
+
+    NRF(WEIGHTED); // 0
+    IncidentIntObj(WEIGHTED); // 1
+    EmissionIntObj(WEIGHTED); // 2
+    IncidentShielding(WEIGHTED); // 3
+    IncidentPlexiglass(WEIGHTED); // 4
+    DetectorEstimatedInfo(WEIGHTED); // 5
+
     if(debug)
       std::cout << "Analysis::Book -> With Detector Response Ntuples 0 - 5" << std::endl;
   }
@@ -101,20 +105,20 @@ void Analysis::Book()
     if(debug)
       std::cout << "Analysis::Book -> Weighting set to: " << WEIGHTED << std::endl;
 
-    NRF(manager, WEIGHTED); // 0
-    IncidentChopper(manager,WEIGHTED); // 1
-    EmissionChopper(manager,WEIGHTED); // 2
-    IncidentIntObj(manager, WEIGHTED); // 3
-    EmissionIntObj(manager, WEIGHTED); // 4
-    IncidentShielding(manager, WEIGHTED); // 5
-    IncidentPlexiglass(manager, WEIGHTED); // 6
-    IncidentWater(manager,WEIGHTED); // 7
-    ScintillationPerEvent(manager,WEIGHTED); // 8
-    SteppingScintillation(manager, WEIGHTED); // 9
-    CherenkovPerEvent(manager,WEIGHTED); // 10
-    SteppingCherenkov(manager, WEIGHTED); // 11
-    PCDetection(manager, WEIGHTED); // 12
-    IncidentPC(manager, WEIGHTED); // 13
+    NRF(WEIGHTED); // 0
+    IncidentChopper(WEIGHTED); // 1
+    EmissionChopper(WEIGHTED); // 2
+    IncidentIntObj(WEIGHTED); // 3
+    EmissionIntObj(WEIGHTED); // 4
+    IncidentShielding(WEIGHTED); // 5
+    IncidentPlexiglass(WEIGHTED); // 6
+    IncidentWater(WEIGHTED); // 7
+    ScintillationPerEvent(WEIGHTED); // 8
+    SteppingScintillation(WEIGHTED); // 9
+    CherenkovPerEvent(WEIGHTED); // 10
+    SteppingCherenkov(WEIGHTED); // 11
+    PCDetection(WEIGHTED); // 12
+    IncidentPC(WEIGHTED); // 13
 
     if(debug)
       std::cout << "Analysis::Book -> Without Detector Response Ntuples 0 - 13" << std::endl;
@@ -132,8 +136,7 @@ void Analysis::finish()
     G4cerr << "ERROR Analysis::finish: Failed to write to file" << G4endl;
     return;
   }
-
-  G4AnalysisManager* manager = G4AnalysisManager::Instance();
+  
   manager->Write();
   manager->CloseFile();
 
