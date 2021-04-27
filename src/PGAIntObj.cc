@@ -90,7 +90,7 @@ void PGAIntObj::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticleEnergy(energy);
   G4double x_r = beam_size*acos(G4UniformRand())/pi*2.*cos(360.*G4UniformRand()*CLHEP::deg);
   G4double y_r = beam_size*acos(G4UniformRand())/pi*2.*sin(360.*G4UniformRand()*CLHEP::deg);
-  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart*cm));
+  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart));
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1));
   fParticleGun->GeneratePrimaryVertex(anEvent);
 

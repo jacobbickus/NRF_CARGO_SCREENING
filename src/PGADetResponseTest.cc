@@ -108,7 +108,7 @@ void PGADetResponseTest::GeneratePrimaries(G4Event* anEvent)
 
   G4double x_r = beam_size_x*acos(G4UniformRand())/pi*2.*cos(360.*G4UniformRand()*CLHEP::deg);
   G4double y_r = beam_size_y*acos(G4UniformRand())/pi*2.*sin(360.*G4UniformRand()*CLHEP::deg);
-  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart*cm)); // set the electron beam far enough back behind brem radiator
+  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart)); // set the electron beam far enough back behind brem radiator
 
   G4double rand_y_dir = cos(180.*G4UniformRand()*CLHEP::deg);
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, rand_y_dir, 1)); // along z axis

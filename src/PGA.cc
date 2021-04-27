@@ -109,7 +109,7 @@ void PGA::GeneratePrimaries(G4Event* anEvent)
   // Set beam position
   G4double x_r = beam_size*acos(G4UniformRand())/pi*2.*cos(360.*G4UniformRand()*CLHEP::deg);
   G4double y_r = beam_size*acos(G4UniformRand())/pi*2.*sin(360.*G4UniformRand()*CLHEP::deg);
-  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart*cm)); // set the electron beam far enough back behind brem radiator
+  fParticleGun->SetParticlePosition(G4ThreeVector(x_r,y_r,beamStart)); // set the electron beam far enough back behind brem radiator
 
   // Set beam momentum
 
