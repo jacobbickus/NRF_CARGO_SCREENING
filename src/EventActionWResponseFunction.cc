@@ -45,6 +45,7 @@ void EventActionWResponseFunction::BeginOfEventAction(const G4Event* anEvent)
 
   EventActionPrint();
   incident_energy = 0.;
+  energy_counter = 0;
 
   if(debug && eventID == 0)
     std::cout << "EventActionWResponseFunction::BeginOfEventActionWResponseFunction -> Ending" << std::endl;
