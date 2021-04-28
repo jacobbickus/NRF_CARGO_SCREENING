@@ -198,7 +198,7 @@ void SteppingDetTest::UserSteppingAction(const G4Step* aStep)
             if(theTrack->GetCreatorProcess() !=0)
                 creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
             else
-                creatorProcess = "Brem";
+                creatorProcess = "Beam";
 
             kevent->AddDetected();
             if(creatorProcess == "Scintillation")

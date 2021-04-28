@@ -311,7 +311,7 @@ void SteppingActionFull::UserSteppingAction(const G4Step* aStep)
               if(theTrack->GetCreatorProcess() !=0)
                   creatorProcess = theTrack->GetCreatorProcess()->GetProcessName();
               else
-                  creatorProcess = "Brem";
+                  creatorProcess = "Beam";
 
               procCount = "Det";
               FillDetected(12, theParticle->GetKineticEnergy()/(MeV), creatorProcess);
