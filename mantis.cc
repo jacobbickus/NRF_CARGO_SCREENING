@@ -457,6 +457,8 @@ int main(int argc,char **argv)
     runManager->SetUserInitialization(new DetWResponseFunction(chopper, collimator, cargo));
   else if(bremTest)
     runManager->SetUserInitialization(new DetBremTest(chopper, linac, collimator));
+  else if(WResponseFunction && detTest)
+    runManager->SetUserInitialization(new DetectorConstruction(chopper, collimator, cargo));
   else
     runManager->SetUserInitialization(new DetectorConstruction(chopper, collimator, cargo));
 

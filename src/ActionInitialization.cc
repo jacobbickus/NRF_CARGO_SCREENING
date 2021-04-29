@@ -95,9 +95,9 @@ void ActionInitialization::Build() const
 
     if(bremTest)
       SetUserAction(new SteppingBremTest());
-    else if(detTest)
+    else if(detTest && !WResponseFunction)
       SetUserAction(new SteppingDetTest(event));
-    else if(WResponseFunction)
+    else if(detTest && WResponseFunction)
     {
       if(debug)
         std::cout << "ActionInitialization::Build -> SteppingWResponseFunction." << std::endl;
