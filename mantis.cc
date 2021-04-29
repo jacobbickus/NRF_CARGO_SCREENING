@@ -41,7 +41,7 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile, response_function_file;
 // boolean global variables
-G4bool run_without_chopper, WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool IntObjTest, run_without_chopper, WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -89,6 +89,7 @@ namespace
     << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
     << "      [-t4 --Sample_Energy_Range=false]                Samples from a uniform distribution centered on user's energy." << std::endl
     << "      [-t5 --Run_Without_Chopper=false]                Runs Simulation Without Chopper Setup by starting beam directly in front of interrogation object. (Requires Incident IntObj Spectrum as Input)." << std::endl
+    << "      [-t6 --IntObj_Test=false]                        Runs simulation killing particles that leave interrogation object (builds interrogation object beam for later runs)" << std::endl
     << std::endl << std::endl;
     exit(1);
   }
@@ -146,6 +147,8 @@ int main(int argc,char **argv)
   uniform_width = 0.005; // units MeV
   G4String RunWithoutChopper_in = "false";
   run_without_chopper = false;
+  G4String RunIntObjTest_in = "false";
+  IntObjTest = false;
 
   // Output Defaults
   output = false;
@@ -362,12 +365,19 @@ int main(int argc,char **argv)
         std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
         i=i-1;
       }
-      else if (G4String(input) == "--Run_Without_Chopper")
+      else if (G4String(input) == "--run_without_chopper")
       {
         RunWithoutChopper_in = argv[i+1];
         if(RunWithoutChopper_in == "True" || RunWithoutChopper_in == "true")
           run_without_chopper = true;
         std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
+      }
+      else if (G4String(input) == "--intobj_test")
+      {
+        RunIntObjTest_in = argv[i+1];
+        if(RunIntObjTest_in == "True" || RunIntObjTest_in == "true")
+          IntObjTest = true;
+        std::cout << "Running Interrogation Object Test: " << IntObjTest << std::endl;
       }
       else
       {

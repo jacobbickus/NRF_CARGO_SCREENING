@@ -31,6 +31,7 @@ extern G4bool detTest;
 extern G4bool WResponseFunction;
 extern G4bool resonanceTest;
 extern G4String inFile;
+extern G4bool IntObjTest;
 
 Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
 {
@@ -99,6 +100,21 @@ void Analysis::Book()
     if(debug)
       std::cout << "Analysis::Book -> With Detector Response Ntuples 0 - 5" << std::endl;
   }
+  else if(IntObjTest)
+  {
+    if(debug)
+      std::cout << "Analysis::Book Weighting set to: " << WEIGHTED << std::endl;
+
+    NRF(WEIGHTED);             // 0
+    IncidentChopper(WEIGHTED); // 1
+    EmissionChopper(WEIGHTED); // 2
+    IncidentIntObj(WEIGHTED);  // 3
+    EmissionIntObj(WEIGHTED);  // 4
+
+    if(debug)
+      std::cout << "Analysis::Book -> IntObj Test Ntuples 0 - 4" << std::endl;
+
+  }
   // for a simulation without detector response
   else
   {
@@ -136,7 +152,7 @@ void Analysis::finish()
     G4cerr << "ERROR Analysis::finish: Failed to write to file" << G4endl;
     return;
   }
-  
+
   manager->Write();
   manager->CloseFile();
 
