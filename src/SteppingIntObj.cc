@@ -112,19 +112,12 @@ void SteppingIntObj::UserSteppingAction(const G4Step* aStep)
 
     const G4VProcess* process = endPoint->GetProcessDefinedStep();
 
-    if(addNRF)
+    if(process->GetProcessName() == "NRF")
     {
-      // Keep track of Any NRF Created
-      if(drawNRFDataFlag)
-      {
-        if(process->GetProcessName() == "NRF")
-        {
-          krun->AddNRF();
-          const G4TrackVector* emitted_nrf = aStep->GetSecondary();
-          FillNRF(0, loc.z(), emitted_nrf);
-        } // end of process->GetProcessName() == "NRF"
-      } // end of if drawNRFDataFlag
-    } // end of if addNRF
+      krun->AddNRF();
+      const G4TrackVector* emitted_nrf = aStep->GetSecondary();
+      FillNRF(0, loc.z(), emitted_nrf);
+    } // end of process->GetProcessName() == "NRF"
 
 // *********************************************** Track Chopper Interactions **************************************************** //
 
