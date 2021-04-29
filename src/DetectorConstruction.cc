@@ -27,6 +27,7 @@
 extern G4bool detTest;
 extern G4bool debug;
 extern G4bool run_without_chopper;
+extern G4bool WResponseFunction;
 
 DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo, Linac* Linac)
         : G4VUserDetectorConstruction(),
@@ -306,100 +307,102 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 // ************************************************************** Construct PMTs ********************************************************************* //
 
-  G4cout << G4endl << "DetectorConstruction::Construct -> PC and PMT Information" << G4endl;
-  G4cout << "----------------------------------------------------------------------" << G4endl;
-  G4double PMT_rmin = 0*cm;
-  G4cout << "DetectorConstruction::Construct -> PC Radius: " << PMT_rmax/(cm) << " cm" << G4endl;
-  G4double PMT_z = 7.62*cm; // 3 in PMT
-  G4Tubs* solidPMT = new G4Tubs("PMT", PMT_rmin, PMT_rmax, PMT_z, 0*deg, 360*deg);
-  logicPMT = new G4LogicalVolume(solidPMT, PMT_mat, "PMT");
-
-  G4cout << "The Number of PMTs was set to: " << nPMT << G4endl;
-  G4double PMT_y_pos;
-  std::vector<G4double> PMT_y_posv;
-  if(nPMT>1)
+  if(!WResponseFunction)
   {
-    if((PMT_rmax*2)/(cm) > (water_size_y*2./(cm)/nPMT))
-    {
-      G4cerr << "DetectorConstruction::Construct -> ERROR Too many PMTs to fit on Water Surface!"
-      << G4endl << "DetectorConstruction::Construct -> Water Tank Size: " << water_size_y/(cm) << " cm"
-      << G4endl << "DetectorConstruction::Construct -> PMT Diameter: " << (PMT_rmax*2.)/(cm) << " Greater than "
-      << (water_size_y/(cm)/nPMT) << G4endl;
-      exit(10);
-    }
-    G4double PMT_y_pos_start = 0. - water_size_y + water_size_y/nPMT;
-    PMT_y_posv.push_back(PMT_y_pos_start);
-    for(G4int i=1;i<nPMT;++i)
-    {
-      PMT_y_pos = PMT_y_pos_start + i*(PMT_rmax*2.);
-      PMT_y_posv.push_back(PMT_y_pos);
+    G4cout << G4endl << "DetectorConstruction::Construct -> PC and PMT Information" << G4endl;
+    G4cout << "----------------------------------------------------------------------" << G4endl;
+    G4double PMT_rmin = 0*cm;
+    G4cout << "DetectorConstruction::Construct -> PC Radius: " << PMT_rmax/(cm) << " cm" << G4endl;
+    G4double PMT_z = 7.62*cm; // 3 in PMT
+    G4Tubs* solidPMT = new G4Tubs("PMT", PMT_rmin, PMT_rmax, PMT_z, 0*deg, 360*deg);
+    logicPMT = new G4LogicalVolume(solidPMT, PMT_mat, "PMT");
 
-      if(checkOverlaps)
+    G4cout << "The Number of PMTs was set to: " << nPMT << G4endl;
+    G4double PMT_y_pos;
+    std::vector<G4double> PMT_y_posv;
+    if(nPMT>1)
+    {
+      if((PMT_rmax*2)/(cm) > (water_size_y*2./(cm)/nPMT))
       {
-        G4cout << "DetectorConstruction::Construct -> PMT Position " << i
-                << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+        G4cerr << "DetectorConstruction::Construct -> ERROR Too many PMTs to fit on Water Surface!"
+        << G4endl << "DetectorConstruction::Construct -> Water Tank Size: " << water_size_y/(cm) << " cm"
+        << G4endl << "DetectorConstruction::Construct -> PMT Diameter: " << (PMT_rmax*2.)/(cm) << " Greater than "
+        << (water_size_y/(cm)/nPMT) << G4endl;
+        exit(10);
+      }
+      G4double PMT_y_pos_start = 0. - water_size_y + water_size_y/nPMT;
+      PMT_y_posv.push_back(PMT_y_pos_start);
+      for(G4int i=1;i<nPMT;++i)
+      {
+        PMT_y_pos = PMT_y_pos_start + i*(PMT_rmax*2.);
+        PMT_y_posv.push_back(PMT_y_pos);
+
+        if(checkOverlaps)
+        {
+          G4cout << "DetectorConstruction::Construct -> PMT Position " << i
+                  << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+        }
       }
     }
-  }
-  else
-  {
-    PMT_y_posv.push_back(0);
-  }
+    else
+    {
+      PMT_y_posv.push_back(0);
+    }
 
-  if(detTest)
-  {
-    for(G4int k=0;k<nPMT;++k)
+    if(detTest)
     {
-      new G4PVPlacement(0,
-                        G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
-                        logicPMT,
-                        "PMT",
-                        logicWater,
-                        false,
-                        k,
-                        checkOverlaps);
+      for(G4int k=0;k<nPMT;++k)
+      {
+        new G4PVPlacement(0,
+                          G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
+                          logicPMT,
+                          "PMT",
+                          logicWater,
+                          false,
+                          k,
+                          checkOverlaps);
+      }
     }
-  }
-  else
-  {
-    for(G4int k=0;k<nPMT;++k)
+    else
     {
-      new G4PVPlacement(0,
-                        G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
-                        logicPMT,
-                        "PMT",
-                        logicWater,
-                        false,
-                        k,
-                        checkOverlaps);
+      for(G4int k=0;k<nPMT;++k)
+      {
+        new G4PVPlacement(0,
+                          G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
+                          logicPMT,
+                          "PMT",
+                          logicWater,
+                          false,
+                          k,
+                          checkOverlaps);
+      }
     }
-  }
 
 // **************************************************** Construct Photocathode ****************************************************** //
 
-G4double PC_z = 20*nm;
-G4cout << "DetectorConstruction::Construct -> Photocathode material: " << pc_mat << G4endl << G4endl;
-if(pc_mat == "GaAsP")
-{
-  PC_mat = GaAsP;
-}
-else if(pc_mat == "Bialkali")
-{
-  PC_mat = bialkali;
-}
-else exit(1);
+    G4double PC_z = 20*nm;
+    G4cout << "DetectorConstruction::Construct -> Photocathode material: " << pc_mat << G4endl << G4endl;
+    if(pc_mat == "GaAsP")
+    {
+      PC_mat = GaAsP;
+    }
+    else if(pc_mat == "Bialkali")
+    {
+      PC_mat = bialkali;
+    }
+    else exit(1);
 
-G4Tubs* solidPhotoCathode = new G4Tubs("PC", PMT_rmin, PMT_rmax, PC_z, 0*deg, 360.*deg);
-logicPC = new G4LogicalVolume(solidPhotoCathode, PC_mat, "PC");
-G4double PMT_window_thickness = 3*mm;
-physPC = new G4PVPlacement(0,
-                     G4ThreeVector(0,0,PMT_z-PMT_window_thickness),
-                     logicPC,
-                     "PC",
-                     logicPMT, // daughter of PMT logical
-                     false,
-                     0,
-                     checkOverlaps);
+    G4Tubs* solidPhotoCathode = new G4Tubs("PC", PMT_rmin, PMT_rmax, PC_z, 0*deg, 360.*deg);
+    logicPC = new G4LogicalVolume(solidPhotoCathode, PC_mat, "PC");
+    G4double PMT_window_thickness = 3*mm;
+    physPC = new G4PVPlacement(0,
+                         G4ThreeVector(0,0,PMT_z-PMT_window_thickness),
+                         logicPC,
+                         "PC",
+                         logicPMT, // daughter of PMT logical
+                         false,
+                         0,
+                         checkOverlaps);
 
 
 
@@ -407,65 +410,69 @@ physPC = new G4PVPlacement(0,
 // ------------ Generate & Add Material Properties Table ------------
 //
 
-  MaterialProperties* mp = new MaterialProperties();
-  G4MaterialPropertiesTable* waterMPT = mp->SetWaterProperties();
-  Water->SetMaterialPropertiesTable(waterMPT);
+    MaterialProperties* mp = new MaterialProperties();
+    G4MaterialPropertiesTable* waterMPT = mp->SetWaterProperties();
+    Water->SetMaterialPropertiesTable(waterMPT);
 
-  G4MaterialPropertiesTable* casingMPT = mp->SetCasingProperties();
-  G4MaterialPropertiesTable* casingOPMPT = mp->SetCasingOpticalProperties();
-  G4OpticalSurface *casing_opsurf = new G4OpticalSurface("casingSurface", glisur, polished, dielectric_dielectric);
-  plexiglass->SetMaterialPropertiesTable(casingMPT);
-  casing_opsurf->SetMaterialPropertiesTable(casingOPMPT);
-  new G4LogicalSkinSurface("casing_surf", logicCasing, casing_opsurf);
+    G4MaterialPropertiesTable* casingMPT = mp->SetCasingProperties();
+    G4MaterialPropertiesTable* casingOPMPT = mp->SetCasingOpticalProperties();
+    G4OpticalSurface *casing_opsurf = new G4OpticalSurface("casingSurface", glisur, polished, dielectric_dielectric);
+    plexiglass->SetMaterialPropertiesTable(casingMPT);
+    casing_opsurf->SetMaterialPropertiesTable(casingOPMPT);
+    new G4LogicalSkinSurface("casing_surf", logicCasing, casing_opsurf);
 
-  G4MaterialPropertiesTable* tapeMPT = mp->SetTapeProperties();
-  G4MaterialPropertiesTable* tapeOPMPT = mp->SetTapeOpticalProperties();
-  G4OpticalSurface *tape_opsurf = new G4OpticalSurface("tapeSurface",glisur, polishedfrontpainted, dielectric_dielectric);
-  tape_opsurf->SetMaterialPropertiesTable(tapeOPMPT);
-  teflonTape->SetMaterialPropertiesTable(tapeMPT);
-  new G4LogicalBorderSurface("tape_surf", physWater, physTape, tape_opsurf);
+    G4MaterialPropertiesTable* tapeMPT = mp->SetTapeProperties();
+    G4MaterialPropertiesTable* tapeOPMPT = mp->SetTapeOpticalProperties();
+    G4OpticalSurface *tape_opsurf = new G4OpticalSurface("tapeSurface",glisur, polishedfrontpainted, dielectric_dielectric);
+    tape_opsurf->SetMaterialPropertiesTable(tapeOPMPT);
+    teflonTape->SetMaterialPropertiesTable(tapeMPT);
+    new G4LogicalBorderSurface("tape_surf", physWater, physTape, tape_opsurf);
 
-  G4MaterialPropertiesTable* pmtMPT = mp->SetPMTProperties();
-  G4MaterialPropertiesTable* pmtOPMPT = mp->SetPMTOpticalProperties();
-  G4OpticalSurface* PMT_opsurf = new G4OpticalSurface("PMTSurface",unified,polished,dielectric_metal);
-  PMT_mat->SetMaterialPropertiesTable(pmtMPT);
-  PMT_opsurf->SetMaterialPropertiesTable(pmtOPMPT);
+    G4MaterialPropertiesTable* pmtMPT = mp->SetPMTProperties();
+    G4MaterialPropertiesTable* pmtOPMPT = mp->SetPMTOpticalProperties();
+    G4OpticalSurface* PMT_opsurf = new G4OpticalSurface("PMTSurface",unified,polished,dielectric_metal);
+    PMT_mat->SetMaterialPropertiesTable(pmtMPT);
+    PMT_opsurf->SetMaterialPropertiesTable(pmtOPMPT);
 
-  G4MaterialPropertiesTable* pc_MPT = mp->SetPCProperties(pc_mat);
-  G4OpticalSurface* photocath_opsurf= new G4OpticalSurface("photocath_opsurf");
-  photocath_opsurf->SetType(dielectric_metal);
-  photocath_opsurf->SetFinish(polished);
-  photocath_opsurf->SetPolish(1.0);
-  photocath_opsurf->SetModel(glisur);
-  photocath_opsurf->SetMaterialPropertiesTable(pc_MPT);
+    G4MaterialPropertiesTable* pc_MPT = mp->SetPCProperties(pc_mat);
+    G4OpticalSurface* photocath_opsurf= new G4OpticalSurface("photocath_opsurf");
+    photocath_opsurf->SetType(dielectric_metal);
+    photocath_opsurf->SetFinish(polished);
+    photocath_opsurf->SetPolish(1.0);
+    photocath_opsurf->SetModel(glisur);
+    photocath_opsurf->SetMaterialPropertiesTable(pc_MPT);
 
-  new G4LogicalSkinSurface("photocath_surf", logicPC, photocath_opsurf); // name, physical volume of surface, phsical volume of world?, G4optical surface
-  new G4LogicalSkinSurface("PMT_surf", logicPMT, PMT_opsurf);
+    new G4LogicalSkinSurface("photocath_surf", logicPC, photocath_opsurf); // name, physical volume of surface, phsical volume of world?, G4optical surface
+    new G4LogicalSkinSurface("PMT_surf", logicPMT, PMT_opsurf);
 
-  G4MaterialPropertiesTable* airMPT = mp->SetAirProperties();
-  air->SetMaterialPropertiesTable(airMPT);
+    G4MaterialPropertiesTable* airMPT = mp->SetAirProperties();
+    air->SetMaterialPropertiesTable(airMPT);
 
-// Material Verbosity to print materials properties tables
-  if(material_verbose)
-  {
-    G4cout << "Material Verbose set to True/On!" << G4endl;
-    G4cout << "Material Properties Table for: " << air->GetName() << G4endl;
-    airMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << teflonTape->GetName() << G4endl;
-    tapeOPMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << pc_mat << G4endl;
-    pc_MPT->DumpTable();
-    G4cout << "Material Properties Table for: " << Water->GetName() << G4endl;
-    waterMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
-    casingOPMPT->DumpTable();
+  // Material Verbosity to print materials properties tables
+    if(material_verbose)
+    {
+      G4cout << "Material Verbose set to True/On!" << G4endl;
+      G4cout << "Material Properties Table for: " << air->GetName() << G4endl;
+      airMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << teflonTape->GetName() << G4endl;
+      tapeOPMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << pc_mat << G4endl;
+      pc_MPT->DumpTable();
+      G4cout << "Material Properties Table for: " << Water->GetName() << G4endl;
+      waterMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
+      casingOPMPT->DumpTable();
+    }
+
   }
 
 //always return the physical World!!!
   if(debug)
     G4cout << "DetectorConstruction::Construct -> Constructed!" << G4endl << G4endl;
+
   return physWorld;
 }
+
 /* ************************************************************************************ */
 
 void DetectorConstruction::DefDetPositionConstraintUpper(double container_z_pos, double water_z, double water_z_pos)
