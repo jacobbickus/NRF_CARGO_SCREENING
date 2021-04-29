@@ -122,13 +122,13 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   {
     if (fCerenkovCount > 0)
     {
-      G4cout << "Average Cherenkov Photon energy emitted:                  "
+      G4cout << "Average Cherenkov Photon energy emitted:                    "
              << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
     }
 
     if (fScintCount > 0)
     {
-      G4cout << "Average Scintillation Photon energy emitted:              "
+      G4cout << "Average Scintillation Photon energy emitted:                "
              << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
     }
   }
