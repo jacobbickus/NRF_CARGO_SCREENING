@@ -453,7 +453,7 @@ int main(int argc,char **argv)
   Collimator* collimator = new Collimator();
   Cargo* cargo = new Cargo();
 
-  if(WResponseFunction)
+  if(WResponseFunction && !detTest)
     runManager->SetUserInitialization(new DetWResponseFunction(chopper, collimator, cargo));
   else if(bremTest)
     runManager->SetUserInitialization(new DetBremTest(chopper, linac, collimator));
