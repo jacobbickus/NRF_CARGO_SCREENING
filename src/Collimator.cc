@@ -49,27 +49,42 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double colimator_size = 50*cm;
   G4double col_position = 1.0*cm + container_z_pos - 1.2192*m - colimator_size; // should go 1cm past the container
   G4double col_edge_position = col_position + colimator_size;
-  G4double rearCol_Z_pos = bremStartPos - linac_size - 50.0*cm;
+  G4double rearCol_Z_pos = bremStartPos*cm - linac_size - colimator_size;
   detInfo->setRearCollimatorPosition(rearCol_Z_pos);
 
-  G4Box *solidCollimator =
-                        new G4Box("Collimator", 1*cm, water_size_y, colimator_size);
+  if(!bremTest)
+  {
+    solidCollimator = new G4Box("Collimator", 1*cm, water_size_y, colimator_size);
+    logicCollimator = new G4LogicalVolume(solidCollimator, lead, "Collimator");
+  }
+
   G4double rear_col_z_size = 5*cm;
+  G4double col_rear_x_size = 0.;
+
+  if(bremTest)
+  {
+    water_size_y = linac_max_radius;
+    col_rear_x_size = linac_max_radius;
+  }
+  else
+    col_rear_x_size = 0.3048*m - 2*cm;
+
   G4Box *solidCollimatorRear =
-                        new G4Box("Collimator",0.3048*m - 2*cm, water_size_y, rear_col_z_size);
-  G4LogicalVolume *logicCollimator =
-                        new G4LogicalVolume(solidCollimator, lead, "Collimator");
+                        new G4Box("Collimator",col_rear_x_size, water_size_y, rear_col_z_size);
   G4LogicalVolume *logicCollimatorRear =
                         new G4LogicalVolume(solidCollimatorRear, lead, "Collimator");
 
   G4double brem_collimator_length = beginChop - endLinac;
-  G4Cons *solidBremCollimator =
-                        new G4Cons("BremCollimator", linac_min_radius, linac_min_radius+2*cm,
-                                  5.0*mm, 25.0*mm, brem_collimator_length/(cm),
-                                  0.0*deg, 360.0*deg);
+  if(bremTest)
+  {
+    solidBremCollimator =
+                          new G4Cons("BremCollimator", linac_min_radius, linac_min_radius+2*cm,
+                                    5.0*mm, 25.0*mm, brem_collimator_length/(cm),
+                                    0.0*deg, 360.0*deg);
 
-  G4LogicalVolume* logicBremCollimator =
-                        new G4LogicalVolume(solidBremCollimator, lead, "BremCollimator");
+    logicBremCollimator =
+                          new G4LogicalVolume(solidBremCollimator, lead, "BremCollimator");
+  }
 
   G4cout << G4endl << "Collimator::Construct -> Information" << G4endl;
   G4cout << "----------------------------------------------------------------------"
@@ -80,15 +95,19 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
     << col_edge_position/(cm) << " cm" << G4endl << G4endl;
   }
 
-  new G4PVPlacement(0, G4ThreeVector(-0.3048*m - 1*cm, 0, col_position),
-                    logicCollimator, "ColL-Pb", logicWorld,
-                    false, 0, checkOverlaps);
-  new G4PVPlacement(0, G4ThreeVector(0.3048*m + 1*cm, 0, col_position),
-                    logicCollimator, "ColRi-Pb", logicWorld,
-                    false, 0, checkOverlaps);
-  if(bremTest)
+  if(!bremTest)
+  {
+    new G4PVPlacement(0, G4ThreeVector(-0.3048*m - 1*cm, 0, col_position),
+                      logicCollimator, "ColL-Pb", logicWorld,
+                      false, 0, checkOverlaps);
+    new G4PVPlacement(0, G4ThreeVector(0.3048*m + 1*cm, 0, col_position),
+                      logicCollimator, "ColRi-Pb", logicWorld,
+                      false, 0, checkOverlaps);
+  }
+  else
     rearCol_Z_pos = bremStartPos - linac_size - rear_col_z_size;
 
+  // Place Rear collimator for both bremTest and !bremTest
   new G4PVPlacement(0, G4ThreeVector(0,0,rearCol_Z_pos),
                     logicCollimatorRear, "ColRe-Pb", logicWorld,
                     false, 0, checkOverlaps);
@@ -99,7 +118,7 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
                       logicBremCollimator, "BremCollimator",logicWorld,
                       false, 0, checkOverlaps);
     SourceInformation* sInfo = SourceInformation::Instance();
-    if((rearCol_Z_pos + rear_col_z_size/2.)/(cm) > sInfo->GetSourceZPosition())
+    if((rearCol_Z_pos + rear_col_z_size/2.)/(cm) > sInfo->GetSourceZPosition()/(cm))
     {
       G4cerr << "Collimator::Construct -> Rear Collimator Edge Position: " << (rearCol_Z_pos + rear_col_z_size/2.)/(cm) << " cm" << G4endl;
       G4cerr << "Collimator::Construct -> Source Position: " << sInfo->GetSourceZPosition() << " cm" << G4endl;

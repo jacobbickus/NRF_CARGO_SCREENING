@@ -24,8 +24,7 @@
 
 #include "StepMessenger.hh"
 
-
-StepMessenger::StepMessenger(SteppingAction* stepAction)
+StepMessenger::StepMessenger(BaseSteppingAction* stepAction)
         : stepA(stepAction)
 {
   myDir = new G4UIdirectory("/output/");
@@ -51,23 +50,23 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     G4String theCommand = newValue;
     if(theCommand == "ChopIncData")
     {
-            stepA->SetChopperIncDataFlag(1);
-            G4cout << G4endl << "User Selected Chopper Incident Data." << G4endl;
+      stepA->SetChopperIncDataFlag(1);
+      G4cout << G4endl << "User Selected Chopper Incident Data." << G4endl;
     }
     else if(theCommand == "ChopOutData")
     {
-            stepA->SetChopperOutDataFlag(1);
-            G4cout << G4endl << "User Selected Chopper Emission Data." << G4endl;
+      stepA->SetChopperOutDataFlag(1);
+      G4cout << G4endl << "User Selected Chopper Emission Data." << G4endl;
     }
     else if(theCommand == "NRFData")
     {
-            stepA->SetNRFDataFlag(1);
-            G4cout << G4endl << "User Selected NRF Data." << G4endl;
+      stepA->SetNRFDataFlag(1);
+      G4cout << G4endl << "User Selected NRF Data." << G4endl;
     }
     else if(theCommand == "IntObjInData")
     {
-            stepA->SetIntObjInDataFlag(1);
-            G4cout << G4endl << "User Selected Interrogation Object Incident Data." << G4endl;
+      stepA->SetIntObjInDataFlag(1);
+      G4cout << G4endl << "User Selected Interrogation Object Incident Data." << G4endl;
     }
     else if(theCommand == "IntObjOutData")
     {
@@ -86,8 +85,8 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "WaterIncData")
     {
-            stepA->SetWaterIncDataFlag(1);
-            G4cout << G4endl << "User Selected Incident Water Data." <<G4endl;
+      stepA->SetWaterIncDataFlag(1);
+      G4cout << G4endl << "User Selected Incident Water Data." <<G4endl;
     }
     else if(theCommand == "ScintillationData")
     {
@@ -101,8 +100,8 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "CherenkovData")
     {
-            stepA->SetCherenkovDataFlag(1);
-            G4cout << G4endl << "User Selected Cherenkov Data." <<G4endl;
+      stepA->SetCherenkovDataFlag(1);
+      G4cout << G4endl << "User Selected Cherenkov Data." <<G4endl;
     }
     else if(theCommand == "CherenkovData2")
     {
@@ -111,21 +110,8 @@ void StepMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
     }
     else if(theCommand == "DetData")
     {
-            stepA->SetDetDataFlag(1);
-            G4cout << G4endl << "User Selected Detected Data."<<G4endl;
+      stepA->SetDetDataFlag(1);
+      G4cout << G4endl << "User Selected Detected Data."<<G4endl;
     }
-    else if(theCommand == "none")
-    {
-            G4cout << G4endl << "No output requested." << G4endl;
-    }
-    else
-    {
-      G4cerr << "ERROR: StepMessenger::SetStepInputValue Command not found." << G4endl;
-    }
-
-  }
-  else
-  {
-    G4cerr << "ERROR StepMessenger :: SetStepInputValue command != Cmd" << G4endl;
-  }
-}
+  } // end of if command == cmd
+} // end of set new value function

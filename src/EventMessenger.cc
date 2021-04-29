@@ -1,7 +1,7 @@
 #include "EventMessenger.hh"
 
 
-EventMessenger::EventMessenger(EventAction* EventAction)
+EventMessenger::EventMessenger(BaseEventAction* EventAction)
         : EventA(EventAction)
 {
   myDir = new G4UIdirectory("/mantisevent/");

@@ -33,7 +33,7 @@
 class SourceInformation
 {
   static SourceInformation *instance;
-  G4double z_pos;
+  G4double z_pos, beamMax;
 
   SourceInformation();
 public:
@@ -48,6 +48,9 @@ public:
 
   void SetSourceZPosition(G4double);
   G4double GetSourceZPosition()const{return z_pos;}
+  void SetBeamMax(G4double maxE){beamMax = maxE;}
+  G4double GetBeamMax()const {return beamMax;}
+
   ~SourceInformation();
 };
 

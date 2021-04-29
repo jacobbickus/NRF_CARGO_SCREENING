@@ -29,17 +29,18 @@
 #include "G4UserRunAction.hh"
 #include <vector>
 #include "G4Run.hh"
-#include "HistoManager.hh"
+#include "Analysis.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
 #include "RunInformation.hh"
-#include "PrimaryGeneratorAction.hh"
+#include "DetectorResponseFunction.hh"
+#include "InputFileManager.hh"
 
 class RunAction : public G4UserRunAction
 {
   public:
-    RunAction(HistoManager*, PrimaryGeneratorAction*);
+    RunAction(Analysis*);
     virtual ~RunAction();
 
   public:
@@ -48,8 +49,7 @@ class RunAction : public G4UserRunAction
     virtual void EndOfRunAction(const G4Run*);
 
   private:
-    HistoManager* fHistoManager;
-    PrimaryGeneratorAction* fpga;
+    Analysis* fAnalysis;
 };
 
 

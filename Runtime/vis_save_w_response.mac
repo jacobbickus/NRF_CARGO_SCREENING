@@ -1,0 +1,56 @@
+/chopper/state On
+/chopper/material Uranium
+/chopper/abundance 90
+/IntObj/Abundance 90
+/IntObj/Material Uranium
+/control/verbose 0
+/tracking/verbose 0
+/run/verbose 0
+/event/verbose 0
+/chopper/thickness 30
+/chopper/distance 2
+/mydet/Angle 150
+/mydet/attenuator Off
+#/mydet/attenuatorThickness 1
+#/mydet/attenuatorMaterial G4_Pb
+/mydet/attenuator2 Off
+#/mydet/attenuatorThickness2 1
+#/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
+
+
+#/Cargo/AddSphere true
+#units all units cm
+#/Cargo/SphereRadius 2
+# Places Sphere 20 cm to right of center and 50 cm towards beam origin (in between interrogation object and beam)
+#/Cargo/SpherePosition 20 0 -50
+#/Cargo/SphereMaterial G4_Pb
+#/Cargo/AddBox true
+#/Cargo/BoxSize 3 3 3
+#/Cargo/BoxPosition -20 -10 50
+#/Cargo/BoxMaterial G4_W
+
+/run/initialize
+
+/vis/open VRML2FILE
+/vis/viewer/set/autoRefresh false
+/vis/drawVolume
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/scene/add/hits
+/vis/scene/endOfEventAction accumulate 5000
+
+# Make the "World" box invisible
+/vis/geometry/set/visibility World 0 false
+/vis/viewer/set/background 1 1 1
+
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/set 1 blue
+/vis/modeling/trajectories/drawByCharge-0/set -1 blue
+/vis/modeling/trajectories/drawByCharge-0/set 0 red
+
+/vis/viewer/update
+/vis/viewer/set/autoRefresh true
+/run/beamOn 10

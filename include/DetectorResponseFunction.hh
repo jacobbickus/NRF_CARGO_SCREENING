@@ -22,76 +22,64 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef PrimaryGeneratorAction_h
-#define PrimaryGeneratorAction_h 1
+#ifndef DetectorResponseFunction_h
+#define DetectorResponseFunction_h 1
 
-#include "G4VUserPrimaryGeneratorAction.hh"
-#include "HistoManager.hh"
-#include "PGAMessenger.hh"
-#include "globals.hh"
-#include <vector>
-#include "G4ParticleGun.hh"
-#include "Randomize.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4Event.hh"
-#include "G4Gamma.hh"
-#include "G4Electron.hh"
-#include "eventInformation.hh"
-#include "SourceInformation.hh"
-#include "DetectorInformation.hh"
+#include "globals.hh"
+#include "G4Types.hh"
+#include "G4ios.hh"
 
 #include "TFile.h"
 #include "TROOT.h"
-#include "TH1D.h"
-#include "TGraph.h"
-#include "TRandom2.h"
 #include "TSystem.h"
 #include "TMath.h"
+#include "TProfile.h"
+#include "TH1.h"
+#include "TH2.h"
+#include <vector>
+#include "TRandom2.h"
 
-class G4Event;
-class HistoManager;
-class PGAMessenger;
-
-class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
+class DetectorResponseFunction
 {
+  static DetectorResponseFunction *instance;
 
+  DetectorResponseFunction(G4double);
 public:
-PrimaryGeneratorAction();
-virtual ~PrimaryGeneratorAction();
 
-public:
-virtual void GeneratePrimaries(G4Event*);
-G4ParticleGun* GetParticleGun()
-{
-  return fParticleGun;
-};
-void SetBeamSize(G4double x)
-{
-  beam_size = x;
-  G4cout << "PrimaryGeneratorAction::BeamSize set to: " << beam_size << " mm" << G4endl;
-}
+  static DetectorResponseFunction *Instance(G4double maxE=1.8)
+  {
+    if(!instance)
+    {
+      instance = new DetectorResponseFunction(maxE);
+    }
+    return instance;
+  }
 
-void CloseInputFile(){if(fFileOpen) fin->Close();}
+  ~DetectorResponseFunction();
 
-private:
-  void CreateInputSpectrum(TGraph*);
   void CheckFile(const char*);
-  G4double SampleUResonances();
-  G4double SampleEnergyRange(double,double);
+  G4double GetDetectorPhotoelectrons(G4double);
+  G4double GetScintillationResponse(G4double);
+  G4double GetCherenkovResponse(G4double);
+  G4int GetBin(G4double);
+  //void SetBeamMax(G4double maximumE){maxE = maximumE;}
+  //G4double GetBeamMax()const {return maxE;}
+  G4double GetProjectedPhotoelectrons(G4double);
+  void CloseInputFile()
+  {
+    if(fin->IsOpen())
+      fin->Close();
+  }
 
 private:
-  PGAMessenger* pgaM;
-  G4ParticleGun* fParticleGun;
-  G4double beamStart;
-  G4double beam_size, energy;
-  G4bool file_check, fFileOpen;
-  std::vector<double> energies, N;
-  // ROOT
-  TRandom2 Random;
-  TGraph *tBrems;
-  TGraph *gSample;
-  TH1D* hSample;
-  TFile *fin;
+  TProfile* tdet_response;
+  TH2D* hdet_response;
+  TProfile* tdet_scintillation_response;
+  TProfile* tdet_cherenkov_response;
+  TFile* fin;
+  TAxis* xAxis;
+  std::vector<TH1D*> projections;
 };
 
 #endif

@@ -23,10 +23,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "StackingAction.hh"
-
+extern G4bool detTest;
+extern G4bool debug;
+extern G4bool bremTest;
 
 StackingAction::StackingAction()
 {
+  if(debug)
+    std::cout << "StackingAction::StackingAction -> Initialized." << std::endl;
 }
 
 StackingAction::~StackingAction()
@@ -35,19 +39,23 @@ StackingAction::~StackingAction()
 
 G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* currentTrack)
 {
-  DetectorInformation* detInfo = DetectorInformation::Instance();
-  RunInformation* runInfo = RunInformation::Instance();
-  // if a new track is created beyond interogation material kill it
-  G4double EndIntObj = detInfo->getEndIntObj();
-  G4double trackZ = currentTrack->GetPosition().z();
-
-  if(trackZ/(cm) > EndIntObj/(cm))
+  if(!detTest && !bremTest)
   {
-    runInfo->AddStatusKilledPosition();
-    return fKill;
+
+    DetectorInformation* detInfo = DetectorInformation::Instance();
+    // if a new track is created beyond interogation material kill it
+    G4double EndIntObj = detInfo->getEndIntObj();
+    G4double trackZ = currentTrack->GetPosition().z();
+    if(trackZ/(cm) > EndIntObj/(cm))
+    {
+      RunInformation* runInfo = RunInformation::Instance();
+      runInfo->AddStatusKilledPosition();
+      return fKill;
+    }
   }
 
-  if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it 
+
+  if(currentTrack->GetGlobalTime() > 10000) return fKill; // if secondary track time is greater than 10000 ns kill it
 
   G4ParticleDefinition *pdef = currentTrack->GetDefinition();
   // kill neutrons (probably not important)

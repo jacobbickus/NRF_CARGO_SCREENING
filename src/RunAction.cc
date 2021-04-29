@@ -23,12 +23,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "RunAction.hh"
-extern G4bool output;
-extern G4double chosen_energy;
-extern G4bool debug;
 
-RunAction::RunAction(HistoManager* histoAnalysis, PrimaryGeneratorAction* pga)
-        : G4UserRunAction(), fHistoManager(histoAnalysis), fpga(pga)
+extern G4bool output;
+extern G4bool debug;
+extern G4bool WResponseFunction;
+extern G4bool bremTest;
+
+RunAction::RunAction(Analysis* histoAnalysis)
+        : G4UserRunAction(), fAnalysis(histoAnalysis)
 {
 }
 
@@ -40,17 +42,28 @@ void RunAction::BeginOfRunAction(const G4Run*)
 {
   if(output)
   {
-    fHistoManager->Book();
+    fAnalysis->Book();
   }
+
+  if(debug)
+    std::cout << "RunAction::BeginOfRunAction -> Beginning Run..." << std::endl;
+
   G4cout << G4endl << "Beginning Run..." << G4endl;
 }
 
 void RunAction::EndOfRunAction(const G4Run* aRun)
 {
-  if(chosen_energy < 0)
+  InputFileManager *ifm = InputFileManager::Instance();
+  ifm->CloseInputFile();
+  G4cout << G4endl << "RunAction::EndOfRunAction -> Input File Closed." << G4endl;
+
+  if(WResponseFunction)
   {
-    fpga->CloseInputFile();
-    G4cout << G4endl << "RunAction::EndOfRunAction -> PrimaryGeneratorAction Input File Closed." << G4endl;
+    DetectorResponseFunction* dResponse = DetectorResponseFunction::Instance();
+    dResponse->CloseInputFile();
+    G4cout << G4endl
+    << "RunAction::EndOfRunAction -> DetectorResponseFunction Input File Closed."
+    << G4endl;
   }
 
   RunInformation* rInfo = RunInformation::Instance();
@@ -76,16 +89,24 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
     << G4endl;
   G4cout << "Total Number of Events:                                      "
     << TotNbofEvents << G4endl;
-  G4cout << "Total number of Surface Events:                              "
-    << fTotalSurface << G4endl;
-  G4cout << "Total number of NRF Photons:                                 "
-    << fNRF << G4endl;
-  G4cout << "Total number of Cherenkov Photons:                           "
-    << fCerenkovCount << G4endl;
-  G4cout << "Total number of Scintillation Photons:                       "
-    << fScintCount << G4endl;
-  G4cout << "Total number of Optical Photons:                             "
-    << fCerenkovCount + fScintCount << G4endl;
+
+  if(!bremTest)
+  {
+    G4cout << "Total number of Surface Events:                              "
+      << fTotalSurface << G4endl;
+    if(!WResponseFunction)
+    {
+      G4cout << "Total number of Cherenkov Photons:                           "
+        << fCerenkovCount << G4endl;
+      G4cout << "Total number of Scintillation Photons:                       "
+        << fScintCount << G4endl;
+      G4cout << "Total number of Optical Photons:                             "
+        << fCerenkovCount + fScintCount << G4endl;
+    }
+    G4cout << "Total number of NRF Photons:                                 "
+      << fNRF << G4endl;
+  }
+
   G4cout << "Total number of Tracks Cut Based on Position:                "
     << fStatusKilledPosition << G4endl;
   G4cout << "Total number of Tracks Cut Based on Process:                 "
@@ -97,21 +118,27 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
   G4cout << "Total number of Tracks Cut Based on Phi Emission Angle:      "
     << fStatusKilledPhiAngle << G4endl;
 
-  if (fCerenkovCount > 0)
+  if(!bremTest && !WResponseFunction)
   {
-    G4cout << "Average Cherenkov Photon energy emitted:            "
-           << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
+    if (fCerenkovCount > 0)
+    {
+      G4cout << "Average Cherenkov Photon energy emitted:                    "
+             << (fCerenkovEnergy/eV)/fCerenkovCount << " eV." << G4endl;
+    }
+
+    if (fScintCount > 0)
+    {
+      G4cout << "Average Scintillation Photon energy emitted:                "
+             << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
+    }
   }
 
-  if (fScintCount > 0)
+  if(bremTest)
   {
-    G4cout << "Average Scintillation Photon energy emitted:        "
-           << (fScintEnergy/eV)/fScintCount << " eV." << G4endl;
-  }
-
-  if(fBremBackingCount > 0)
-  {
-    G4cout << "Total Number of Brem Backing Hits:                         " << fBremBackingCount << G4endl;
+    if(fBremBackingCount > 0)
+    {
+      G4cout << "Total Number of Brem Backing Hits:                           " << fBremBackingCount << G4endl;
+    }
   }
 
   G4cout << "----------------------------------------------------------------------" << G4endl;
@@ -122,6 +149,6 @@ void RunAction::EndOfRunAction(const G4Run* aRun)
 
   if(output)
   {
-    fHistoManager->finish();
+    fAnalysis->finish();
   }
 }

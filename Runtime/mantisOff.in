@@ -1,92 +1,38 @@
-# Comments are syntaxed by "#", remove "#" for commands
-#################################################################################################
-## Mandatory Inputs (Do not Comment!)
 
-# Chopper Inputs
-# Turn chopper wheel On/off
 /chopper/state Off
-# Chopper base material either Uranium, Plutonium, lead or tungsten
 /chopper/material Uranium
-# Chopper base material isotope abundance percentage REQUIRED for Uranium or Plutonium
-# U235/238 abundance if chopper On/off Pu239/240 if chopper On/Off
 /chopper/abundance 99.8
-
-# Interrogation Object Inputs
-# Percentage of Fission isotope Input necessary for Uranium/Plutonium Only!
 /IntObj/Material Uranium
-# Percentage of Fission 90
 /IntObj/Abundance 90
 
 /control/verbose 0
 /tracking/verbose 0
 /run/verbose 0
 /event/verbose 0
-
-#################################################################################################
-## OPTIONAL USER INPUTS
-
-#################################################################################################
-# BEAM OPTIONS
-# Set the Size of the beam (mm)
 #/PGA/beamSize 2.0
-
-#################################################################################################
-# EVENT OPTIONS
-# Set the Event Info Frequency
 /mantisevent/eventInfoFreq 10
-
-#################################################################################################
-# CHOPPER WHEEL OPTIONS
-#units mm
 /chopper/thickness 37.415
-# This is the distance from the Chopper wheel to the source units cm must be between 1 and 50
 /chopper/distance 2
-
-# CONTAINER OPTIONS
-#/Container/Remove true
-
-# INTERROGATION TARGET OPTIONS
-# units cm Default set to 4.5cm
 #/IntObj/Radius
 
-#################################################################################################
-# DETECTOR OPTIONS
-
-# Detector Location
-
-# Units cm WaterX, WaterY, WaterZ sets the cherenkov detector size
 /mydet/WaterX 28
 /mydet/WaterY 225
 /mydet/WaterZ 30
-# Units degrees Backscatter angle Default 120
 /mydet/Angle 150
-
-# Attenuator Settings Surrounding Cherenkov Detector (optional)
 
 /mydet/attenuator Off
 # Attenuator Thickness in mm
 #/mydet/attenuatorThickness 1
-# Attenuator Material Options from NIST materials
-# First Attenuator Layer (first material to be impacted by particles)
 #/mydet/attenuatorMaterial G4_Pb
-# Second Attenuator material automatically removed if attenuator layer 1 set to "off"
 #/mydet/attenuator2 On
-# Second Attenuator Layer thickness in mm
 #/mydet/attenuatorThickness2 1
-# Second Attenuator Layer (second material to be impacted by particles after first layer
 #/mydet/attenuatorMaterial2 G4_POLYETHYLENE
-
-# Photocathode Options
-
-# units cm for photocathode radius Default is 25.4*cm (also adjusts PMT radius accordingly)
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
 #/mydet/PCrad
-# Photocathode material options (GaAsP, Bialkali) Default is GaAsP
 #/mydet/PCmat
-# Number of PMTs in each Cherenkov Detector so total = input*2 Default is 4
 /mydet/nPMT 8
-
-#################################################################################################
-# OUTPUT OPTIONS
 
 #/material/CheckOverlaps true
 
@@ -106,7 +52,4 @@
 #/output/myoutput CherenkovData2
 #/output/myoutput DetData
 
-#################################################################################################
-# RUN OPTIONS
-# Number of Events
 /run/beamOn 100

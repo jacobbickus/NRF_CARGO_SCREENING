@@ -49,8 +49,8 @@ public:
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
     void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
-    void Sampling(const char*, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
-    void SimpleSampling(const char*, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false);
+    void Sampling(const char*, const char*, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
+    void SimpleSampling(const char*, const char*, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
     void CheckAngles(const char*, const char*, const char*, int estimate=-1);
@@ -64,12 +64,15 @@ public:
     double Energy2Wave(double, string unit="eV");
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, bool correct=true, int estimate=-1);
-    void PrepInputSpectrum(const char*, const char* object="ChopIn", double deltaE=1.0e-3, string outfile="brem.root");
+    void PrepInputSpectrum(const char*, const char* object="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=1.0e-3);
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
     void CheckIntObjRegion(const char*, const char*, double, TCut);
     void CreateOptPerEnergy(const char*, double e_cut=1.4);
+    void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
+    void GetCounts(const char*, bool weighted=false);
+    void GetCountIntegralAndError(const char*, bool weighted=false);
 
 private:
 
@@ -200,11 +203,12 @@ private:
     void Rescale(const char*, double, bool write2file=false);
     void Rescale(const char*, bool write2file=false);
 
-    double ReturnBremMax(const char*);
+    double ReturnMax(const char*, const char*);
+    double ReturnMin(const char*, const char*);
     TH1D* BuildBremSampling(const std::vector<double>, double, double, double, double);
-    TH1D* BuildSimpleSample(const char*, double, double, double, double, double);
+    TH1D* BuildSimpleSample(const char*, const char*, double, double, double, double, double);
     void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
-    TGraph* PrepInputSpectrum(const char*, double);
+    TGraph* PrepInputSpectrum(const char*, const char*, bool, double);
 
     string EraseSubStr(string&, const string&);
 
@@ -267,6 +271,11 @@ private:
     void Show_CheckIntObjRegion_Description();
     void Show_CreateOptPerEnergy();
     void Show_CreateOptPerEnergy_Description();
+    void Show_CreateDetectorResponseFunction();
+    void Show_CreateDetectorResponseFunction_Description();
+    void Show_GetCounts();
+    void Show_GetCounts_Description();
+
 
     double hc = 6.62607004e-34*299792458;
 
@@ -346,6 +355,10 @@ void MantisROOT::Help()
   Show_CopyTrees_Description();
   std::cout << std::endl;
 
+  Show_CreateDetectorResponseFunction();
+  Show_CreateDetectorResponseFunction_Description();
+  std::cout << std::endl;
+
   Show_CreateDetEfficiencyCurve();
   Show_CreateDetEfficiencyCurve_Description();
   std::cout << std::endl;
@@ -364,6 +377,10 @@ void MantisROOT::Help()
 
   Show_Energy2Wave();
   Show_Energy2Wave_Description();
+  std::cout << std::endl;
+
+  Show_GetCounts();
+  Show_GetCounts_Description();
   std::cout << std::endl;
 
   Show_GetInstance();
@@ -1104,11 +1121,13 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_ChopperWeightandCost();
     Show_CombineFiles();
     Show_CopyTrees();
+    Show_CreateDetectorResponseFunction();
     Show_CreateDetEfficiencyCurve();
     Show_CreateOptPerEnergy();
     Show_CreateScintillationDistribution();
     Show_CreateTKDE();
     Show_Energy2Wave();
+    Show_GetCounts();
     Show_GetScintillationDistribution();
     Show_Help();
     Show_Integral();
@@ -1180,6 +1199,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     if(description)
       Show_CreateOptPerEnergy_Description();
   }
+  else if(!name.compare("CreateDetectorResponseFunction"))
+  {
+    Show_CreateDetectorResponseFunction();
+    if(description)
+      Show_CreateDetectorResponseFunction_Description();
+  }
   else if(!name.compare("CreateTKDE"))
   {
     Show_CreateTKDE();
@@ -1197,6 +1222,12 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_Energy2Wave();
     if(description)
       Show_Energy2Wave_Description();
+  }
+  else if(!name.compare("GetCounts"))
+  {
+    Show_GetCounts();
+    if(description)
+      Show_GetCounts_Description();
   }
   else if(!name.compare("GetScintillationDistribution"))
   {
@@ -2603,54 +2634,70 @@ TH1D* MantisROOT::BuildBremSampling(const std::vector<double> Evec_above_thresho
   int nbins = Emax/deltaE;
   string hName;
   if(deltaE == 10.0e-3)
-    hName = "hSample_short";
+    hName = "h_sample_short";
   else
-    hName = "hSample_long";
+    hName = "h_sample_long";
 
-  TH1D *hSample = new TH1D(hName.c_str(), "hSample", nbins, 0., Emax);
+  TH1D *h_sample = new TH1D(hName.c_str(), "h_sample", nbins, 0., Emax);
   double weight = 1./theweight;
 	for (int i = 1; i <= nbins; ++i) {
-		double e = hSample->GetBinCenter(i);
+		double e = h_sample->GetBinCenter(i);
 
 		for (int j = 0; j < Evec_above_threshold.size(); ++j)
 		{
 			if (e < non_nrf_energy_cut)
 			{
-				hSample->SetBinContent(i, weight);
+				h_sample->SetBinContent(i, weight);
 			}
   		else if (e > Evec_above_threshold[j] - deltaE && e < Evec_above_threshold[j] + deltaE)
   		{
-				hSample->SetBinContent(i, 1);
+				h_sample->SetBinContent(i, 1);
 				break;
   		}
   		else
   		{
-				hSample->SetBinContent(i, 0.1);
+				h_sample->SetBinContent(i, 0.1);
 			}
 		}
 	}
 
-	// normalize hSample so that its integral is 1
-	hSample->Scale(1.0/(hSample->Integral()));
-  return hSample;
+	// normalize h_sample so that its integral is 1
+	h_sample->Scale(1.0/(h_sample->Integral()));
+  return h_sample;
 }
 
-double MantisROOT::ReturnBremMax(const char* bremInputFilename)
+double MantisROOT::ReturnMax(const char* InputFilename, const char* obj)
 {
-  std::cout << "MantisROOT::ReturnBremMax -> Searching Max Energy..." << std::endl;
-  TFile *f = TFile::Open(bremInputFilename);
+  std::cout << "MantisROOT::ReturnMax -> Searching Max Energy..." << std::endl;
+  TFile *f = TFile::Open(InputFilename);
   bool confirm = f->cd();
   if(!confirm)
     exit(10);
-  TTree *ChopperData;
-  f->GetObject("ChopIn", ChopperData);
+  TTree *tData;
+  f->GetObject(obj, tData);
 
-  double Emax = ChopperData->GetMaximum("Energy");
-  std::cout << "MantisROOT::ReturnBremMax -> Max Found: " << Emax << std::endl;
+  double Emax = tData->GetMaximum("Energy");
+  std::cout << "MantisROOT::ReturnMax -> Max Found: " << Emax << std::endl;
   return Emax;
 }
 
-TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
+double MantisROOT::ReturnMin(const char* InputFilename, const char* obj)
+{
+  std::cout << "MantisROOT::ReturnMin -> Searching Min Energy..." << std::endl;
+  TFile* f = TFile::Open(InputFilename);
+  bool confirm = f->cd();
+
+  if(!confirm)
+    exit(1);
+
+  TTree* tData;
+  f->GetObject(obj, tData);
+  double Emin = tData->GetMinimum("Energy");
+  std::cout << "MantisROOT::ReturnMin -> Min Found: " << Emin << std::endl;
+  return Emin;
+}
+
+TH1D* MantisROOT::BuildSimpleSample(const char* InputFilename, const char* obj, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
 {
   if(cut_energy1 > cut_energy2)
   {
@@ -2658,124 +2705,267 @@ TH1D* MantisROOT::BuildSimpleSample(const char* bremInputFilename, double deltaE
     exit(1);
   }
 
-  double Emax = ReturnBremMax(bremInputFilename);
+  double Emax = ReturnMax(InputFilename, obj);
+  double Emin = ReturnMin(InputFilename, obj);
 
   int nbins = Emax/deltaE;
   string hName;
-  if(deltaE == 10.0e-3)
-    hName = "hSample_short";
-  else
-    hName = "hSample_long";
 
-  TH1D *hSample = new TH1D(hName.c_str(), "hSample", nbins, 0., Emax);
+  if(deltaE == 10.0e-3)
+    hName = "h_sample_short";
+  else
+    hName = "h_sample_long";
+
+  TH1D *h_sample = new TH1D(hName.c_str(), "h_sample", nbins, Emin, Emax);
   double theWeight1 = 1./weight1;
   double theWeight2 = 1./weight2;
 	// create the sampling distribution
 	// user can adjust relative scales in SetBinContent
 	for (int i = 1; i <= nbins; ++i)
   {
-		double e = hSample->GetBinCenter(i);
+		double e = h_sample->GetBinCenter(i);
 
 		if (e < cut_energy1)
-			hSample->SetBinContent(i, theWeight1);
+			h_sample->SetBinContent(i, theWeight1);
     else if(e < cut_energy2 && e > cut_energy1)
-      hSample->SetBinContent(i, theWeight2);
+      h_sample->SetBinContent(i, theWeight2);
 		else
-			hSample->SetBinContent(i, 1);
+			h_sample->SetBinContent(i, 1);
 	}
 
-	// normalize hSample so that its integral is 1
-	hSample->Scale(1.0/(hSample->Integral()));
+	// normalize h_sample so that its integral is 1
+	h_sample->Scale(1.0/(h_sample->Integral()));
   std::cout << "MantisROOT::BuildSimpleSample -> Sampling Distribution Created." << std::endl;
-  return hSample;
+  return h_sample;
 }
 
-void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* gSample, TH1D* hSample, double bin_width, double short_bin_width)
+void MantisROOT::WriteSampling(TGraph* gBrems, TGraph* g_sample, TH1D* h_sample, double bin_width, double short_bin_width)
 {
   std::cout << "MantisROOT::WriteSampling -> Writing to file..." << std::endl;
-  hSample->SetTitle("NRF importance sampling distribution");
-  gSample->SetTitle("NRF importance sampling distribution");
-  hSample->GetXaxis()->SetTitle("energy #it{E} [MeV]");
+  h_sample->SetTitle("NRF importance sampling distribution");
+  g_sample->SetTitle("NRF importance sampling distribution");
+  h_sample->GetXaxis()->SetTitle("energy #it{E} [MeV]");
   string titleProb = "probability per " + std::to_string(bin_width*1e6) + " eV";
-  hSample->GetYaxis()->SetTitle(titleProb.c_str());
-  gSample->GetXaxis()->SetTitle("Energy #it{E} [MeV]");
+  h_sample->GetYaxis()->SetTitle(titleProb.c_str());
+  g_sample->GetXaxis()->SetTitle("Energy #it{E} [MeV]");
   string titleProb2 = "probability per " + std::to_string(short_bin_width*1e3) + " keV";
-  gSample->GetYaxis()->SetTitle(titleProb2.c_str());
+  g_sample->GetYaxis()->SetTitle(titleProb2.c_str());
 
   // save everything to file
-  TFile *fout = new TFile("brems_distributions.root","recreate");
+  TFile *fout = new TFile("importance_sampling_input.root","recreate");
   fout->cd();
   gBrems->Write();
-  gSample->Write();
-  hSample->Write();
-  std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to brems_distributions.root" << std::endl;
+  g_sample->Write();
+  h_sample->Write();
+  std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to importance_sampling_input.root" << std::endl;
   fout->Close();
 }
 
-TGraph* MantisROOT::PrepInputSpectrum(const char* bremInputFilename, double deltaE)
+void MantisROOT::GetCountIntegralAndError(const char* filename, bool weighted=false)
 {
-  CheckFile(bremInputFilename);
-  TFile *f = new TFile(bremInputFilename);
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
   f->cd();
-  TTree* tBrem;
-  f->GetObject("ChopIn", tBrem);
-  double maxE = tBrem->GetMaximum("Energy");
-  double minE = tBrem->GetMinimum("Energy");
-  int nbins = (maxE - minE)/deltaE;
+  TTree* tree;
+  f->GetObject("DetInfo",tree);
+  tree->SetEstimate(-1);
+  TH1D* h = new TH1D("h","h",100,0.,tree->GetMaximum("Energy"));
+  if(weighted)
+    tree->Draw("Energy>>h","Weight","goff");
+  else
+    tree->Draw("Energy>>h","","goff");
 
-  TH1D* hBrems = new TH1D("hBrems","Bremsstrahlung Input Spectrum", nbins, minE, maxE);
-  tBrem->Draw("Energy>>hBrems","","goff");
-  hBrems->Scale(1./hBrems->Integral());
-  hBrems->GetXaxis()->SetTitle("Energy [MeV]");
-  int titleEValue = deltaE*1e6;
-  string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  hBrems->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* gBrems = new TGraph(hBrems);
-  f->Close();
-  return gBrems;
+  double error;
+  double hIntegral = h->IntegralAndError(0,100,error);
+
+  std::cout << "MantisROOT::GetCountIntegralAndError -> Counts: " << hIntegral << " +- " << error << std::endl;
+
 }
 
-void MantisROOT::PrepInputSpectrum(const char* bremInputFilename, const char* obj="ChopIn", double deltaE=10.0e-3, string outfile="brem.root")
+void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char* outfilename, double maxE=1.8, bool drawFigures=false)
 {
-  CheckFile(bremInputFilename);
-  TFile *f = new TFile(bremInputFilename);
+  CheckFile(filename);
+  TFile* fin = TFile::Open(filename);
+  fin->cd();
+  TTree* tdet_response;
+  tdet_response = (TTree*) fin->Get("DetResponse");
+  tdet_response->SetEstimate(-1);
+
+  int x_bins = maxE/10e-3; // set bin width to 10 keV
+  double ymax = tdet_response->GetMaximum("NumPE");
+  ymax = ymax + 50;
+  std::vector<TH1D*> projections;
+  //double left_bin = 0;
+  //double right_bin = 10e-3;
+
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Detector Response Function..." << std::endl;
+  TProfile* DetectorResponse = new TProfile("DetectorResponse","Detector Response Function Profile",x_bins, 0., maxE);
+  TProfile* ScintillationResponse = new TProfile("ScintillationResponse","Detector Scintillation Response Function Profile",x_bins,0.,maxE);
+  TProfile* CherenkovResponse = new TProfile("CherenkovResponse","Detector Cherenkov Response Function Profile",x_bins,0.,maxE);
+  TH2D* hDetectorResponse = new TH2D("hDetectorResponse","Detector Response Function",x_bins,0.,maxE, ymax,0.,ymax);
+  hDetectorResponse->SetMinimum(10);
+
+  tdet_response->Draw("NumPE:IncidentEnergy>>DetectorResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Profile Created." << std::endl;
+  tdet_response->Draw("NumPE:IncidentEnergy>>hDetectorResponse","","colz,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Response Function Histogram Created." << std::endl;
+  tdet_response->Draw("NumScintillation:IncidentEnergy>>ScintillationResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Scintillation Response Created." << std::endl;
+  tdet_response->Draw("NumCherenkov:IncidentEnergy>>CherenkovResponse","","prof,goff");
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Detector Cherenkov Response Created." << std::endl;
+
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Creating Projection Vector..." << std::endl;
+  string hn = "projY_";
+  for(int i=0;i<x_bins+1;++i)
+  {
+    string h_name = hn + std::to_string(i) + "_" + std::to_string(i+1);
+    TH1D* h = new TH1D();
+    h = hDetectorResponse->ProjectionY(h_name.c_str(),i,i+1);
+    if(debug)
+    {
+      if(i < 2)
+      {
+        h->Print();
+      }
+    }
+    projections.push_back(h);
+    //delete h;
+  }
+
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Projection Vector complete." << std::endl;
+
+  if(debug)
+  {
+    for(int i=0;i<5;++i)
+      projections[i]->Print();
+  }
+
+  if(drawFigures)
+  {
+    TCanvas* c1 = new TCanvas("c1","Detector Response Function Profile",600,400);
+    c1->cd();
+    DetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    DetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+    DetectorResponse->SetLineColor(kRed);
+    DetectorResponse->Draw();
+
+    TCanvas* c2 = new TCanvas("c2","Detector Scintillation Response",600,400);
+    c2->cd();
+    ScintillationResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    ScintillationResponse->GetYaxis()->SetTitle("Number of Detector Scintillation Photoelectrons");
+    ScintillationResponse->Draw();
+
+    TCanvas* c3 = new TCanvas("c3","Detector Cherenkov Response",600,400);
+    c3->cd();
+    CherenkovResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    CherenkovResponse->GetYaxis()->SetTitle("Number of Detector Cherenkov Photoelectrons");
+    CherenkovResponse->Draw();
+
+    TCanvas* c4 = new TCanvas("c4", "Detector Response Function",600,400);
+    c4->cd();
+    hDetectorResponse->GetXaxis()->SetTitle("Incident Plexiglass Energy [MeV]");
+    hDetectorResponse->GetYaxis()->SetTitle("Number of Detector Photoelectrons");
+    hDetectorResponse->SetStats(0);
+    gPad->SetLogz();
+    hDetectorResponse->Draw("colz");
+    DetectorResponse->Draw("SAME");
+
+    auto legend = new TLegend();
+    legend->SetHeader("Detector Response","C");
+    legend->AddEntry(hDetectorResponse, "Response 2D Histogram");
+    legend->AddEntry(DetectorResponse, "Response Profile");
+    legend->Draw();
+  }
+
+
+  TFile* fout = new TFile(outfilename,"RECREATE");
+  fout->cd();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Writting to file: " << outfilename << std::endl;
+  for(int i=0;i<projections.size();++i)
+    projections[i]->Write();
+
+  DetectorResponse->Write();
+  hDetectorResponse->Write();
+  ScintillationResponse->Write();
+  CherenkovResponse->Write();
+  fout->Close();
+  std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
+}
+
+TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename,  const char* obj, bool Weighted, double deltaE)
+{
+  CheckFile(InputFilename);
+  TFile *f = new TFile(InputFilename);
   f->cd();
-  TTree* tBrem;
-  f->GetObject(obj, tBrem);
-  double maxE = tBrem->GetMaximum("Energy");
-  double minE = tBrem->GetMinimum("Energy");
+  TTree* tin;
+  f->GetObject(obj, tin);
+  double maxE = tin->GetMaximum("Energy");
+  double minE = tin->GetMinimum("Energy");
+  int nbins = (maxE - minE)/deltaE;
+
+  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+
+  if(Weighted)
+    tin->Draw("Energy>>h_input","Weight","goff");
+  else
+    tin->Draw("Energy>>h_input","","goff");
+
+  h_input->Scale(1./h_input->Integral());
+  h_input->GetXaxis()->SetTitle("Energy [MeV]");
+  int titleEValue = deltaE*1e6;
+  string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
+  h_input->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* g_input = new TGraph(h_input);
+  f->Close();
+  return g_input;
+}
+
+void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3)
+{
+  CheckFile(InputFilename);
+  TFile *f = new TFile(InputFilename);
+  f->cd();
+  TTree* tin;
+  f->GetObject(obj, tin);
+  double maxE = tin->GetMaximum("Energy");
+  double minE = tin->GetMinimum("Energy");
 
   int nbins = (maxE - minE)/deltaE;
 
-  TH1D* hBrems = new TH1D("hBrems","Bremsstrahlung Input Spectrum", nbins, minE, maxE);
-  tBrem->Draw("Energy>>hBrems","","goff");
-  hBrems->Scale(1./hBrems->Integral());
-  hBrems->GetXaxis()->SetTitle("Energy [MeV]");
+  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+
+  if(Weighted)
+    tin->Draw("Energy>>h_input","Weight","goff");
+  else
+    tin->Draw("Energy>>h_input","","goff");
+
+  h_input->Scale(1./h_input->Integral());
+  h_input->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  hBrems->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* gBrems = new TGraph(hBrems);
+  h_input->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* g_input = new TGraph(h_input);
   TFile *fout = new TFile(outfile.c_str(),"RECREATE");
   fout->cd();
-  hBrems->Write();
-  gBrems->Write();
-  std::cout << "MantisROOT::PrepInputSpectrum -> Bremsstrahlung Spectra written to " << outfile << std::endl;
+  h_input->Write();
+  g_input->Write();
+  std::cout << "MantisROOT::PrepInputSpectrum -> Spectra written to " << outfile << std::endl;
   fout->Close();
   f->cd();
   f->Close();
 }
 
-void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)
+void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false)
 {
-	TGraph *gBrems_short = PrepInputSpectrum(bremInputFilename, 10.0e-3);
-  TH1D* hSample_long = BuildSimpleSample(bremInputFilename, deltaE, cut_energy1, cut_energy2, weight, weight2);
-  TH1D* hSample_short = BuildSimpleSample(bremInputFilename, 10.0e-3, cut_energy1, cut_energy2, weight, weight2);
-  TGraph *gSample_short = new TGraph(hSample_short);
+	TGraph *g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, deltaE_short);
+  TH1D* h_sample_long = BuildSimpleSample(InputFilename, obj, deltaE, cut_energy1, cut_energy2, weight, weight2);
+  TH1D* h_sample_short = BuildSimpleSample(InputFilename, obj, deltaE_short, cut_energy1, cut_energy2, weight, weight2);
+  TGraph *g_sample_short = new TGraph(h_sample_short);
   // writes Brem TGraph with 1e-3 bin widths and Sampling TGraph with
   // same bin width then writes sampling histogram to sample energies
   // from with user bin_width
 
-  WriteSampling(gBrems_short, gSample_short, hSample_long, deltaE, 10.0e-3);
+  WriteSampling(g_input_short, g_sample_short, h_sample_long, deltaE, deltaE_short);
 
   if(drawWeights)
   {
@@ -2787,7 +2977,7 @@ void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0
     std::vector<double> energies, theweights;
     energies.push_back(0);
     theweights.push_back(0);
-    double maxE = TMath::MaxElement(gBrems_short->GetN(), gBrems_short->GetX());
+    double maxE = TMath::MaxElement(g_input_short->GetN(), g_input_short->GetX());
     for(double i=maxE/1000.;i<maxE;i += maxE/1000.)
     {
       energies.push_back(i);
@@ -2795,7 +2985,7 @@ void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0
     for(int i=1;i<energies.size();++i)
     {
       double energy = energies[i];
-      double w = gBrems_short->Eval(energy)/gSample_short->Eval(energy);
+      double w = g_input_short->Eval(energy)/g_sample_short->Eval(energy);
       theweights.push_back(w);
     }
 
@@ -2814,13 +3004,13 @@ void MantisROOT::SimpleSampling(const char* bremInputFilename, double deltaE=5.0
 
 }
 
-void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
+void MantisROOT::Sampling(const char *InputFilename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
 {
 	// Convert Input Bremsstrahlung Spectrum Histogram to TGraph
-	CheckFile(bremInputFilename);
+	CheckFile(InputFilename);
 
-  TGraph* gBrems_short = PrepInputSpectrum(bremInputFilename, 10.0e-3);
-  double Emax = ReturnBremMax(bremInputFilename);
+  TGraph* g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, 10.0e-3);
+  double Emax = ReturnMax(InputFilename, obj);
 	// resonance energies in MeV as calculated by G4NRF
 	vector<double> Evec;
 	vector<double> Evec_above_threshold;
@@ -2871,14 +3061,14 @@ void MantisROOT::Sampling(const char *bremInputFilename, string sample_element="
 	  }
 	}
 
-  TH1D* hSample = BuildBremSampling(Evec_above_threshold, non_nrf_energy_cut,
+  TH1D* h_sample = BuildBremSampling(Evec_above_threshold, non_nrf_energy_cut,
                                     deltaE, Emax, weights);
   // create Short Sampling
-  TH1D* hSample_short = BuildBremSampling(Evec_above_threshold, non_nrf_energy_cut,
+  TH1D* h_sample_short = BuildBremSampling(Evec_above_threshold, non_nrf_energy_cut,
                                           10.0e-3, Emax, weights);
-  TGraph* gSample = new TGraph(hSample_short);
+  TGraph* g_sample = new TGraph(h_sample_short);
 
-	WriteSampling(gBrems_short, gSample, hSample, deltaE, 10.0e-3);
+	WriteSampling(g_input_short, g_sample, h_sample, deltaE, 10.0e-3);
 
   std::cout << "MantisROOT::Sampling -> COMPLETE!" << std::endl;
 
@@ -3376,6 +3566,48 @@ TGraph* MantisROOT::CreateTKDE(const char* filename, int nentries=10000)
 
 } // End of CreateTKDE Function
 
+void MantisROOT::GetCounts(const char* filename, bool weighted=false)
+{
+
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
+
+  TTree* tree;
+  f->GetObject("DetInfo",tree);
+  tree->SetEstimate(-1);
+
+  double weights;
+  double profile_counts;
+  double histo_counts;
+  double total_profile_counts = 0.;
+  double total_histo_counts = 0.;
+
+  tree->SetBranchAddress("NumPE", &profile_counts);
+  tree->SetBranchAddress("NumPE2", &histo_counts);
+
+  if(weighted)
+    tree->SetBranchAddress("Weight",&weights);
+  else
+    weights = 1.;
+
+  for(int i=0;i<tree->GetEntries();++i)
+  {
+    tree->GetEntry(i);
+    total_profile_counts += profile_counts*weights;
+    total_histo_counts += histo_counts*weights;
+  }
+
+  double sd_profile = sqrt(total_profile_counts);
+  double sd_histo = sqrt(total_histo_counts);
+
+  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
+            << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << " +- " << sd_histo   << std::endl;
+
+  f->Close();
+  std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
+
+}
 
 void MantisROOT::CreateOptPerEnergy(const char* filename, double e_cut=1.4)
 {
@@ -3834,77 +4066,6 @@ TGraph* MantisROOT::CreateScintillationDistribution(double scale=1.)
   TGraph* gScint = CreateScintillationDistribution(energies, crossX);
   return gScint;
 } // end of CreateScintillationDistribution Function
-
-/*
-void MantisROOT::CreateBremFit(const char* filename, double bin_width=5e-6)
-{
-  CheckFile(filename);
-  TFile* f = new TFile(filename);
-  f->cd();
-
-  TTree* tBrems;
-  f->GetObject("Brem",tBrems);
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> Brem Object Grabbed." << std::endl;
-
-  double maxE = tBrems->GetMaximum("Energy");
-  double maxWave = Energy2Wave(maxE,"MeV")*1e9; // units nm
-  Int_t nbins = maxE/bin_width;
-  TH1D* hBrems = new TH1D("hBrems","Brem Histo", nbins, 0., maxE);
-  int n = tBrems->Draw("Energy>>hBrems","","goff");
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> hBrems Created. Smoothing..." << std::endl;
-
-  hBrems->Smooth(2024);
-  hBrems->Scale(1./hBrems->Integral());
-
-  std::vector<double> energies, counts;
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> Writing to hBrems..." << std::endl;
-
-  for(int i=0;i<nbins;++i)
-  {
-    energies.push_back(hBrems->GetXaxis()->GetBinCenter(i));
-    counts.push_back(hBrems->GetBinContent(i));
-  }
-
-  TGraph* gBrems = new TGraph(nbins, &energies[0], &counts[0]);
-
-  string cmd = "([0]/pow(x,2))*((x/" + std::to_string(maxE) + ") - 1)";
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> Fitting Equation: " << cmd << std::endl;
-
-  const char* cmd_c_str = cmd.c_str();
-  TF1* f1 = new TF1("f1",cmd_c_str, 0.001, maxE);
-
-  gBrems->SetTitle("Bremsstrahlung Distribution with Fitting");
-  gBrems->GetXaxis()->SetTitle("Energy [MeV]");
-  string bin_width_string = std::to_string((int)bin_width*1e6);
-  string yaxis_title = "Probability per " + bin_width_string + "eV";
-  gBrems->GetYaxis()->SetTitle(yaxis_title.c_str());
-  TCanvas* c1 = new TCanvas("c1","Brem TGraph",900,600);
-  c1->cd();
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> Drawing Brem TGraph..." << std::endl;
-
-  gBrems->Draw("AC");
-
-  if(debug)
-    std::cout << "MantisROOT::CreateBremFit -> Creating Best Fit..." << std::endl;
-
-  gBrems->Fit("f1","R");
-
-  std::cout << "MantisROOT::CreateBremFit -> Complete." << std::endl;
-
-
-}
-
-*/
 
 void MantisROOT::CreateDetEfficiencyCurve(std::vector<double> x, std::vector<double> y, string DetType)
 {
@@ -4634,7 +4795,7 @@ void MantisROOT::Show_CopyTrees()
 
 void MantisROOT::Show_CopyTrees_Description()
 {
-  std::cout << "Clones TTrees from input 1 (filename) to a file named by input 3 outfilename."
+  std::cout << "DESCRIPTION: " << std::endl << "Clones TTrees from input 1 (filename) to a file named by input 3 outfilename."
   << std::endl << "The TTrees to be cloned are inputed as input two as a string vector."
   << std::endl << "Example: mantis->CopyTrees(\"test.root\",{\"IntObjIn\",\"DetInfo\"})" << std::endl;
 }
@@ -4646,7 +4807,7 @@ void MantisROOT::Show_Sig2Noise()
 
 void MantisROOT::Show_Sig2Noise_Description()
 {
-  std::cout << "Computes the Signal to Noise Ratio in the files inputed in the string vector."
+  std::cout << "DESCRIPTION: " << std::endl << "Computes the Signal to Noise Ratio in the files inputed in the string vector."
   << std::endl << "The signal to noise ratio can be computed for the Incident Interrogation Object spectrum"
   << std::endl << ", the detected spectrum, or both with the second input options: IncObj, Det, Both."
   << std::endl << "IF the TTrees contain weights be sure to set the third input bool option to true."
@@ -4656,6 +4817,15 @@ void MantisROOT::Show_Sig2Noise_Description()
   << std::endl << "Example: mantis->Sig2Noise({\"TestOn.root\",\"TestOff.root\"},\"Both\", true, true, true, \"Energy<5e-6\")" << std::endl;
 }
 
+void MantisROOT::Show_GetCounts()
+{
+  std::cout << "void GetCounts(const char* filename, bool weighted=false)" << std::endl;
+}
+
+void MantisROOT::Show_GetCounts_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Calculates the Number of Hits for Estimated Detector Info Tree." << std::endl;
+}
 void MantisROOT::Show_ZScore()
 {
   std::cout << "void ZScore(const char* filename1, const char* filename2, std::vector<string> ObjectNames, bool weighted=false)" << std::endl;
@@ -4764,25 +4934,35 @@ void MantisROOT::Show_Sampling()
 
 void MantisROOT::Show_Sampling_Description()
 {
-  std::cout << "DESCRIPTION: " << std::endl << "Creates an importance sampling distribution and prepares mantis input file brems_distributions.root."
-  << std::endl << "If the user would like a different bin width for hBrems than the user can supply the bin width with input 3."
+  std::cout << "DESCRIPTION: " << std::endl << "Creates an importance sampling distribution and prepares mantis input file importance_sampling_input.root."
+  << std::endl << "If the user would like a different bin width for h_input than the user can supply the bin width with input 3."
   << std::endl << "Example: mantis->Sampling(\"brem.root\",\"U\", 5e-6,true,1.5, 10000)"
-  << std::endl << "would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content"
+  << std::endl << "would create importance_sampling_input.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content"
   << std::endl << "the importance sampling distribution energies below 1.5 MeV would have importances 1/1000 of the NRF resonance energies."
   << std::endl;
 }
 
+void MantisROOT::Show_CreateDetectorResponseFunction()
+{
+  std::cout << "void CreateDetectorResponseFunction(const char* filename, const char* outfilename, double MaxIncidentEnergy)" << std::endl;
+}
+
+void MantisROOT::Show_CreateDetectorResponseFunction_Description()
+{
+  std::cout << "DESCRIPTION: " << std::endl << "Creates Detector Response Function for Detector Response runs." << std::endl;
+}
+
 void MantisROOT::Show_SimpleSampling()
 {
-  std::cout << "void SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)" << std::endl;
+  std::cout << "void SimpleSampling(const char* InputFilename, const char* obj=\"ChopIn\", bool Weighted=false, double deltaE=5.0e-6, double deltaE_short, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)" << std::endl;
 }
 
 void MantisROOT::Show_SimpleSampling_Description()
 {
-  std::cout << "DESCRIPTION: " << std::endl << "Creates an importance sampling distribution and prepares mantis input file brems_distributions.root."
-  << std::endl << "If the User would like a different bin width for hBrems than the user can supply the bin width with input 2."
-  << std::endl << "Example: mantis->SimpleSampling(\"brem.root\", 5e-6,1.5, 10000, true)"
-  << std::endl << "would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content"
+  std::cout << "DESCRIPTION: " << std::endl << "Creates an importance sampling distribution and prepares mantis input file importance_sampling_input.root."
+  << std::endl << "If the User would like a different bin width for h_input than the user can supply the bin width with input 2."
+  << std::endl << "Example: mantis->SimpleSampling(\"brem.root\", \"ChopIn\", false, 5e-6, 1e-3, 1.5, 10000, true)"
+  << std::endl << "would create importance_sampling_input.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content"
   << std::endl << "the importance sampling distribution energies below 1.5 MeV would have importances 1/10000 of all energies above 1.5 MeV."
   << std::endl;
 }
@@ -4900,14 +5080,12 @@ void MantisROOT::Show_PrepareAnalysis_Description()
 
 void MantisROOT::Show_PrepInputSpectrum()
 {
-  std::cout << "void PrepInputSpectrum(const char* bremInputFilename, const char* object, double deltaE=5.0e-6, string outfilename=\"brem.root\")" << std::endl;
+  std::cout << "void PrepInputSpectrum(const char* InputFilename, const char* object, string outfilename=\"brem.root\", bool Weighted=false, double deltaE=5.0e-6)" << std::endl;
 }
 
 void MantisROOT::Show_PrepInputSpectrum_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "Prepares input spectrum file for Mantis Simulation without importance sampling."
-  << std::endl << "Object name options are Radiator, Backing, or ChopIn."
-  << std::endl << "deltaE is the bin width of the Histogram and if the user wishes a nondefault outfilename enter the third input."
   << std::endl;
 }
 

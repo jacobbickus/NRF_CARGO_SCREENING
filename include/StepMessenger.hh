@@ -5,10 +5,10 @@
 #include "G4UImessenger.hh"
 #include "G4ApplicationState.hh"
 #include "G4UIcmdWithAString.hh"
-#include "SteppingAction.hh"
+#include "BaseSteppingAction.hh"
 #include "G4UIdirectory.hh"
 
-class SteppingAction;
+class BaseSteppingAction;
 class G4UIcmdWithAString;
 class G4UIdirectory;
 
@@ -16,12 +16,12 @@ class G4UIdirectory;
 class StepMessenger: public G4UImessenger
 {
 public:
-  StepMessenger(SteppingAction*);
+  StepMessenger(BaseSteppingAction*);
   ~StepMessenger();
 
   void SetNewValue(G4UIcommand*, G4String);
 private:
-  SteppingAction* stepA;
+  BaseSteppingAction* stepA;
   G4UIcmdWithAString* Cmd;
   G4UIdirectory *myDir;
 };

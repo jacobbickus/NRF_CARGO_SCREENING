@@ -22,133 +22,63 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "EventAction.hh"
-#include <ctime>
 
 extern G4bool debug;
-extern G4bool printEvents;
-extern G4bool bremTest;
-extern G4String inFile;
+extern G4bool detTest;
 
 EventAction::EventAction()
-:eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
-totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
+: G4UserEventAction(), BaseEventAction()
 {
-  eventM = new EventMessenger(this);
-  if(!inFile.compare("brems_distributions.root"))
-    WEIGHTED = true;
+  if(debug)
+    std::cout << "EventAction::EventAction Initialized." << std::endl;
 }
 
 EventAction::~EventAction()
-{
-  delete eventM;
-}
+{}
 
 void EventAction::BeginOfEventAction(const G4Event* anEvent)
 {
-    if(debug)
-        std::cout << "EventAction::BeginOfEventAction -> Beginning" << std::endl;
+  eventID = anEvent->GetEventID();
 
-    G4int event = anEvent->GetEventID();
-    if(event == 0)
-    {
-      std::cout << "Tracking Events... " << std::endl;
-      G4cout << "Tracking Events: " << G4endl;
-      totalEventsToRun = G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEventToBeProcessed();
-    }
-    else if(event % eventInfoFreq == 0)
-    {
-      G4RunManager *runMgr = G4RunManager::GetRunManager();
-      if(runMgr->GetCurrentRun()->GetRunID()!=runID)
-      {
-        prevRunTime = clock()*1.0/CLOCKS_PER_SEC;
-        runID++;
-      }
+  if(debug && eventID == 0)
+      std::cout << "EventAction::BeginOfEventAction -> Beginning" << std::endl;
 
-      // Calculate the rate [particles tracked / s] and the estimated
-      // time to completion of the present run [m,s]
-      runTime = clock()*1.0/CLOCKS_PER_SEC - prevRunTime;
-      eventsPerSec = event*1.0/runTime;  // [s]
-      timeToFinish = (totalEventsToRun-event)/eventsPerSec; // [s]
+  EventActionPrint();
+  // Reset values
+  number_detected = 0;
+  energy_counter = 0;
+  s_detected = 0;
+  c_detected = 0;
+  incident_energy = 0.;
+  s_secondaries = 0;
+  c_secondaries = 0;
+  scintillation_energyv.clear();
+  cherenkov_energyv.clear();
 
-      // Output the event variables in scientific notation using
-      // std::stringstreams to avoid screwing up G4cout formatting
-      std::stringstream eventSS;
-      eventSS.precision(3);
-      eventSS << std::scientific << (double)event;
-      std::stringstream tEventSS;
-      tEventSS.precision(3);
-      tEventSS << std::scientific << totalEventsToRun;
-      if(printEvents)
-      {
-        std::cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
-                  << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
-                  << std::setprecision(2) << "Time2Finish ["
-                  << ((int)timeToFinish)/3600  << "h "
-                  << ((int)timeToFinish%3600)/60 << "m "
-                  << ((int)timeToFinish%3600)%60 << "s]"
-                  << std::setprecision(6) << std::flush;
-      }
-
-      G4cout << "\r**  Event [" << eventSS.str() << "/" << tEventSS.str() << "]    "
-                << std::setprecision(4) << "Rate [" << eventsPerSec << "]    "
-                << std::setprecision(2) << "Time2Finish ["
-                << ((int)timeToFinish)/3600  << "h "
-                << ((int)timeToFinish%3600)/60 << "m "
-                << ((int)timeToFinish%3600)%60 << "s]"
-                << std::setprecision(6) << std::flush;
-    }
-
-    // Reset values 
-    s_secondaries = 0;
-    c_secondaries = 0;
-    scintillation_energyv.clear();
-    cherenkov_energyv.clear();
-
-    if(debug)
-        std::cout << "EventAction::BeginOfEventAction -> Ending" << std::endl;
+  if(debug && eventID == 0)
+      std::cout << "EventAction::BeginOfEventAction -> Ending" << std::endl;
 }
 
 void EventAction::EndOfEventAction(const G4Event* anEvent)
 {
-    if(debug)
+    if(debug && eventID == 0)
         std::cout << "EventAction::EndOfEventAction -> Beginning" << std::endl;
 
     eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double weight = info->GetWeight();
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
-    // Deal With Scintillation per Event
-    if(s_secondaries > 0)
+
+    // Deal with Detected per Event
+    if(detTest)
     {
-      // Grab Max Energy
-      G4double maxE = *std::max_element(scintillation_energyv.begin(), scintillation_energyv.end());
-
-      // Fill the Tree
-      manager->FillNtupleIColumn(8,0,anEvent->GetEventID());
-      manager->FillNtupleDColumn(8,1,maxE);
-      manager->FillNtupleIColumn(8,2,s_secondaries);
-
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(8,3,weight);
-
-      manager->AddNtupleRow(8);
+      FillDetectorResponse();
     }
-    // Deal With Cherenkov per Event
-    if(c_secondaries > 0)
+    else
     {
-      // Grab Max Energy
-      G4double maxE = *std::max_element(cherenkov_energyv.begin(),cherenkov_energyv.end());
-
-      // Fill the TTree
-      manager->FillNtupleIColumn(10,0,anEvent->GetEventID());
-      manager->FillNtupleDColumn(10,1,maxE);
-      manager->FillNtupleIColumn(10,2,c_secondaries);
-
-      if(WEIGHTED)
-        manager->FillNtupleDColumn(10,3, weight);
-
-      manager->AddNtupleRow(10);
+      FillScintillationPerEvent(weight);
+      FillCherenkovPerEvent(weight);
     }
 
-    if(debug)
+    if(debug && eventID == 0)
         std::cout << "EventAction::EndOfEventAction() --> Ending!" << std::endl;
 }

@@ -26,23 +26,9 @@
 #define EventAction_h 1
 
 #include "G4UserEventAction.hh"
-#include "globals.hh"
-#include "G4Types.hh"
-#include "G4EventManager.hh"
-#include "eventInformation.hh"
-#include "HistoManager.hh"
-#include "G4RunManager.hh"
-#include "G4Event.hh"
-#include "G4ios.hh"
-#include "G4UImanager.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4Run.hh"
-#include "EventMessenger.hh"
+#include "BaseEventAction.hh"
 
-class G4Event;
-class EventMessenger;
-
-class EventAction : public G4UserEventAction
+class EventAction : public G4UserEventAction, public BaseEventAction
 {
 public:
 EventAction();
@@ -51,20 +37,6 @@ EventAction();
 public:
 void BeginOfEventAction(const G4Event*);
 void EndOfEventAction(const G4Event*);
-
-void ScintillationEnergy(G4double energy){scintillation_energyv.push_back(energy);}
-void CherenkovEnergy(G4double energy){cherenkov_energyv.push_back(energy);}
-void ScintillationAddSecondary(){s_secondaries++;}
-void CherenkovAddSecondary(){c_secondaries++;}
-void SetEventInfoFreq(G4int freq){eventInfoFreq = freq;}
-
-private:
-G4int eventInfoFreq, runID;
-G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
-G4bool WEIGHTED;
-EventMessenger* eventM;
-G4int c_secondaries, s_secondaries;
-std::vector<double> cherenkov_energyv, scintillation_energyv;
 };
 
 #endif

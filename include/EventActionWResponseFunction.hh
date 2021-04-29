@@ -22,28 +22,22 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef HistoManager_h
-#define HistoManager_h 1
+#ifndef EventActionWResponseFunction_h
+#define EventActionWResponseFunction_h 1
 
-#include "globals.hh"
-#include "g4root.hh"
-#include "G4UnitsTable.hh"
-#include "G4SystemOfUnits.hh"
-#include "time.h"
+#include "G4UserEventAction.hh"
+#include "BaseEventAction.hh"
 
-
-class HistoManager
+class EventActionWResponseFunction : public G4UserEventAction, public BaseEventAction
 {
 public:
-HistoManager();
-~HistoManager();
+EventActionWResponseFunction();
+~EventActionWResponseFunction();
 
-void finish();     // close root file
-void Book();
+public:
+void BeginOfEventAction(const G4Event*);
+void EndOfEventAction(const G4Event*);
 
-private:
-G4bool fFactoryOn, WEIGHTED;
-G4int start_time, stop_time;
 };
 
 #endif

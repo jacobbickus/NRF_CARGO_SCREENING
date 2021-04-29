@@ -24,6 +24,9 @@
 
 #include "Cargo.hh"
 
+extern G4bool run_without_chopper;
+extern G4bool debug;
+
 Cargo::Cargo()
 :
 RemoveContainer(false),
@@ -77,11 +80,13 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
 
   if(!RemoveContainer)
   {
-    G4cout << "Cargo::Construct -> Building Container!" << G4endl;
+    if(debug)
+      G4cout << "Cargo::Construct -> Building Container!" << G4endl;
+
     new G4PVPlacement(0,
                     G4ThreeVector(0, 0, container_z_pos),
-                    logicContainer, "Con-Steel",logicWorld,
-                    false,0,checkOverlaps);
+                    logicContainer, "Con-Steel", logicWorld,
+                    false, 0, checkOverlaps);
   }
 
   // make container hollow
@@ -90,10 +95,10 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
 
   if(!RemoveContainer)
   {
+    new G4PVPlacement(0, G4ThreeVector(0,0,0),
+                      logicHollowC, "Con-Air", logicContainer, false,
+                      0, checkOverlaps);
     G4cout << "Cargo::Construct -> Container Built!" << G4endl;
-    new G4PVPlacement(0, G4ThreeVector(),
-                      logicHollowC, "Con-Air",logicContainer, false,
-                      0,checkOverlaps);
   }
 
   // Set Up the Interrogation Object
@@ -131,23 +136,23 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
     }
     else if(IntObj_Selection == "Natural Uranium")
     {
-            intObjMat->AddMaterial(natural_uranium,1);
+      intObjMat->AddMaterial(natural_uranium,1);
     }
     else if(IntObj_Selection == "Natural Plutonium")
     {
-            intObjMat->AddMaterial(natural_plutonium,1);
+      intObjMat->AddMaterial(natural_plutonium,1);
     }
     else if(IntObj_Selection == "Lead")
     {
-            intObjMat->AddMaterial(lead,1);
+      intObjMat->AddMaterial(lead,1);
     }
     else if(IntObj_Selection == "Steel")
     {
-            intObjMat->AddMaterial(steel,1);
+      intObjMat->AddMaterial(steel,1);
     }
     else if(IntObj_Selection == "Plastic")
     {
-            intObjMat->AddMaterial(poly,1);
+      intObjMat->AddMaterial(poly,1);
     }
     else{G4cerr << "ERROR: Cargo::Construct -> Interogation Material not found."<<G4endl;}
 
@@ -173,9 +178,17 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
     }
     else
     {
-      new G4PVPlacement(0,
-                        G4ThreeVector(0,0,chopper_end_edge_position+1.0*m),
-                        logicIntObj, "IntObj",logicWorld, false, 0, checkOverlaps);
+      if(!run_without_chopper)
+      {
+        new G4PVPlacement(0,
+                          G4ThreeVector(0,0,chopper_end_edge_position+1.0*m),
+                          logicIntObj, "IntObj",logicWorld, false, 0, checkOverlaps);
+      }
+      else
+      {
+        G4cerr << "Cargo::Construct ERROR Cannot remove container when running simulation without chopper wheel." << G4endl;
+        exit(10);
+      }
     }
     CheckCargoBoxSize();
     PlaceCargoSpheres();

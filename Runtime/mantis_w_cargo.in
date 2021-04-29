@@ -1,0 +1,49 @@
+/chopper/state On
+/chopper/material Uranium
+/chopper/abundance 90
+/IntObj/Material Uranium
+/IntObj/Abundance 90
+
+/control/verbose 0
+/tracking/verbose 0
+/run/verbose 0
+/event/verbose 0
+#/PGA/beamSize 2.0
+/mantisevent/eventInfoFreq 10
+/chopper/thickness 37
+/chopper/distance 2
+#/IntObj/Radius
+
+#/mydet/WaterX
+#/mydet/WaterY
+#/mydet/WaterZ
+#/mydet/Angle
+#/mydet/attenuator Off
+#/mydet/attenuatorThickness 1
+#/mydet/attenuatorMaterial G4_Pb
+#/mydet/attenuator2 Off
+#/mydet/attenuatorThickness2 1
+#/mydet/attenuatorMaterial2 G4_POLYETHYLENE
+#/mydet/attenuator3 Off
+#/mydet/attenuatorThickness3 1
+#/mydet/attenuatorMaterial3 G4_POLYETHYLENE
+
+#/Cargo/AddSphere true
+#/Cargo/SphereRadius 2
+#/Cargo/SpherePosition 20 0 -50
+#/Cargo/SphereMaterial G4_Pb
+#/Cargo/AddBox true
+#/Cargo/BoxSize 3 3 3
+#/Cargo/BoxPosition -20 -10 50
+#/Cargo/BoxMaterial G4_W
+
+#/material/CheckOverlaps true
+/run/initialize
+
+#/output/myoutput NRFData
+#/output/myoutput IntObjInData
+#/output/myoutput IntObjOutData
+#/output/myoutput ShieldingData
+#/output/myoutput PlexiData
+
+/run/beamOn 100

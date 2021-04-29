@@ -24,27 +24,30 @@
 
 #include "DetectorConstruction.hh"
 
-extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool debug;
+extern G4bool run_without_chopper;
 
-DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator, Cargo* Cargo)
+DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo, Linac* Linac)
         : G4VUserDetectorConstruction(),
-        chop(Chopper), linac(Linac), collimator(Collimator), cargo(Cargo),
+        chop(Chopper), collimator(Collimator), cargo(Cargo), linac(Linac),
         // Attenuator Properties
-        attenuatorState(false), attenuatorState2(false), attenThickness(0.001*mm), attenThickness2(0.001*mm), attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"),
+        attenuatorState(false), attenuatorState2(false), attenuatorState3(false),
+        attenThickness(0.001*mm), attenThickness2(0.001*mm), attenThickness3(0.001*mm),
+        attenuatorMat("G4_AIR"), attenuatorMat2("G4_AIR"), attenuatorMat3("G4_AIR"),
         // Water Tank properties
-        theAngle(120.0), water_size_x(60*cm), water_size_y(129.54*cm), water_size_z(40*cm),
+        theAngle(150.0), water_size_x(28*cm), water_size_y(225*cm), water_size_z(30*cm),
         // plexi/tape properties
         plexiThickness(0.18*mm), tapeThick(0.01*cm),
         // PMT Properties
-        PMT_rmax(25.4*cm), nPMT(5), pc_mat("GaAsP"),
+        PMT_rmax(25.4*cm), nPMT(8), pc_mat("GaAsP"),
         // Output Properties
         DetectorViewOnly(false), material_verbose(false), checkOverlaps(true),
         // Messenger
         detectorM(NULL)
 {
   detectorM = new DetectorMessenger(this);
+  SetDefaultNistMaterials();
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -52,16 +55,129 @@ DetectorConstruction::~DetectorConstruction()
   delete detectorM;
 }
 
+void DetectorConstruction::SetDefaultNistMaterials()
+{
+  nist = G4NistManager::Instance();
+  air = nist->FindOrBuildMaterial("G4_AIR");
+  plexiglass = nist->FindOrBuildMaterial("G4_PLEXIGLASS");
+  PMT_mat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
+  teflonTape = nist->FindOrBuildMaterial("G4_TEFLON");
+  G4cout << "DetectorConstruction::SetDefaultNistMaterials -> Complete." << G4endl;
+}
+
+void DetectorConstruction::ConstructAttenuatorMaterial(G4Material* &attenuator, G4Material* &attenuator2, G4Material* &attenuator3)
+{
+  attenuator = nist->FindOrBuildMaterial(attenuatorMat);
+  attenuator2 = nist->FindOrBuildMaterial(attenuatorMat2);
+  attenuator3 = nist->FindOrBuildMaterial(attenuatorMat3);
+  G4cout << "DetectorConstruction::ConstructAttenuatorMaterial -> Complete." << G4endl;
+}
+
+G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4LogicalVolume* logicWorld, G4double container_z_pos, G4Material* attenuator, G4Material* attenuator2, G4Material* attenuator3)
+{
+  // First Attenuation Layer
+  // THIS IS THE MOTHER VOLUME INSIDE WORLD ALL OTHER DETECTOR VOLUMES ARE DAUGHTERS OF THIS VOLUME
+  G4Box* solidAttenuator = new G4Box("Attenuator1", water_size_x + attenThickness/2. + attenThickness2/2. + attenThickness3/2., water_size_y + attenThickness/2. + attenThickness2/2. + attenThickness3/2.,
+                                     water_size_z + attenThickness/2. + attenThickness2/2. + attenThickness3/2.);
+  G4LogicalVolume* logicAttenuator = new G4LogicalVolume(solidAttenuator, attenuator, "Attenuator1");
+
+  if(attenuatorState)
+  {
+    G4cout << G4endl << "DetectorConstruction::Construct -> Attenuator Information" << G4endl;
+    G4cout << "----------------------------------------------------------------------" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Attenuator Thickness set to: " << attenThickness << " mm of " << attenuator->GetName() << G4endl;
+  }
+  else
+  {
+    attenuatorState2 = false;
+    attenThickness2 = 0.001*mm; // of air
+    attenuatorState3 = false;
+    attenThickness3 = 0.001*mm; // of air
+    G4cout<< "DetectorConstruction::Construct -> Second Attenuator State automatically set to Off."
+    << G4endl << "DetectorConstruction::Construct -> Third Attenuator State automatically set to Off." << G4endl;
+  }
+
+  DetectorInformation* detInfo = DetectorInformation::Instance();
+  water_z_pos = detInfo->getRearCollimatorPosition();
+  G4double myangle = (180. - theAngle)*pi/180.;
+  G4double z_pos_factor = 0.3602*m;
+
+  if(!run_without_chopper)
+    z_pos_factor = container_z_pos;
+
+  water_x_pos = tan(myangle)*(z_pos_factor - water_z_pos);
+
+  if(debug)
+  {
+    std::cout << "DetectorConstruction::ConstructAttenuatorsAndPlexiglass -> Water X Position: " << water_x_pos/(cm) << " cm" << std::endl
+    << "DetectorConstruction::ConstructAttenuatorsAndPlexiglass -> Water Z Position: " << water_z_pos/(cm) << " cm" << std::endl;
+  }
+
+  G4double detDistance = water_x_pos/sin(myangle) + water_size_z;
+  G4RotationMatrix* waterRot = new G4RotationMatrix;
+  G4RotationMatrix* waterRot2 = new G4RotationMatrix;
+
+  if(detTest)
+  {
+    new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
+                      "Attenuator1",logicWorld, false, 0, checkOverlaps);
+  }
+  else
+  {
+    waterRot->rotateY((180. - theAngle)*deg);
+    waterRot2->rotateY((180. + theAngle)*deg);
+    new G4PVPlacement(waterRot,
+                      G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1L", logicWorld, false, 0, checkOverlaps);
+    new G4PVPlacement(waterRot2,
+                      G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
+                      "Attenuator1R", logicWorld, false, 0, checkOverlaps);
+  }
+
+// Option to add second layer of low Z attenuation material
+
+  G4Box* solidSecondAttenuator = new G4Box("Attenuator2", water_size_x + attenThickness2/2. + attenThickness3/2., water_size_y+attenThickness2/2. + attenThickness3/2.,
+                                           water_size_z+attenThickness2/2. + attenThickness3/2.);
+  G4LogicalVolume* logicSecondAttenuator = new G4LogicalVolume(solidSecondAttenuator, attenuator2, "Attenuator2");
+  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicSecondAttenuator, "Attenuator2", logicAttenuator, false, 0, checkOverlaps);
+
+  if(attenuatorState2)
+    G4cout << "DetectorConstruction::Construct -> Second Attenuator set to: " << attenThickness2 << " mm of " << attenuator2->GetName() << G4endl;
+  else
+  {
+    attenuatorState3 = false;
+    attenThickness3 = 0.001*mm; // of air
+    G4cout << "DetectorConstruction::Construct -> Third Attenuator automatically set Off." << G4endl;
+  }
+
+  // Make third attenuator layer
+  G4Box* solidThirdAttenuator = new G4Box("Attenuator3", water_size_x + attenThickness3/2., water_size_y + attenThickness3/2., water_size_z + attenThickness3/2.);
+  G4LogicalVolume* logicThirdAttenuator = new G4LogicalVolume(solidThirdAttenuator, attenuator3, "LastLayerAttenuator3");
+  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicThirdAttenuator, "LastLayerAttenuator3", logicSecondAttenuator, false, 0, checkOverlaps);
+
+  if(attenuatorState3)
+    G4cout << "DetectorConstruction::Construct -> Third Attenuator set to: " << attenThickness3 << " mm of " << attenuator3->GetName() << G4endl;
+
+// Make Water Casing (Plexiglass)
+
+  G4Box* solidCasing = new G4Box("Plexiglass", water_size_x, water_size_y, water_size_z);
+  G4LogicalVolume* logicCasing = new G4LogicalVolume(solidCasing, plexiglass, "Plexiglass");
+  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicCasing, "Plexiglass", logicThirdAttenuator, false, 0, checkOverlaps);
+  G4cout << G4endl << "DetectorConstruction::Construct -> Water Tank Information" << G4endl;
+  G4cout << "----------------------------------------------------------------------" << G4endl;
+  if(plexiThickness != 0.18*mm)
+  {
+    G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: "
+    << plexiThickness << " mm" << G4endl;
+  }
+
+  return logicCasing;
+}
+
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
-// Get nist material manager
-  G4NistManager* nist = G4NistManager::Instance();
-  // ************************************* Set up Materials ***************************************** //
-  G4Material *air = nist->FindOrBuildMaterial("G4_AIR");
-
-  // Materials For NIST Shielding
-  G4Material *attenuator = nist->FindOrBuildMaterial(attenuatorMat);
-  G4Material *low_z_attenuator = nist->FindOrBuildMaterial(attenuatorMat2);
+  G4Material *attenuator, *attenuator2, *attenuator3;
+  ConstructAttenuatorMaterial(attenuator, attenuator2, attenuator3);
 
   G4Element *elO = new G4Element("Oxygen", "O", 8, 16.0*g/mole);
   G4Element *elH = new G4Element("Hydrogen", "H", 1, 1.00794*g/mole);
@@ -69,8 +185,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Material *Water = new G4Material("Water", 0.99802*g/cm3,2, kStateLiquid,273.15, 1); // Name, density, numComponents, state, Temperature, pressure
   Water->AddElement(elH, 1);
   Water->AddElement(elO, 2);
-  G4Material *plexiglass = nist->FindOrBuildMaterial("G4_PLEXIGLASS");
-  G4Material* PMT_mat = nist->FindOrBuildMaterial("G4_Pyrex_Glass");
 
   // Set up Photocathode materials
   G4Element* elGa = new G4Element("Gallium", "Ga", 31, 69.723*g/mole);
@@ -89,9 +203,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   bialkali->AddElement(elSb,1);
 
   G4double world_size_x = 2.5*m;
-  G4double world_size_z = 4.5*m;
+  G4double world_size_y = 2.5*m;
+  G4double world_size_z = 2.5*m;
 
-  G4Box* solidWorld = new G4Box("World", world_size_x, world_size_x, world_size_z);
+  if(detTest)
+  {
+   world_size_x = 1.*m;
+   world_size_z = 1.*m;
+  }
+  G4Box* solidWorld = new G4Box("World", world_size_x, world_size_y, world_size_z);
 
   G4LogicalVolume* logicWorld =
           new G4LogicalVolume(solidWorld, //its solid
@@ -112,9 +232,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // ********************************************************** World and Materials Complete ************************************************************//
   // Parameters used later
   DetectorInformation* detInfo = DetectorInformation::Instance();
-  G4double bremStartPos = 130*cm;
+  G4double bremStartPos = detInfo->GetShiftFactor()/(cm);
   detInfo->setBremStartPosition(bremStartPos);
-  G4double container_z_pos = 1.2192*m + 1.5*m;
+  G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
+
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
@@ -124,17 +245,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   if(!detTest)
   {
-    chop->Construct(logicWorld, checkOverlaps);
-    // Set up Linac configuration if Brem Test
-
-    if(bremTest)
+    if(!run_without_chopper)
     {
-      linac->Construct(logicWorld, checkOverlaps);
+      chop->Construct(logicWorld, checkOverlaps);
+      collimator->Construct(logicWorld, checkOverlaps);
     }
-
-    // ***************************************** End of Brem Test Materials ***************************************** //
-
-    collimator->Construct(logicWorld, checkOverlaps);
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();
 
@@ -142,93 +257,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 // ******************************************************** Begin Detector Construction *************************************************************** //
 
-  // First Attenuation Layer
-  // THIS IS THE MOTHER VOLUME INSIDE WORLD ALL OTHER DETECTOR VOLUMES ARE DAUGHTERS OF THIS VOLUME
-  G4Box* solidAttenuator = new G4Box("Attenuator", water_size_x + attenThickness/2. + attenThickness2/2., water_size_y + attenThickness/2. + attenThickness2/2.,
-                                     water_size_z + attenThickness/2. + attenThickness2/2.);
-  G4LogicalVolume* logicAttenuator = new G4LogicalVolume(solidAttenuator, attenuator, "Attenuator");
-  if(attenuatorState)
-  {
-    G4cout << G4endl << "DetectorConstruction::Construct -> Attenuator Information" << G4endl;
-    G4cout << "----------------------------------------------------------------------" << G4endl;
-    G4cout << "DetectorConstruction::Construct -> Attenuator Thickness set to: " << attenThickness << " mm of " << attenuator->GetName() << G4endl;
-  }
-  else
-  {
-    attenuatorState2 = false;
-    attenThickness2 = 0.001*mm; // of air
-    G4cout<< "DetectorConstruction::Construct -> Second Attenuator State automatically set to Off." << G4endl;
-  }
-
-  //G4double water_z_pos = container_z_pos - 1.2192*m;
-  G4double water_z_pos = detInfo->getRearCollimatorPosition();
-  G4double myangle = (180. - theAngle)*pi/180.;
-  G4double water_x_pos = tan(myangle)*(container_z_pos - water_z_pos);
-  G4double detDistance = water_x_pos/sin(myangle) + water_size_z;
-  G4RotationMatrix* waterRot = new G4RotationMatrix;
-  waterRot->rotateY((180. - theAngle)*deg);
-  G4RotationMatrix* waterRot2 = new G4RotationMatrix;
-  waterRot2->rotateY((180. + theAngle)*deg);
-
-  if(detTest)
-  {
-    new G4PVPlacement(0, G4ThreeVector(0,0,water_size_z), logicAttenuator,
-                      "Attenuator1Lay1L",logicWorld, false, 0, checkOverlaps);
-  }
-  else
-  {
-    new G4PVPlacement(waterRot,
-                      G4ThreeVector(water_x_pos,0,water_z_pos), logicAttenuator,
-                      "Attenuator1Lay1L", logicWorld, false, 0, checkOverlaps);
-    new G4PVPlacement(waterRot2,
-                      G4ThreeVector(-1*water_x_pos,0,water_z_pos), logicAttenuator,
-                      "Attenuator1Lay1R", logicWorld, false, 0, checkOverlaps);
-  }
-
-// Option to add second layer of low Z attenuation material
-
-  G4Box* solidSecondAttenuator = new G4Box("LowZAttenuator", water_size_x + attenThickness2/2., water_size_y+attenThickness2/2.,
-                                           water_size_z+attenThickness2/2.);
-  G4LogicalVolume* logicSecondAttenuator = new G4LogicalVolume(solidSecondAttenuator, low_z_attenuator, "LowZAttenuator");
-  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicSecondAttenuator, "LowZAttenuator", logicAttenuator, false, 0, checkOverlaps);
-  if(attenuatorState2)
-  {
-    G4cout << "DetectorConstruction::Construct -> Second Attenuator set to: " << attenThickness2 << " mm of " << low_z_attenuator->GetName() << G4endl;
-  }
-
-// Make Water Casing (Plexiglass)
-
-  G4Box* solidCasing = new G4Box("Plexiglass", water_size_x, water_size_y, water_size_z);
-  G4LogicalVolume* logicCasing = new G4LogicalVolume(solidCasing, plexiglass, "Plexiglass");
-  new G4PVPlacement(0,G4ThreeVector(0,0,0), logicCasing, "Plexiglass", logicSecondAttenuator, false, 0, checkOverlaps);
-  G4cout << G4endl << "DetectorConstruction::Construct -> Water Tank Information" << G4endl;
-  G4cout << "----------------------------------------------------------------------" << G4endl;
-  if(plexiThickness != 0.18*mm)
-  {
-    G4cout << "DetectorConstruction::Construct -> Plexiglass Thickness Changed to: "
-    << plexiThickness << " mm" << G4endl;
-  }
-  else
-  {
-    G4cout << G4endl
-    << "DetectorConstruction::Construct -> Plexiglass Thickness set to default: "
-    << plexiThickness << " mm" << G4endl;
-  }
+  G4LogicalVolume* logicCasing = ConstructAttenuatorsAndPlexiglass(logicWorld, container_z_pos, attenuator, attenuator2, attenuator3);
   if(tapeThick != 0.01*cm)
   {
     G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: "
-    << tapeThick << " cm" << G4endl;
-  }
-  else
-  {
-    G4cout << "DetectorConstruction::Construct -> Optical Tape Wrap set to default: "
     << tapeThick << " cm" << G4endl;
   }
 
 // Make Teflon tape wrap
 
   G4VSolid* solidTape = new G4Box("Tape", water_size_x-plexiThickness, water_size_y-plexiThickness, water_size_z-plexiThickness);
-  G4Material *teflonTape = nist->FindOrBuildMaterial("G4_TEFLON");
   G4LogicalVolume* logicTape = new G4LogicalVolume(solidTape, teflonTape, "Tape");
   physTape = new G4PVPlacement(0,G4ThreeVector(0,0,0), logicTape, "Tape", logicCasing, false, 0, checkOverlaps);
 
@@ -308,8 +346,24 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     PMT_y_posv.push_back(0);
   }
 
-  for(G4int k=0;k<nPMT;++k)
+  if(detTest)
   {
+    for(G4int k=0;k<nPMT;++k)
+    {
+      new G4PVPlacement(0,
+                        G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
+                        logicPMT,
+                        "PMT",
+                        logicWater,
+                        false,
+                        k,
+                        checkOverlaps);
+    }
+  }
+  else
+  {
+    for(G4int k=0;k<nPMT;++k)
+    {
       new G4PVPlacement(0,
                         G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
                         logicPMT,
@@ -318,6 +372,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         false,
                         k,
                         checkOverlaps);
+    }
   }
 
 // **************************************************** Construct Photocathode ****************************************************** //
@@ -405,7 +460,6 @@ physPC = new G4PVPlacement(0,
     G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
     casingOPMPT->DumpTable();
   }
-       // } // for if !bremTest
 
 //always return the physical World!!!
   if(debug)

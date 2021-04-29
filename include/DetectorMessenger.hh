@@ -37,6 +37,7 @@
 class DetectorConstruction;
 class G4UIcmdWithADouble;
 class G4UIcmdWithAString;
+class G4UIcmdWithAnInteger;
 class G4UIdirectory;
 
 class DetectorMessenger: public G4UImessenger
@@ -46,7 +47,7 @@ public:
   ~DetectorMessenger();
 
   void SetNewValue(G4UIcommand*, G4String); // must always be a string input
-private:
+protected:
   DetectorConstruction* DetectorA;
   G4UIcmdWithADouble* Cmd;
   G4UIcmdWithADouble* CmdX;
@@ -63,6 +64,10 @@ private:
   G4bool check_atten2_on = false;
   G4UIcmdWithADouble* CmdAttenThick2;
   G4UIcmdWithAString* CmdAttenMat2;
+  G4UIcmdWithAString* CmdAttenOn3;
+  G4UIcmdWithADouble* CmdAttenThick3;
+  G4UIcmdWithAString* CmdAttenMat3;
+  G4bool check_atten3_on = false;
   G4UIcmdWithADouble* CmdPlexi;
   G4UIcmdWithADouble* CmdTape;
   G4UIcmdWithAString* CmdVis;
