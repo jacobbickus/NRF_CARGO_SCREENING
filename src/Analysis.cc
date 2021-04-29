@@ -75,7 +75,7 @@ void Analysis::Book()
       std::cout << "Analysis::Book -> Brem Test Ntuples 0 - 4" << std::endl;
   }
   // for Creating Detector Response Function
-  else if(detTest)
+  else if(detTest && !WResponseFunction)
   {
     IncidentShielding();  // 0
     IncidentPlexiglass(); // 1
@@ -136,7 +136,7 @@ void Analysis::finish()
     G4cerr << "ERROR Analysis::finish: Failed to write to file" << G4endl;
     return;
   }
-  
+
   manager->Write();
   manager->CloseFile();
 
