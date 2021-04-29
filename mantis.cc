@@ -372,6 +372,12 @@ int main(int argc,char **argv)
           run_without_chopper = true;
         std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
       }
+      else if (G4String(input) == "-t6")
+      {
+        IntObjTest = true;
+        std::cout << "Running Interrogation Object Test: " << IntObjTest << std::endl;
+        i=i-1;
+      }
       else if (G4String(input) == "--intobj_test")
       {
         RunIntObjTest_in = argv[i+1];
