@@ -299,7 +299,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                   checkOverlaps); //overlaps checking
 
     // Conduct Final Tank Position Check
-    if(!detTest)
+    if(!detTest && !debug)
     {
       DefDetPositionConstraintUpper(container_z_pos/(m), water_size_z/(m), water_z_pos/(m));
       DefDetPositionConstraintLeft(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
@@ -471,7 +471,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 //always return the physical World!!!
   if(debug)
     G4cout << "DetectorConstruction::Construct -> Constructed!" << G4endl << G4endl;
-    
+
   return physWorld;
 }
 /* ************************************************************************************ */

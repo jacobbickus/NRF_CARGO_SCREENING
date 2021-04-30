@@ -45,9 +45,11 @@ public:
     void Integral(std::vector<TTree*>,TCut);
     void PredictThickness(std::vector<string>, bool write2file=false);
     void PredictThickness(std::vector<string>, double, bool write2file=false);
+    /*
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double);
     void RebinHisto(vector<string>, vector<string>, vector<string>, int, double, double, TCut);
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
+    */
     void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
     void Sampling(const char*, const char*, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
     void SimpleSampling(const char*, const char*, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false);
@@ -64,7 +66,7 @@ public:
     double Energy2Wave(double, string unit="eV");
     double Wave2Energy(double, string unit="m");
     void PrepareAnalysis(std::vector<string>, bool weighted=false, bool correct=true, int estimate=-1);
-    void PrepInputSpectrum(const char*, const char* object="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=1.0e-3);
+    void PrepInputSpectrum(const char*, const char* object="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=1.0e-3, double minimum_energy=0.0);
     void ChopperWeightandCost(string, double, double chopper_radius=7.5);
     void GetScintillationDistribution(const char*, bool Corrected=true);
     void RunSummary(const char*, const char*, bool intObjIn=true, bool weighted=false, bool zscores=true, bool drawPlots=false, bool drawBeamEnergyPlots=false);
@@ -73,6 +75,7 @@ public:
     void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
     void GetCounts(const char*, bool weighted=false);
     void GetCountIntegralAndError(const char*, bool weighted=false);
+    void VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false);
 
 private:
 
@@ -198,8 +201,10 @@ private:
     void hIntegral(const char*);
     double ZTest(double, double);
     void ZTest(const char*, const char*, const char*, bool weighted=false);
+    /*
     void Rebin(bool,const char*,const char*,const char*,int,double Emin=0.0,double Emax=2.1,TCut cut1="NA",bool VarArray=false,double nrf_bin_width=-1.,double non_nrf_bin_width=-1.);
     void Rebin(const char*, const char*, const char*);
+    */
     void Rescale(const char*, double, bool write2file=false);
     void Rescale(const char*, bool write2file=false);
 
@@ -232,10 +237,12 @@ private:
     void Show_Integral_Description();
     void Show_PredictThickness();
     void Show_PredictThickness_Description();
+    /*
     void Show_RebinHisto();
     void Show_RebinHisto_Description();
     void Show_VarRebin();
     void Show_VarRebin_Description();
+    */
     void Show_CheckEvents();
     void Show_CheckEvents_Description();
     void Show_Sampling();
@@ -413,11 +420,11 @@ void MantisROOT::Help()
   Show_PrepInputSpectrum();
   Show_PrepInputSpectrum_Description();
   std::cout << std::endl;
-
+/*
   Show_RebinHisto();
   Show_RebinHisto_Description();
   std::cout << std::endl;
-
+*/
   Show_RunSummary();
   Show_RunSummary_Description();
   std::cout << std::endl;
@@ -433,11 +440,11 @@ void MantisROOT::Help()
   Show_Sig2Noise();
   Show_Sig2Noise_Description();
   std::cout << std::endl;
-
+/*
   Show_VarRebin();
   Show_VarRebin_Description();
   std::cout << std::endl;
-
+*/
   Show_Wave2Energy();
   Show_Wave2Energy_Description();
   std::cout << std::endl;
@@ -447,19 +454,16 @@ void MantisROOT::Help()
   std::cout << std::endl;
 }
 
-void MantisROOT::Rebin(bool verbose, const char* inFile, const char* ObjName, const char* OutObjName,
-  int nbins, double Emin = 0.0, double Emax=2.1, TCut cut1="NA",
-  bool VarArray=false, double nrf_bin_width = -1., double non_nrf_bin_width =-1.)
+void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false)
 {
 
   // Check to make sure file exists
   CheckFile(inFile);
 
   // Complete User Input Checks
-  if(VarArray && (nrf_bin_width < 0. || non_nrf_bin_width < 0.))
+  if(energy_regions.size() != bin_widths.size()+1)
   {
-    std::cerr << "USER ERROR. Variable bin widths selected without user selecting "
-                << "the magnitude of the bin widths. Exiting..." << std::endl;
+    std::cerr << "MantisROOT::VariableBinWidthRebin -> FATAL ERROR energy region vector size must be one index larger than bin width vector size. Exiting..." << std::endl;
     exit(1);
   }
 
@@ -470,100 +474,168 @@ void MantisROOT::Rebin(bool verbose, const char* inFile, const char* ObjName, co
   inObj = (TTree*) f->Get(ObjName);
   inObj->SetEstimate(-1);
   // Grab TTree Values
-  Int_t nentries=0;
-  if(cut1=="NA")
-    nentries = inObj->Draw("Energy:Weight","","goff");
-  else
-    nentries = inObj->Draw("Energy:Weight",cut1,"goff");
+  double energy, weight;
+  inObj->SetBranchAddress("Energy", &energy);
 
-  if(nentries <= 0)
-    exit(1);
+  if(weighted)
+    inObj->SetBranchAddress("Weight", &weight);
 
-  if(verbose)
-    inObj->Print();
+  std::vector<double> energyv, weightv;
 
-  Double_t *energies = inObj->GetVal(0);
-  Double_t *weights = inObj->GetVal(1);
-  TH1D *hObj;
-  // If User wants fixed bin widths
-  if(!VarArray)
+  if(debug)
+    std::cout << "MantisROOT::VariableBinWidthRebin -> Grabbing Energies..." << std::endl;
+
+  for(int i=0;i<inObj->GetEntries();++i)
   {
-    if(verbose)
-      std::cout << "User did not select variable bin widths." << std::endl;
-    hObj = new TH1D(OutObjName, "Weighted Energy Spectrum", nbins, Emin, Emax);
+    inObj->GetEntry(i);
+    energyv.push_back(energy);
+    weightv.push_back(weight);
   }
-  // User wants variable bin widths
-  else
+
+  if(debug)
+    std::cout << "MantisROOT::VariableBinWidthRebin -> Energies grabbed." << std::endl;
+
+  int tbins = 0;
+  std::vector<int> nbinsv;
+  // Find total number of bins
+  for(int i=0;i<energy_regions.size()-1;++i)
   {
-    if(verbose)
-      std::cout << "User selected variable bin widths." <<std::endl;
-    // Find total number of bins
-    double edge_counter = 0.;
-    int nbins1 = Emin/(non_nrf_bin_width);
-    int nbins2 = (Emax - Emin)/nrf_bin_width;
-    Int_t tbins = nbins1 + nbins2;
-    // create edges (dynamically sized array)
-    Double_t* edges = new Double_t[tbins+1];
-    // fill the edges for the first region
-    if(verbose)
-      std::cout << "Creating Edges for the first region..." << std::endl;
+    int nbins = (energy_regions[i+1] - energy_regions[i])/bin_widths[i];
+    nbinsv.push_back(nbins);
+    tbins += nbins;
+  }
 
-    for(int i=0;i<nbins1+1;++i)
+  if(debug)
+  {
+    for(int i=0;i<nbinsv.size();++i)
+      std::cout << "Number of Bins: " << nbinsv[i] << std::endl;
+
+    std::cout << "Total Number of Bins: " << tbins << std::endl;
+  }
+  // create edges (dynamically sized array)
+  Double_t* edges = new Double_t[tbins+1];
+  double edge_counter = energy_regions[0];
+  double last_edge_counter = energy_regions[0];
+
+  if(debug)
+    std::cout << "MantisROOT::VariableBinWidthRebin -> Filling Edges..." << std::endl;
+
+  for(int i=0;i<nbinsv.size();++i)
+  {
+    edge_counter = last_edge_counter;
+    int bins_completed = 0;
+
+    if(i > 0)
     {
-      edges[i] = edge_counter;
-      edge_counter += non_nrf_bin_width;
+      int a = 0;
+      while(a < i)
+      {
+        bins_completed += nbinsv[a];
+        a++;
+      }
     }
-    // fill the edges for the second region
-    edge_counter = edge_counter - non_nrf_bin_width;
-    if(verbose)
-      std::cout << "Creating Edges for the second region..." << std::endl;
 
-    for(int i=nbins1;i<tbins+2;++i)
+    for(int j=bins_completed;j<nbinsv[i]+bins_completed;++j)
     {
-      edges[i] = edge_counter;
-      edge_counter += nrf_bin_width;
+      edges[j] = edge_counter;
+      edge_counter += bin_widths[i];
+      last_edge_counter = edge_counter;
     }
+  }
 
-    // edges complete now create new histogram
-    hObj = new TH1D(OutObjName,"Weighted Energy Spectrum w/ Variable Bins",tbins,edges);
+  int energy_end = energy_regions.size()-1;
+  edges[tbins] = energy_regions[energy_end];
 
-  }// end !VarArray
+  // Check edges are increasing
+  std::vector<double> edgesv;
+  for(int i=0;i<tbins+1;++i)
+    edgesv.push_back(edges[i]);
 
+  if(debug)
+  {
+    for(int i=0;i<edgesv.size();++i)
+      std::cout << "Edges Vector Index " << i << " Value: " << edgesv[i] << std::endl;
+  }
+
+  if(!std::is_sorted(edgesv.begin(),edgesv.end()))
+  {
+    auto it = std::is_sorted_until(edgesv.begin(),edgesv.end());
+    std::cout << "ERROR Edges not in ascending order." << std::endl
+    << "Check Index: " << it - edgesv.begin() << std::endl;
+
+    for(int i=0;i<it-edgesv.begin()+1;++i)
+      std::cout << "Edge Index " << i << " Value: " << edgesv[i] << std::endl;
+  }
+
+
+  if(debug)
+  {
+    std::cout << "MantisROOT::VariableBinWidthRebin -> Edges Filled." << std::endl;
+    std::cout << "Edges Preview: " << std::endl;
+    for(int i=0;i<nbinsv.size();++i)
+    {
+      int bins_completed = 0;
+
+      if(i > 0)
+      {
+        int a = 0;
+        while(a < i)
+        {
+          bins_completed += nbinsv[a];
+          a++;
+        }
+
+        if(debug)
+        {
+          std::cout << "Bins Completed: " << bins_completed << std::endl;
+          std::cout << "Bins in Next loop: " << nbinsv[i] << std::endl;
+        }
+      }
+
+      for(int j=bins_completed;j<nbinsv[i]+bins_completed;++j)
+      {
+        std::cout << "Edge Index " << j << " Value: " << edges[j] << std::endl;
+      }
+    }
+  }
+
+  // Create Histogram
+  std::cout << "MantisROOT::VariableBinWidthRebin -> Creating Histogram..." << std::endl;
+  TH1D* hObj = new TH1D("hObj",ObjName, tbins, edges);
+
+  if(debug)
+    std::cout << "MantisROOT::VariableBinWidthRebin -> Filling Histogram..." << std::endl;
+
+  for(unsigned int i=0;i<inObj->GetEntries();++i)
+  {
+    if(weighted)
+      hObj->Fill(energyv[i], weightv[i]);
+    else
+      hObj->Fill(energyv[i]);
+  }
+
+  std::cout << "MantisROOT::VariableBinWidthRebin -> Histogram Filled." << std::endl;
+  hObj->Print();
   // Prior to filling histogram set structure for storing bin errors
   hObj->Sumw2();
 
-  if(verbose)
-    std::cout << "Filling Histogram..." << std::endl;
-  // Fill the new Histogram
-  for(unsigned int i=0;i<nentries;++i)
-  {
-    hObj->Fill(energies[i],weights[i]);
-  }
-
   // Write to OutFile
-  std::string OutFileName;
-  if(!VarArray)
-    OutFileName = "rebinned_" + to_string(nbins) + "_" + (std::string)inFile;
-  else
-    OutFileName = "rebinned_Variable_binWidth_" + to_string(nrf_bin_width) + "_" + (std::string)inFile;
-
   TFile *fout;
-  if(!gSystem->AccessPathName(OutFileName.c_str()))
-    fout = new TFile(OutFileName.c_str(),"update");
+  if(!gSystem->AccessPathName(Outfilename))
+    fout = new TFile(Outfilename,"update");
   else
-    fout = new TFile(OutFileName.c_str(),"recreate");
+    fout = new TFile(Outfilename,"recreate");
 
   fout->cd();
   hObj->Write();
-  std::cout << "Rebinned Histogram written to: " << OutFileName << std::endl;
+  std::cout << "Variable Bin Width Histogram written to: " << Outfilename << std::endl;
   fout->Close();
-
 }
 
 // *************************************************************************//
 // *************************************************************************//
 // *************************************************************************//
-
+/*
 void MantisROOT::Rebin(const char* inFile,const char* ObjName,const char* OutObjName)
 {
   // Check to make sure file exists
@@ -606,7 +678,7 @@ void MantisROOT::Rebin(const char* inFile,const char* ObjName,const char* OutObj
   hObj->Write();
   fout->Close();
 } // end of Rebin Functions
-
+*/
 void MantisROOT::hIntegral(TH1 *h)
 {
   int nentries = h->GetEntries();
@@ -1047,6 +1119,7 @@ void MantisROOT::PredictThickness(std::vector<string> obj, double Er, bool write
   std::cout << "Thickness Prediction Analysis Complete." << std::endl;
 }
 
+/*
 void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,
                  std::vector<string> OutObjName, int nbins, double Emin,
                  double Emax)
@@ -1104,6 +1177,7 @@ void MantisROOT::VarRebin(std::vector<string> inFile, std::vector<string> ObjNam
     }
   }
 }
+*/
 
 void MantisROOT::Show(string name="All", bool description=false)
 {
@@ -1135,13 +1209,13 @@ void MantisROOT::Show(string name="All", bool description=false)
     Show_PredictThickness();
     Show_PrepareAnalysis();
     Show_PrepInputSpectrum();
-    Show_RebinHisto();
+    //Show_RebinHisto();
     Show_RunSummary();
     Show_Sampling();
     Show_Show();
     Show_Sig2Noise();
     Show_SimpleSampling();
-    Show_VarRebin();
+    //Show_VarRebin();
     Show_Wave2Energy();
     Show_ZScore();
   }
@@ -1277,24 +1351,28 @@ void MantisROOT::Show(string name="All", bool description=false)
     if(description)
       Show_PrepInputSpectrum_Description();
   }
+  /*
   else if(!name.compare("RebinHisto"))
   {
     Show_RebinHisto();
     if(description)
       Show_RebinHisto_Description();
   }
+  */
   else if(!name.compare("RunSummary"))
   {
     Show_RunSummary();
     if(description)
       Show_RunSummary_Description();
   }
+  /*
   else if(!name.compare("VarRebin"))
   {
     Show_VarRebin();
     if(description)
       Show_VarRebin_Description();
   }
+  */
   else if(!name.compare("CheckEvents"))
   {
     Show_CheckEvents();
@@ -2920,15 +2998,21 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename,  const char* ob
   return g_input;
 }
 
-void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3)
+void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3, double minimum_energy=0.0)
 {
   CheckFile(InputFilename);
   TFile *f = new TFile(InputFilename);
   f->cd();
   TTree* tin;
   f->GetObject(obj, tin);
+  double minE = 0.0;
+
+  if(minimum_energy == 0.0)
+    minE = tin->GetMinimum("Energy");
+  else
+    minE = minimum_energy;
+
   double maxE = tin->GetMaximum("Energy");
-  double minE = tin->GetMinimum("Energy");
 
   int nbins = (maxE - minE)/deltaE;
 
@@ -4867,7 +4951,7 @@ void MantisROOT::Show_PredictThickness_Description()
   << std::endl << "This would predict thickness effects of IntObjIn and IntObjOut for the 1.73354 resonance energy and write the results to a file."
   << std::endl;
 }
-
+/*
 void MantisROOT::Show_RebinHisto()
 {
   std::cout << "void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName, std::vector<string> OutObjName, int nbins, double Emin, double Emax)"
@@ -4892,7 +4976,7 @@ void MantisROOT::Show_VarRebin_Description()
 {
   std::cout << "DESCRIPTION: " << std::endl << "See RebinHisto. This Function allows variable binning." << std::endl;
 }
-
+*/
 void MantisROOT::Show_CheckEvents()
 {
   std::cout << "void CheckEvents(const char* filename, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false)" << std::endl;
