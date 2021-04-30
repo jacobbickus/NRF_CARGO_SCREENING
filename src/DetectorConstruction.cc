@@ -253,6 +253,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
       chop->Construct(logicWorld, checkOverlaps);
       collimator->Construct(logicWorld, checkOverlaps);
     }
+    else
+    {
+      detInfo->setRearCollimatorPosition(-linac_size-50*cm)
+    }
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();
 
