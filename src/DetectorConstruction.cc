@@ -248,6 +248,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double linac_size = 4.5*cm;
   detInfo->setLinac_Size(linac_size);
   detInfo->setWaterSizeY(water_size_y);
+  detInfo->SetCollimatorSize(50*cm);
+  detInfo->setRearCollimatorPosition(-linac_size-150*cm);
 
   if(!detTest)
   {
@@ -255,10 +257,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     {
       chop->Construct(logicWorld, checkOverlaps);
       collimator->Construct(logicWorld, checkOverlaps);
-    }
-    else
-    {
-      detInfo->setRearCollimatorPosition(-linac_size-150*cm);
     }
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();

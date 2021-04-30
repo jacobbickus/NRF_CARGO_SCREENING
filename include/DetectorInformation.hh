@@ -58,6 +58,8 @@ public:
   G4double GetContainerEdgePosition()const{return container_edge_position;}
   void setWaterSizeY(G4double y){water_size_y = y;}
   G4double GetWaterSizeY()const{return water_size_y;}
+  void SetCollimatorSize(G4double x){collimator_size = x;}
+  G4double GetCollimatorSize()const{return collimator_size;}
 
   void setBeginChopper(G4double pos){BeginChop = pos;}
   G4double getBeginChopper()const{return BeginChop;}
@@ -89,6 +91,7 @@ private:
   G4double bremStartPos, linac_size, container_z_pos, water_size_y, container_edge_position;
   G4double BeginChop, EndChop, EndIntObj, RearColPos, linac_min_radius, linac_max_radius, distance_to_chop;
   G4double end_linac, brem_target_edge_position;
+  G4double collimator_size;
   ~DetectorInformation();
 };
 
