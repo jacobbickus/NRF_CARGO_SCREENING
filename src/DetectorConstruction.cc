@@ -239,6 +239,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   detInfo->setBremStartPosition(bremStartPos);
   G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
 
+  if(run_without_chopper)
+    container_z_pos = 0.;
+
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
   detInfo->setContainerEdgePosition(container_edge_position);
@@ -255,7 +258,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     }
     else
     {
-      detInfo->setRearCollimatorPosition(-linac_size-50*cm);
+      detInfo->setRearCollimatorPosition(-linac_size-150*cm);
     }
     cargo->Construct(logicWorld, checkOverlaps);
     cargo->CheckCargoSphereSize();
