@@ -193,20 +193,20 @@ void Cargo::Construct(G4LogicalVolume* logicWorld, bool checkO)
     CheckCargoBoxSize();
     PlaceCargoSpheres();
     PlaceCargoBoxes();
-    
+
     if(run_without_chopper)
-      CheckIntObjAndSource();
+      CheckIntObjAndSource(container_z_pos);
 }
 
-void Cargo::CheckIntObjAndSource()
+void Cargo::CheckIntObjAndSource(G4double c_z_pos)
 {
   SourceInformation* sInfo = SourceInformation::Instance();
   G4double source_position = sInfo->GetSourceZPosition();
-  if(source_position > (container_z_pos - IntObj_rad))
+  if(source_position > (c_z_pos - IntObj_rad))
   {
     G4cerr << "Cargo::CheckIntObjAndSource -> USER ERROR Source position is past interrogation object."
     << std::endl << "Source Position: " << source_position/(cm) << " cm" << std::endl
-    << "Interrogation Object Edge Position: " << (container_z_pos - IntObj_rad)/(cm) << " cm" << std::endl;
+    << "Interrogation Object Edge Position: " << (c_z_pos - IntObj_rad)/(cm) << " cm" << std::endl;
     exit(100);
   }
 }
