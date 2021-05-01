@@ -44,6 +44,7 @@
 #include "G4Material.hh"
 #include "CargoMessenger.hh"
 #include "DetectorInformation.hh"
+#include "SourceInformation.hh"
 
 
 class G4VPhysicalVolume;
