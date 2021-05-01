@@ -149,7 +149,7 @@ private:
   void CheckCargoBoxSize();
   void PlaceCargoBoxes();
   void PlaceCargoSpheres();
-  void CheckIntObjAndSource();
+  void CheckIntObjAndSource(G4double);
 
 
   G4bool RemoveContainer;
