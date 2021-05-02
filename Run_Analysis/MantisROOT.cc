@@ -622,6 +622,11 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
   if(normalize)
     hObj->Scale(1./hObj->Integral());
 
+  TGraph* gObj = new TGraph(hObj);
+
+  hObj->SetName("h_input");
+  gObj->SetName("Graph_from_h_input");
+
   // Write to OutFile
   TFile *fout;
   if(!gSystem->AccessPathName(Outfilename))
