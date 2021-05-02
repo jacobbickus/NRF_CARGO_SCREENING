@@ -454,7 +454,7 @@ void MantisROOT::Help()
   std::cout << std::endl;
 }
 
-void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false)
+void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true)
 {
 
   // Check to make sure file exists
@@ -618,6 +618,9 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
   hObj->Print();
   // Prior to filling histogram set structure for storing bin errors
   hObj->Sumw2();
+
+  if(normalize)
+    hObj->Scale(1./hObj->Integral());
 
   // Write to OutFile
   TFile *fout;
