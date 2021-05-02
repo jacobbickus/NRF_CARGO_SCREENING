@@ -276,7 +276,7 @@ void SteppingActionFull::UserSteppingAction(const G4Step* aStep)
 
 // *********************************************** Track Photocathode Interactions **************************************************** //
 
-        // Photocathode Analysis
+    // Photocathode Analysis
 
     if(endPoint->GetStepStatus() == fGeomBoundary)
     {

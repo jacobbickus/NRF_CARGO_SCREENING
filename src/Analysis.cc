@@ -32,6 +32,7 @@ extern G4bool WResponseFunction;
 extern G4bool resonanceTest;
 extern G4String inFile;
 extern G4bool IntObjTest;
+extern G4bool run_without_chopper;
 
 Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
 {
@@ -114,6 +115,16 @@ void Analysis::Book()
     if(debug)
       std::cout << "Analysis::Book -> IntObj Test Ntuples 0 - 4" << std::endl;
 
+  }
+  else if(run_without_chopper)
+  {
+    NRF(WEIGHTED);
+    IncidentIntObj(WEIGHTED);
+    EmissionIntObj(WEIGHTED);
+    IncidentShielding(WEIGHTED); // 5
+    IncidentPlexiglass(WEIGHTED); // 6
+    PCDetection(WEIGHTED);
+    IncidentPC(WEIGHTED);
   }
   // for a simulation without detector response
   else
