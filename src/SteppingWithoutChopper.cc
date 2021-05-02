@@ -119,7 +119,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
     if(nextStep_VolumeName.compare("IntObj") == 0
        && previousStep_VolumeName.compare("IntObj") != 0)
     {
-      FillIntObjIn(3);
+      FillIntObjIn(1);
       return;
     }
   }
@@ -138,7 +138,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
     {
       if(drawIntObjOutDataFlag)
       {
-        FillIntObjOut(4);
+        FillIntObjOut(2);
         return;
       }// end if drawIntObjOutDataFlag
       else
@@ -154,7 +154,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
     if(nextStep_VolumeName.compare(0,5,"Atten") == 0
         && previousStep_VolumeName.compare("World") == 0)
     {
-      FillShielding(5);
+      FillShielding(3);
       return;
     }
   }
@@ -179,7 +179,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
     }
     if(drawPlexiIncDataFlag)
     {
-      FillPlexi(6);
+      FillPlexi(4);
       return;
     }
     else
@@ -226,7 +226,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
                 creatorProcess = "Beam";
 
             procCount = "Det";
-            FillDetected(12, theParticle->GetKineticEnergy()/(MeV), creatorProcess);
+            FillDetected(5, theParticle->GetKineticEnergy()/(MeV), creatorProcess);
           }
           else if(theStatus == Transmission)
             procCount = "Trans";
@@ -257,7 +257,7 @@ void SteppingWithoutChopper::UserSteppingAction(const G4Step* aStep)
           // Keep track of Detector Process Data
           if(drawDetDataFlag)
           {
-            FillIncDetector(13, theParticle->GetKineticEnergy()/(MeV));
+            FillIncDetector(6, theParticle->GetKineticEnergy()/(MeV));
           } // for if keeping track of detector process data
 
         } // for if opProc

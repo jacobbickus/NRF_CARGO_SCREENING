@@ -118,13 +118,13 @@ void Analysis::Book()
   }
   else if(run_without_chopper)
   {
-    NRF(WEIGHTED);
-    IncidentIntObj(WEIGHTED);
-    EmissionIntObj(WEIGHTED);
-    IncidentShielding(WEIGHTED); // 5
-    IncidentPlexiglass(WEIGHTED); // 6
-    PCDetection(WEIGHTED);
-    IncidentPC(WEIGHTED);
+    NRF(WEIGHTED);                // 0
+    IncidentIntObj(WEIGHTED);     // 1
+    EmissionIntObj(WEIGHTED);     // 2
+    IncidentShielding(WEIGHTED);  // 3
+    IncidentPlexiglass(WEIGHTED); // 4
+    PCDetection(WEIGHTED);        // 5
+    IncidentPC(WEIGHTED);         // 6
   }
   // for a simulation without detector response
   else
