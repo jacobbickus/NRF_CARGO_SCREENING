@@ -77,8 +77,8 @@ public:
     void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
     void GetCounts(const char*, bool weighted=false);
     void GetCountIntegralAndError(const char*, bool weighted=false);
-    void PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true);
-    void VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true, bool for_weighted_spectrum=false);
+    void PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool drawWeights=false);
+    TGraph* VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, std::vector<double> samplev, bool weighted=false, bool normalize=true, bool for_weighted_spectrum=false);
 
 private:
 
@@ -217,6 +217,7 @@ private:
     TH1D* BuildSimpleSample(const char* filename, const char* obj, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2);
     void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
     TGraph* PrepInputSpectrum(const char*, const char*, bool, double);
+    void DrawWeights(TGraph* input, TGraph* sample);
 
     string EraseSubStr(string&, const string&);
 
@@ -457,7 +458,7 @@ void MantisROOT::Help()
   std::cout << std::endl;
 }
 
-void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true)
+void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool drawWeights=false)
 {
   CheckFile(filename);
   TFile* f = new TFile(filename);
@@ -478,7 +479,7 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
   if(debug)
     std::cout << "MantisROOT::PrepIntObjInputSpectrum -> End of h_sample_short: " << energy_regions[energy_end] << std::endl;
 
-  TH1D* h_sample_short = new TH1D("h_sample_short","h_sample_short",100,energy_regions[0],energy_regions[energy_end]);
+  TH1D* h_sample_short = new TH1D("h_sample_short","Sampling Distribution 100 Bins",100,energy_regions[0],energy_regions[energy_end]);
   for(int i=0;i<obj->GetEntries();++i)
   {
     obj->GetEntry(i);
@@ -492,6 +493,18 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
     h_sample_short->Scale(1./h_sample_short->Integral());
 
   TGraph* g_sample_short = new TGraph(h_sample_short);
+  Double_t* sample = g_sample_short->GetX();
+  std::vector<double> samplev;
+  for(int i=0;i<100;++i)
+  {
+    if(sample[i] > energy_regions[energy_end-1])
+    {
+      if(debug)
+        std::cout << "Sample Index: " << i << " Value set: " << sample[i] << std::endl;
+
+      samplev.push_back(sample[i]);
+    }
+  }
   std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling created." << std::endl;
 
   TFile* outfile = new TFile(Outfilename,"recreate");
@@ -500,12 +513,31 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
   outfile->Close();
   std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling Written to file: " << Outfilename << std::endl;
 
-  VariableBinWidthRebin(filename, ObjName, Outfilename, energy_regions, bin_widths, Weighted, normalize, true);
+
+  TGraph* g_input_short = VariableBinWidthRebin(filename, ObjName, Outfilename, energy_regions, bin_widths, samplev, Weighted, normalize, true);
+
+  if(g_input_short == 0)
+  {
+    std::cout << "MantisROOT::PrepIntObjInputSpectrum -> VariableBinWidthRebin Returned NULL Exiting..." << std::endl;
+    return;
+  }
+
+  if(drawWeights)
+  {
+    DrawWeights(g_input_short, g_sample_short);
+    TCanvas* c_input_short = new TCanvas("c_input_short","dNdE Distribution",600,400);
+    c_input_short->cd();
+    g_input_short->Draw();
+    TCanvas* c_sample_short = new TCanvas("c_sample_short","Sampling Distribution",600,400);
+    c_sample_short->cd();
+    g_sample_short->Draw();
+  }
+
   std::cout << "MantisROOT::PrepIntObjInputSpectrum -> COMPLETE." << std::endl;
 
 }
 
-void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool for_weighted_spectrum=false)
+TGraph* MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, std::vector<double> samplev, bool Weighted=false, bool normalize=true, bool for_weighted_spectrum=false)
 {
   // Check to make sure file exists
   CheckFile(filename);
@@ -563,13 +595,15 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
     std::cout << "Total Number of Bins: " << tbins << std::endl;
   }
   // create edges (dynamically sized array)
-  Double_t* edges = new Double_t[tbins];
-  double edge_counter = energy_regions[0];
-  double last_edge_counter = energy_regions[0];
+  Double_t* edges = new Double_t[tbins+1];
+  double edge_counter = bin_widths[0]+energy_regions[0];
+  double last_edge_counter = bin_widths[0]+energy_regions[0];
+  int energy_end = energy_regions.size()-1;
 
   if(debug)
     std::cout << "MantisROOT::VariableBinWidthRebin -> Filling Edges..." << std::endl;
 
+  edges[0] = energy_regions[0];
   for(int i=0;i<nbinsv.size();++i)
   {
     edge_counter = last_edge_counter;
@@ -585,21 +619,33 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
       }
     }
 
-    for(int j=bins_completed;j<nbinsv[i]+bins_completed;++j)
+    for(int j=bins_completed+1;j<nbinsv[i]+bins_completed+1;++j)
     {
       edges[j] = edge_counter;
       edge_counter += bin_widths[i];
+      // do a check
+      if(edge_counter > energy_regions[i+1])
+      {
+        if(debug)
+          std::cout << "Boundary Edge Condition met at index: " << j << std::endl;
+
+        edges[j+1] = energy_regions[i+1];
+        edge_counter = energy_regions[i+1];
+      }
       last_edge_counter = edge_counter;
     }
   }
 
-  int energy_end = energy_regions.size()-1;
-  int bin_end = bin_widths.size()-1;
-  edges[tbins] = energy_regions[energy_end] + bin_widths[bin_end];
-
+  // Reset edges past NRF to end to ensure correctness
+  for(int i=0;i<samplev.size();++i)
+  {
+    int loc = tbins - samplev.size() + i;
+    edges[loc] = samplev[i];
+  }
+  edges[tbins] = 1.8;
   // Check edges are increasing
   std::vector<double> edgesv;
-  for(int i=0;i<tbins;++i)
+  for(int i=0;i<tbins+1;++i)
     edgesv.push_back(edges[i]);
 
   if(!std::is_sorted(edgesv.begin(),edgesv.end()))
@@ -608,40 +654,17 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
     std::cout << "ERROR Edges not in ascending order." << std::endl
     << "Check Index: " << it - edgesv.begin() << std::endl;
 
-    for(int i=0;i<it-edgesv.begin();++i)
+    for(int i=0;i<edgesv.size();++i)
       std::cout << "Edge Index " << i << " Value: " << edgesv[i] << std::endl;
+
+    return 0;
   }
-
-
-  if(debug)
+  else
   {
-    std::cout << "MantisROOT::VariableBinWidthRebin -> Edges Filled." << std::endl;
-    std::cout << "Edges Preview: " << std::endl;
-    for(int i=0;i<nbinsv.size();++i)
+    if(debug)
     {
-      int bins_completed = 0;
-
-      if(i > 0)
-      {
-        int a = 0;
-        while(a < i)
-        {
-          bins_completed += nbinsv[a];
-          a++;
-        }
-
-        if(debug)
-        {
-          std::cout << "Bins Completed: " << bins_completed << std::endl;
-          std::cout << "Bins in Next loop: " << nbinsv[i] << std::endl;
-        }
-      }
-
-      for(int j=bins_completed;j<nbinsv[i]+bins_completed;++j)
-      {
-        std::cout << "Edge Index " << j << " Value: " << edges[j] << std::endl;
-      }
-      std::cout << "Edge Index " << tbins << " Value: " << edges[tbins] << std::endl;
+      for(int i=0;i<edgesv.size();++i)
+        std::cout << "Edge Index " << i << " Value: " << edgesv[i] << std::endl;
     }
   }
 
@@ -691,6 +714,7 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
   gObj->Write();
   std::cout << "Variable Bin Width Histogram written to: " << Outfilename << std::endl;
   fout->Close();
+  return gObj;
 }
 
 // *************************************************************************//
@@ -3113,40 +3137,42 @@ void MantisROOT::SimpleSampling(const char* filename, const char* obj, bool Weig
   WriteSampling(g_input_short, g_sample_short, h_sample_long, deltaE, deltaE_short);
 
   if(drawWeights)
-  {
-    std::cout << "MantisROOT::SimpleSampling -> Drawing Weights..." << std::endl;
-    TCanvas* c1 = new TCanvas("c1","Weighting Spectra",600,400);
-    c1->cd();
-    gPad->SetTicks(1,1);
-	  gPad->SetLogy();
-    std::vector<double> energies, theweights;
-    energies.push_back(0);
-    theweights.push_back(0);
-    double maxE = TMath::MaxElement(g_input_short->GetN(), g_input_short->GetX());
-    for(double i=maxE/1000.;i<maxE;i += maxE/1000.)
-    {
-      energies.push_back(i);
-    }
-    for(int i=1;i<energies.size();++i)
-    {
-      double energy = energies[i];
-      double w = g_input_short->Eval(energy)/g_sample_short->Eval(energy);
-      theweights.push_back(w);
-    }
-
-    TGraph* gWeights = new TGraph(energies.size(), &energies[0], &theweights[0]);
-    gWeights->SetTitle("Weighting Spectrum");
-    gWeights->GetXaxis()->SetTitle("Energy [MeV]");
-    gWeights->GetYaxis()->SetTitle("Weight");
-    gWeights->GetYaxis()->SetRangeUser(1e-4,1e5);
-    gWeights->Draw("AC");
-
-    std::cout << "MantisROOT::SimpleSampling -> Weighting Drawn." << std::endl;
-
-  }
+    DrawWeights(g_input_short, g_sample_short);
 
   std::cout << "MantisROOT::SimpleSampling -> Complete." << std::endl;
 
+}
+
+void MantisROOT::DrawWeights(TGraph* input, TGraph* sample)
+{
+  std::cout << "MantisROOT::DrawWeights -> Drawing Weights..." << std::endl;
+  TCanvas* c1 = new TCanvas("c1","Weighting Spectra",600,400);
+  c1->cd();
+  gPad->SetTicks(1,1);
+  gPad->SetLogy();
+  std::vector<double> energies, theweights;
+  energies.push_back(0);
+  theweights.push_back(0);
+  double maxE = TMath::MaxElement(input->GetN(), input->GetX());
+  for(double i=maxE/1000.;i<maxE;i += maxE/1000.)
+  {
+    energies.push_back(i);
+  }
+  for(int i=1;i<energies.size();++i)
+  {
+    double energy = energies[i];
+    double w = input->Eval(energy)/sample->Eval(energy);
+    theweights.push_back(w);
+  }
+
+  TGraph* gWeights = new TGraph(energies.size(), &energies[0], &theweights[0]);
+  gWeights->SetTitle("Weighting Spectrum");
+  gWeights->GetXaxis()->SetTitle("Energy [MeV]");
+  gWeights->GetYaxis()->SetTitle("Weight");
+  gWeights->GetYaxis()->SetRangeUser(1e-4,1e5);
+  gWeights->Draw("AC");
+
+  std::cout << "MantisROOT::DrawWeights -> Weighting Drawn." << std::endl;
 }
 
 void MantisROOT::Sampling(const char *filename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
