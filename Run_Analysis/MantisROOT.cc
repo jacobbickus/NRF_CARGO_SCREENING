@@ -51,12 +51,14 @@ public:
     void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double);
     */
     void CheckEvents(const char*, bool Weighted=false, bool Corrected=false, bool copy_to_original_file=false);
-    void Sampling(const char*, const char*, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
-    void SimpleSampling(const char*, const char*, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false);
+    void Sampling(const char *filename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000);
+    void SimpleSampling(const char* filename, const char* obj, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false);
     void CheckIntObj(const char*, const char*, double Er=1.73354, bool Weighted=false);
     std::vector<TH1D*> CheckIntObj(std::vector<string>, double Er=1.73354, bool Weighted=false);
-    void CheckAngles(const char*, const char*, const char*, int estimate=-1);
+    void CheckAngles(const char* filename, const char* obj1, const char* obj2, int estimate=-1);
+    /*
     TGraph* CreateTKDE(const char*, int nentries=10000);
+    */
     void CheckDet(const char*, bool weighted=false, int estimate=-1);
     TGraph* CreateScintillationDistribution(std::vector<double>, std::vector<double>);
     void CreateScintillationDistribution(string, string, string, string);
@@ -75,7 +77,8 @@ public:
     void CreateDetectorResponseFunction(const char*, const char*, double maxE=1.8, bool drawFigures=false);
     void GetCounts(const char*, bool weighted=false);
     void GetCountIntegralAndError(const char*, bool weighted=false);
-    void VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false);
+    void PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true);
+    void VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true, bool for_weighted_spectrum=false);
 
 private:
 
@@ -190,7 +193,7 @@ private:
     void hIntegral(TH1*);
     double hIntegral(TH1*, int);
     double hIntegral(TTree*, int, TCut, double);
-    double hIntegral(TTree*, int);
+    double hIntegral(TTree *inObj, int returnValue);
     double hIntegralReturn(TTree*, bool, TCut cut1="NA");
     double hIntegralReturnWeightedCounts(TTree*, double cut_energy=5e-6);
     double hIntegralReturnWeightedEnergy(TTree*, double cut_energy=5e-6);
@@ -210,8 +213,8 @@ private:
 
     double ReturnMax(const char*, const char*);
     double ReturnMin(const char*, const char*);
-    TH1D* BuildBremSampling(const std::vector<double>, double, double, double, double);
-    TH1D* BuildSimpleSample(const char*, const char*, double, double, double, double, double);
+    TH1D* BuildBremSampling(const std::vector<double> Evec_above_threshold, double non_nrf_energy_cut, double deltaE, double Emax, double theweight);
+    TH1D* BuildSimpleSample(const char* filename, const char* obj, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2);
     void WriteSampling(TGraph*, TGraph*, TH1D*, double, double);
     TGraph* PrepInputSpectrum(const char*, const char*, bool, double);
 
@@ -454,11 +457,54 @@ void MantisROOT::Help()
   std::cout << std::endl;
 }
 
-void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool weighted=false, bool normalize=true)
+void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true)
 {
+  CheckFile(filename);
+  TFile* f = new TFile(filename);
+  f->cd();
 
+  TTree* obj;
+
+  obj = (TTree*) f->Get(ObjName);
+  obj->SetEstimate(-1);
+  double energy, weight;
+  obj->SetBranchAddress("Energy",&energy);
+
+  if(Weighted)
+    obj->SetBranchAddress("Weight",&weight);
+
+  int energy_end = energy_regions.size()-1;
+  TH1D* h_sample_short = new TH1D("h_sample_short","h_sample_short",100,energy_regions[0],energy_regions[energy_end]);
+  for(int i=0;i<obj->GetEntries();++i)
+  {
+    obj->GetEntry(i);
+    if(Weighted)
+      h_sample_short->Fill(energy,weight);
+    else
+      h_sample_short->Fill(energy);
+  }
+
+  if(normalize)
+    h_sample_short->Scale(1./h_sample_short->Integral());
+
+  TGraph* g_sample_short = new TGraph(h_sample_short);
+  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling created." << std::endl;
+
+  TFile* outfile = new TFile(Outfilename,"recreate");
+  outfile->cd();
+  g_sample_short->Write();
+  outfile->Close();
+  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling Written to file: " << Outfilename << std::endl;
+
+  VariableBinWidthRebin(filename, ObjName, Outfilename, energy_regions, bin_widths, Weighted, normalize, true);
+  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> COMPLETE." << std::endl;
+
+}
+
+void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool for_weighted_spectrum=false)
+{
   // Check to make sure file exists
-  CheckFile(inFile);
+  CheckFile(filename);
 
   // Complete User Input Checks
   if(energy_regions.size() != bin_widths.size()+1)
@@ -467,7 +513,7 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
     exit(1);
   }
 
-  TFile *f = new TFile(inFile);
+  TFile *f = new TFile(filename);
   f->cd();
   TTree *inObj;
   // Grab the Users TTree
@@ -477,7 +523,7 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
   double energy, weight;
   inObj->SetBranchAddress("Energy", &energy);
 
-  if(weighted)
+  if(Weighted)
     inObj->SetBranchAddress("Weight", &weight);
 
   std::vector<double> energyv, weightv;
@@ -608,7 +654,7 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
 
   for(unsigned int i=0;i<inObj->GetEntries();++i)
   {
-    if(weighted)
+    if(Weighted)
       hObj->Fill(energyv[i], weightv[i]);
     else
       hObj->Fill(energyv[i]);
@@ -622,9 +668,15 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
   if(normalize)
     hObj->Scale(1./hObj->Integral());
 
+  //hObj->Smooth(10);
+
   TGraph* gObj = new TGraph(hObj);
 
-  hObj->SetName("h_input");
+  if(for_weighted_spectrum)
+    hObj->SetName("h_sample_long");
+  else
+    hObj->SetName("h_input");
+
   gObj->SetName("Graph_from_h_input");
 
   // Write to OutFile
@@ -636,6 +688,7 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
 
   fout->cd();
   hObj->Write();
+  gObj->Write();
   std::cout << "Variable Bin Width Histogram written to: " << Outfilename << std::endl;
   fout->Close();
 }
@@ -644,12 +697,12 @@ void MantisROOT::VariableBinWidthRebin(const char* inFile, const char* ObjName, 
 // *************************************************************************//
 // *************************************************************************//
 /*
-void MantisROOT::Rebin(const char* inFile,const char* ObjName,const char* OutObjName)
+void MantisROOT::Rebin(const char* filename,const char* ObjName,const char* OutObjName)
 {
   // Check to make sure file exists
-  CheckFile(inFile);
+  CheckFile(filename);
 
-  std::string OutFileName = "converted_" + (std::string)inFile;
+  std::string OutFileName = "converted_" + (std::string)filename;
   if(!gSystem->AccessPathName(OutFileName.c_str()))
   {
     std::cout << "Rebinned File Already exists. Continue to rebin?" << std::endl;
@@ -663,7 +716,7 @@ void MantisROOT::Rebin(const char* inFile,const char* ObjName,const char* OutObj
 
   }
 
-  TFile *f = new TFile(inFile);
+  TFile *f = new TFile(filename);
   f->cd();
   TTree *inObj;
   // Grab the Users TTree
@@ -1128,7 +1181,7 @@ void MantisROOT::PredictThickness(std::vector<string> obj, double Er, bool write
 }
 
 /*
-void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,
+void MantisROOT::RebinHisto(std::vector<string> filename, std::vector<string> ObjName,
                  std::vector<string> OutObjName, int nbins, double Emin,
                  double Emax)
 {
@@ -1137,17 +1190,17 @@ void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjN
     std::cout << "Error ObjName and OutObjName vector inputs must be same length! Check your inputs!" << std::endl;
     exit(1);
   }
-  for(int i=0;i<inFile.size();++i)
+  for(int i=0;i<filename.size();++i)
   {
     for(int j=0;j<ObjName.size();++j)
     {
-      Rebin(false, inFile[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
+      Rebin(false, filename[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
             nbins, Emin, Emax);
     }
   }
 }
 
-void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,
+void MantisROOT::RebinHisto(std::vector<string> filename, std::vector<string> ObjName,
                  std::vector<string> OutObjName, int nbins, double Emin,
                  double Emax, TCut cut1)
 {
@@ -1156,17 +1209,17 @@ void MantisROOT::RebinHisto(std::vector<string> inFile, std::vector<string> ObjN
     std::cout << "Error ObjName and OutObjName vector inputs must be same length! Check your inputs!" << std::endl;
     exit(1);
   }
-  for(int i=0;i<inFile.size();++i)
+  for(int i=0;i<filename.size();++i)
   {
     for(int j=0;j<ObjName.size();++j)
     {
-      Rebin(false, inFile[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
+      Rebin(false, filename[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
             nbins, Emin, Emax, cut1);
     }
   }
 }
 
-void MantisROOT::VarRebin(std::vector<string> inFile, std::vector<string> ObjName,
+void MantisROOT::VarRebin(std::vector<string> filename, std::vector<string> ObjName,
                            std::vector<string> OutObjName, int nbins,
                            double Ecut1, double Ecut2,
                            TCut cut1, double binwidth1, double binwidth2)
@@ -1176,11 +1229,11 @@ void MantisROOT::VarRebin(std::vector<string> inFile, std::vector<string> ObjNam
     std::cout << "Error ObjName and OutObjName vector inputs must be same length! Check your inputs!" << std::endl;
     exit(1);
   }
-  for(int i=0;i<inFile.size();++i)
+  for(int i=0;i<filename.size();++i)
   {
     for(int j=0;j<ObjName.size();++j)
     {
-      Rebin(false, inFile[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
+      Rebin(false, filename[i].c_str(), ObjName[j].c_str(), OutObjName[j].c_str(),
             nbins, Ecut1, Ecut2, cut1, true, binwidth1, binwidth2);
     }
   }
@@ -1984,12 +2037,12 @@ void MantisROOT::CopyATreeNoWeight(const char* filename, const char* tObj, const
   newfile->Close();
 } // end of CopyTreeNoWeight
 
-void MantisROOT::SNR_IntObj(const char* inFile, bool Weighted)
+void MantisROOT::SNR_IntObj(const char* filename, bool Weighted)
 {
   // Check to make sure file exists
-  CheckFile(inFile);
+  CheckFile(filename);
 
-  TFile *f = new TFile(inFile);
+  TFile *f = new TFile(filename);
   f->cd();
   TTree *aIntObjIn;
   f->GetObject("IntObjIn", aIntObjIn);
@@ -2077,16 +2130,16 @@ void MantisROOT::SNR_IntObj(const char* inFile, bool Weighted)
     std::cout << "MantisROOT::SNR_IntObj -> IntObjIn SNR: \t" << tSignalin/sqrt(inNoise) << std::endl;
   }
   else
-    std::cerr << "MantisROOT::SNR_IntObj -> ERROR IntObjIn Not Found in " << inFile << std::endl;
+    std::cerr << "MantisROOT::SNR_IntObj -> ERROR IntObjIn Not Found in " << filename << std::endl;
 }// end of SNR function
 
-void MantisROOT::SNR_Det(const char* inFile, bool Weighted, bool Corrected, bool cut, TCut cut1="NA")
+void MantisROOT::SNR_Det(const char* filename, bool Weighted, bool Corrected, bool cut, TCut cut1="NA")
 {
   // Check to make sure file exists
-  CheckFile(inFile);
+  CheckFile(filename);
 
   // Open the file
-  TFile *mainf = new TFile(inFile);
+  TFile *mainf = new TFile(filename);
   mainf->cd();
 
   TTree *eventT;
@@ -2752,10 +2805,10 @@ TH1D* MantisROOT::BuildBremSampling(const std::vector<double> Evec_above_thresho
   return h_sample;
 }
 
-double MantisROOT::ReturnMax(const char* InputFilename, const char* obj)
+double MantisROOT::ReturnMax(const char* filename, const char* obj)
 {
   std::cout << "MantisROOT::ReturnMax -> Searching Max Energy..." << std::endl;
-  TFile *f = TFile::Open(InputFilename);
+  TFile *f = TFile::Open(filename);
   bool confirm = f->cd();
   if(!confirm)
     exit(10);
@@ -2767,10 +2820,10 @@ double MantisROOT::ReturnMax(const char* InputFilename, const char* obj)
   return Emax;
 }
 
-double MantisROOT::ReturnMin(const char* InputFilename, const char* obj)
+double MantisROOT::ReturnMin(const char* filename, const char* obj)
 {
   std::cout << "MantisROOT::ReturnMin -> Searching Min Energy..." << std::endl;
-  TFile* f = TFile::Open(InputFilename);
+  TFile* f = TFile::Open(filename);
   bool confirm = f->cd();
 
   if(!confirm)
@@ -2783,7 +2836,7 @@ double MantisROOT::ReturnMin(const char* InputFilename, const char* obj)
   return Emin;
 }
 
-TH1D* MantisROOT::BuildSimpleSample(const char* InputFilename, const char* obj, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
+TH1D* MantisROOT::BuildSimpleSample(const char* filename, const char* obj, double deltaE, double cut_energy1, double cut_energy2, double weight1, double weight2)
 {
   if(cut_energy1 > cut_energy2)
   {
@@ -2791,8 +2844,8 @@ TH1D* MantisROOT::BuildSimpleSample(const char* InputFilename, const char* obj, 
     exit(1);
   }
 
-  double Emax = ReturnMax(InputFilename, obj);
-  double Emin = ReturnMin(InputFilename, obj);
+  double Emax = ReturnMax(filename, obj);
+  double Emin = ReturnMin(filename, obj);
 
   int nbins = Emax/deltaE;
   string hName;
@@ -2978,10 +3031,10 @@ void MantisROOT::CreateDetectorResponseFunction(const char* filename, const char
   std::cout << "MantisROOT::CreateDetectorResponseFunction -> Written to file: " << outfilename << std::endl;
 }
 
-TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename,  const char* obj, bool Weighted, double deltaE)
+TGraph* MantisROOT::PrepInputSpectrum(const char* filename,  const char* obj, bool Weighted, double deltaE)
 {
-  CheckFile(InputFilename);
-  TFile *f = new TFile(InputFilename);
+  CheckFile(filename);
+  TFile *f = new TFile(filename);
   f->cd();
   TTree* tin;
   f->GetObject(obj, tin);
@@ -3006,10 +3059,10 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* InputFilename,  const char* ob
   return g_input;
 }
 
-void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3, double minimum_energy=0.0)
+void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3, double minimum_energy=0.0)
 {
-  CheckFile(InputFilename);
-  TFile *f = new TFile(InputFilename);
+  CheckFile(filename);
+  TFile *f = new TFile(filename);
   f->cd();
   TTree* tin;
   f->GetObject(obj, tin);
@@ -3047,11 +3100,11 @@ void MantisROOT::PrepInputSpectrum(const char* InputFilename, const char* obj="C
   f->Close();
 }
 
-void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false)
+void MantisROOT::SimpleSampling(const char* filename, const char* obj, bool Weighted=false, double deltaE=5e-6, double deltaE_short=10e-3, double cut_energy1=0.5, double cut_energy2=1.0, double weight=1000, double weight2=10, bool checkZero=false, bool drawWeights=false)
 {
-	TGraph *g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, deltaE_short);
-  TH1D* h_sample_long = BuildSimpleSample(InputFilename, obj, deltaE, cut_energy1, cut_energy2, weight, weight2);
-  TH1D* h_sample_short = BuildSimpleSample(InputFilename, obj, deltaE_short, cut_energy1, cut_energy2, weight, weight2);
+	TGraph *g_input_short = PrepInputSpectrum(filename, obj, Weighted, deltaE_short);
+  TH1D* h_sample_long = BuildSimpleSample(filename, obj, deltaE, cut_energy1, cut_energy2, weight, weight2);
+  TH1D* h_sample_short = BuildSimpleSample(filename, obj, deltaE_short, cut_energy1, cut_energy2, weight, weight2);
   TGraph *g_sample_short = new TGraph(h_sample_short);
   // writes Brem TGraph with 1e-3 bin widths and Sampling TGraph with
   // same bin width then writes sampling histogram to sample energies
@@ -3096,13 +3149,13 @@ void MantisROOT::SimpleSampling(const char* InputFilename, const char* obj, bool
 
 }
 
-void MantisROOT::Sampling(const char *InputFilename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
+void MantisROOT::Sampling(const char *filename, const char* obj, bool Weighted=false, string sample_element="U", double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)
 {
 	// Convert Input Bremsstrahlung Spectrum Histogram to TGraph
-	CheckFile(InputFilename);
+	CheckFile(filename);
 
-  TGraph* g_input_short = PrepInputSpectrum(InputFilename, obj, Weighted, 10.0e-3);
-  double Emax = ReturnMax(InputFilename, obj);
+  TGraph* g_input_short = PrepInputSpectrum(filename, obj, Weighted, 10.0e-3);
+  double Emax = ReturnMax(filename, obj);
 	// resonance energies in MeV as calculated by G4NRF
 	vector<double> Evec;
 	vector<double> Evec_above_threshold;
@@ -3592,6 +3645,7 @@ void MantisROOT::CheckAngles(const char* filename, const char* obj1, const char*
 
 } // end of CheckAngles
 
+/*
 TGraph* MantisROOT::CreateTKDE(const char* filename, int nentries=10000)
 {
   CheckFile(filename);
@@ -3657,7 +3711,7 @@ TGraph* MantisROOT::CreateTKDE(const char* filename, int nentries=10000)
   return gBrems;
 
 } // End of CreateTKDE Function
-
+*/
 void MantisROOT::GetCounts(const char* filename, bool weighted=false)
 {
 
@@ -4962,8 +5016,8 @@ void MantisROOT::Show_PredictThickness_Description()
 /*
 void MantisROOT::Show_RebinHisto()
 {
-  std::cout << "void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName, std::vector<string> OutObjName, int nbins, double Emin, double Emax)"
-  << std::endl << "void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,std::vector<string> OutObjName, int nbins, double Emin, double Emax, TCut cut1)"
+  std::cout << "void RebinHisto(std::vector<string> filename, std::vector<string> ObjName, std::vector<string> OutObjName, int nbins, double Emin, double Emax)"
+  << std::endl << "void RebinHisto(std::vector<string> filename, std::vector<string> ObjName,std::vector<string> OutObjName, int nbins, double Emin, double Emax, TCut cut1)"
   << std::endl;
 }
 
@@ -5021,7 +5075,7 @@ void MantisROOT::Show_CheckDet_Description()
 
 void MantisROOT::Show_Sampling()
 {
-  std::cout << "void Sampling(const char* bremInputFilename, string sample_element=U, double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)" << std::endl;
+  std::cout << "void Sampling(const char* bremfilename, string sample_element=U, double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5, double weights=10000)" << std::endl;
 }
 
 void MantisROOT::Show_Sampling_Description()
@@ -5046,7 +5100,7 @@ void MantisROOT::Show_CreateDetectorResponseFunction_Description()
 
 void MantisROOT::Show_SimpleSampling()
 {
-  std::cout << "void SimpleSampling(const char* InputFilename, const char* obj=\"ChopIn\", bool Weighted=false, double deltaE=5.0e-6, double deltaE_short, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)" << std::endl;
+  std::cout << "void SimpleSampling(const char* filename, const char* obj=\"ChopIn\", bool Weighted=false, double deltaE=5.0e-6, double deltaE_short, double cut_energy1=0.5, double cut_energy2=1.5, double weight=10000, double weight2=10, bool checkZero=false, bool drawWeights=false)" << std::endl;
 }
 
 void MantisROOT::Show_SimpleSampling_Description()
@@ -5172,7 +5226,7 @@ void MantisROOT::Show_PrepareAnalysis_Description()
 
 void MantisROOT::Show_PrepInputSpectrum()
 {
-  std::cout << "void PrepInputSpectrum(const char* InputFilename, const char* object, string outfilename=\"brem.root\", bool Weighted=false, double deltaE=5.0e-6)" << std::endl;
+  std::cout << "void PrepInputSpectrum(const char* filename, const char* object, string outfilename=\"brem.root\", bool Weighted=false, double deltaE=5.0e-6)" << std::endl;
 }
 
 void MantisROOT::Show_PrepInputSpectrum_Description()

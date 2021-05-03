@@ -33,7 +33,6 @@ SteppingWithoutChopper::SteppingWithoutChopper(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
-  WEIGHTED = false;
   if(debug)
     std::cout << "SteppingWithoutChopper::SteppingWithoutChopper Initialized." << std::endl;
 }
