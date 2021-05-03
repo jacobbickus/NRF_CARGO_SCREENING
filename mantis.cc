@@ -449,6 +449,11 @@ int main(int argc,char **argv)
     std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << std::endl;
     exit(1);
   }
+  if((bremTest || detTest) && WEIGHTED)
+  {
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot conduct brem test or detector response test with a weighting input spectrum!" << std::endl;
+    exit(1);
+  }
   if(bremTest && detTest)
   {
     std::cerr << "FATAL ERROR mantis.cc -> Cannot test Bremsstrahlung and Detector Response during the same run!" << std::endl;
