@@ -474,7 +474,7 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
     obj->SetBranchAddress("Weight",&weight);
 
   int energy_end = energy_regions.size()-1;
-  
+
   if(debug)
     std::cout << "MantisROOT::PrepIntObjInputSpectrum -> End of h_sample_short: " << energy_regions[energy_end] << std::endl;
 
@@ -563,7 +563,7 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
     std::cout << "Total Number of Bins: " << tbins << std::endl;
   }
   // create edges (dynamically sized array)
-  Double_t* edges = new Double_t[tbins+1];
+  Double_t* edges = new Double_t[tbins];
   double edge_counter = energy_regions[0];
   double last_edge_counter = energy_regions[0];
 
@@ -594,18 +594,13 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
   }
 
   int energy_end = energy_regions.size()-1;
-  edges[tbins] = energy_regions[energy_end];
+  int bin_end = bin_widths.size()-1;
+  edges[tbins] = energy_regions[energy_end] + bin_widths[bin_end];
 
   // Check edges are increasing
   std::vector<double> edgesv;
-  for(int i=0;i<tbins+1;++i)
+  for(int i=0;i<tbins;++i)
     edgesv.push_back(edges[i]);
-
-  if(debug)
-  {
-    for(int i=0;i<edgesv.size();++i)
-      std::cout << "Edges Vector Index " << i << " Value: " << edgesv[i] << std::endl;
-  }
 
   if(!std::is_sorted(edgesv.begin(),edgesv.end()))
   {
@@ -613,7 +608,7 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
     std::cout << "ERROR Edges not in ascending order." << std::endl
     << "Check Index: " << it - edgesv.begin() << std::endl;
 
-    for(int i=0;i<it-edgesv.begin()+1;++i)
+    for(int i=0;i<it-edgesv.begin();++i)
       std::cout << "Edge Index " << i << " Value: " << edgesv[i] << std::endl;
   }
 
@@ -646,6 +641,7 @@ void MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName
       {
         std::cout << "Edge Index " << j << " Value: " << edges[j] << std::endl;
       }
+      std::cout << "Edge Index " << tbins << " Value: " << edges[tbins] << std::endl;
     }
   }
 
