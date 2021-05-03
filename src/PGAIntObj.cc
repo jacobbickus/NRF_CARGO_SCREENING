@@ -68,7 +68,7 @@ void PGAIntObj::GeneratePrimaries(G4Event* anEvent)
     w = dNdE/importanceSampling;
     // this is dangerous fixing weight...
     if(w > 1.)
-      w = 1.
+      w = 1.;
 
     int weight_counter = 0;
     while(w < 0)
