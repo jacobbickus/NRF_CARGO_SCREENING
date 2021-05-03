@@ -104,7 +104,6 @@ protected:
   G4int drawIntObjInDataFlag, drawIntObjOutDataFlag, drawShieldingIncDataFlag, drawPlexiIncDataFlag;
   G4int drawWaterIncDataFlag, drawScintillationDataFlag, drawScintillation2DataFlag;
   G4int drawCherenkovDataFlag, drawCherenkov2DataFlag, drawDetDataFlag;
-  G4bool WEIGHTED;
   StepMessenger* stepM;
 };
 

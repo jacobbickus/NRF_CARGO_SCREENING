@@ -28,6 +28,7 @@ extern G4bool debug;
 extern G4bool addNRF;
 extern G4long seed;
 extern G4bool output;
+extern G4bool WEIGHTED;
 
 SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)

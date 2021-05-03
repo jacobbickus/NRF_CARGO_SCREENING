@@ -25,9 +25,9 @@
 #include "BaseSteppingAction.hh"
 
 extern G4bool debug;
-extern G4String inFile;
 extern G4long seed;
 extern G4bool resonanceTest;
+extern G4bool WEIGHTED;
 
 BaseSteppingAction::BaseSteppingAction()
 : drawChopperIncDataFlag(0), drawChopperOutDataFlag(0), drawNRFDataFlag(0),
@@ -35,7 +35,6 @@ BaseSteppingAction::BaseSteppingAction()
   drawPlexiIncDataFlag(0), drawWaterIncDataFlag(0),
   drawScintillationDataFlag(0), drawScintillation2DataFlag(0),
   drawCherenkovDataFlag(0), drawCherenkov2DataFlag(0), drawDetDataFlag(0),
-  WEIGHTED(false),
   stepM(NULL)
 {
   if(debug)
@@ -46,12 +45,6 @@ BaseSteppingAction::BaseSteppingAction()
   kdet = DetectorInformation::Instance();
   manager = G4AnalysisManager::Instance();
   fExpectedNextStatus = Undefined;
-
-  if(!inFile.compare("importance_sampling_input.root"))
-    WEIGHTED = true;
-
-  if(resonanceTest)
-    WEIGHTED = false;
 }
 
 BaseSteppingAction::~BaseSteppingAction()

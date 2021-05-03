@@ -75,7 +75,6 @@ protected:
   G4int eventInfoFreq, runID;
   G4int eventID;
   G4double runTime, prevRunTime, eventsPerSec, totalEventsToRun, timeToFinish;
-  G4bool WEIGHTED;
   EventMessenger* eventM;
   G4int c_secondaries, s_secondaries, s_detected, c_detected, number_detected;
   G4double incident_energy;

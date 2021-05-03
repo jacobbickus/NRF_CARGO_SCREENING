@@ -24,7 +24,7 @@
 
 #include "PGADetResponseTest.hh"
 
-extern G4String inFile;
+extern G4bool WEIGHTED;
 extern G4double chosen_energy;
 extern G4bool SampleEnergyRangebool;
 extern G4bool resonanceTest;
@@ -39,7 +39,7 @@ PGADetResponseTest::PGADetResponseTest()
   if(chosen_energy < 0 && !resonanceTest && !SampleEnergyRangebool)
   {
 
-    if(!inFile.compare("importance_sampling_input.root"))
+    if(WEIGHTED)
     {
       ReadWeighted();
       file_check = false;

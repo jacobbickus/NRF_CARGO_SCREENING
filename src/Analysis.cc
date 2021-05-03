@@ -30,19 +30,13 @@ extern G4bool bremTest;
 extern G4bool detTest;
 extern G4bool WResponseFunction;
 extern G4bool resonanceTest;
-extern G4String inFile;
 extern G4bool IntObjTest;
 extern G4bool run_without_chopper;
+extern G4bool WEIGHTED;
 
-Analysis::Analysis() : fFactoryOn(false), WEIGHTED(false)
+Analysis::Analysis() : fFactoryOn(false)
 {
   start_time = time(0);
-  if(!inFile.compare("importance_sampling_input.root"))
-    WEIGHTED = true;
-
-  if(resonanceTest)
-    WEIGHTED = false;
-
   manager = G4AnalysisManager::Instance();
 }
 

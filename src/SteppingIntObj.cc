@@ -27,13 +27,13 @@
 extern G4bool output;
 extern G4long seed;
 extern G4bool debug;
+extern G4bool WEIGHTED;
 
 
 SteppingIntObj::SteppingIntObj(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
-  WEIGHTED = false;
   if(debug)
     std::cout << "SteppingIntObj::SteppingIntObj Initialized." << std::endl;
 }

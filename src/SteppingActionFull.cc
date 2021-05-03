@@ -27,6 +27,7 @@
 extern G4bool output;
 extern G4bool addNRF;
 extern G4bool debug;
+extern G4bool WEIGHTED;
 
 SteppingActionFull::SteppingActionFull(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)

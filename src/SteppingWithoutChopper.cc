@@ -27,6 +27,7 @@
 extern G4bool output;
 extern G4long seed;
 extern G4bool debug;
+extern G4bool WEIGHTED;
 
 
 SteppingWithoutChopper::SteppingWithoutChopper(EventAction* event)
