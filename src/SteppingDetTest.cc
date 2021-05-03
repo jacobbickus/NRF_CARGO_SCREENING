@@ -27,13 +27,13 @@
 extern G4bool output;
 extern G4long seed;
 extern G4bool debug;
+extern G4bool WEIGHTED;
 
 
 SteppingDetTest::SteppingDetTest(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
   fExpectedNextStatus = Undefined;
-  WEIGHTED = false;
   if(debug)
     std::cout << "SteppingDetTest::SteppingDetTest Initialized." << std::endl;
 }
