@@ -66,6 +66,11 @@ void PGAIntObj::GeneratePrimaries(G4Event* anEvent)
     G4double dNdE = g_input->Eval(energy);
     G4double importanceSampling = g_sample->Eval(energy);
     w = dNdE/importanceSampling;
+    if(w < 0)
+    {
+      G4cerr << "PGAIntObj::GeneratePrimaries FATAL ERROR Weight below zero: " << w << G4endl;
+      exit(1);
+    }
   }
   // User IS NOT USING importance sampling
   else

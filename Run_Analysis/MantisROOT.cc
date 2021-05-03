@@ -474,6 +474,10 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
     obj->SetBranchAddress("Weight",&weight);
 
   int energy_end = energy_regions.size()-1;
+  
+  if(debug)
+    std::cout << "MantisROOT::PrepIntObjInputSpectrum -> End of h_sample_short: " << energy_regions[energy_end] << std::endl;
+
   TH1D* h_sample_short = new TH1D("h_sample_short","h_sample_short",100,energy_regions[0],energy_regions[energy_end]);
   for(int i=0;i<obj->GetEntries();++i)
   {
