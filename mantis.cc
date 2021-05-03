@@ -64,7 +64,7 @@ namespace
   void PrintUsage()
   {
     std::cerr << "Usage: " << std::endl
-    << "Example:  ./mantis --macro mantis.in --file_to_sample importance_sampling_input.root -r --detector_response_file DetectorResponse.root"
+    << "Example:  ./mantis --macro mantis.in --file_to_sample importance_sampling_input.root -i -r --detector_response_file DetectorResponse.root"
     << std::endl << std::endl <<  "Would run a simulation using a detector response function found in DetectorResponse.root to predict the detector counts." << std::endl
     << "The input spectrum would be a weighted spectrum read from importance_sampling_input.root." << std::endl
     << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl << std::endl
