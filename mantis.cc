@@ -152,7 +152,6 @@ int main(int argc,char **argv)
   G4String RunIntObjTest_in = "false";
   IntObjTest = false;
   G4String importance_sampling_input_on_in = "false";
-  importance_sampling_input_on = false;
   WEIGHTED=false;
 
   // Output Defaults
