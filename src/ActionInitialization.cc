@@ -120,7 +120,7 @@ void ActionInitialization::Build() const
       SetUserAction(new SteppingBremTest());
     }
     // -t1
-    if(detTest)
+    else if(detTest)
     {
       if(debug)
         std::cout << "ActionInitialization::Build -> SteppingDetTest." << std::endl;
@@ -128,7 +128,7 @@ void ActionInitialization::Build() const
       SetUserAction(new SteppingDetTest(event));
     }
     // -t6
-    if(IntObjTest)
+    else if(IntObjTest)
     {
       if(debug)
         std::cout << "ActionInitialization::Build -> SteppingIntObj." << std::endl;
@@ -140,7 +140,7 @@ void ActionInitialization::Build() const
     // -r --Detector_Response_File
     // USER CAN RUN WResponseFunction && run_without_chopper (-r, -t5)
     // THIS IS THE MOST OPTIMIZED SIMULATION (AND LEAST PRECISE)
-    if(WResponseFunction)
+    else if(WResponseFunction)
     {
       if(debug)
         std::cout << "ActionInitialization::Build -> SteppingWResponseFunction." << std::endl;
