@@ -51,9 +51,9 @@ void InputFileManager::ReadWeightedInput(const char* inFile, TGraph* &g_input, T
   fFileOpen = true;
   fin->cd();
   //fin->ls();
-  fin->GetObject("Graph_from_h_input",g_input);
-  fin->GetObject("Graph_from_h_sample_short",g_sample);
-  fin->GetObject("h_sample_long",h_sample);
+  fin->GetObject("dNdE_graph",g_input);
+  fin->GetObject("sampling_graph",g_sample);
+  fin->GetObject("sampling_histo",h_sample);
   if(!g_sample || !h_sample)
   {
     G4cerr << "InputFileManager::ReadWeightedInput() -> FATAL ERROR Failure to grab TGraphs from File: " << inFile << G4endl;
@@ -70,7 +70,7 @@ void InputFileManager::ReadNonWeightedInput(const char* inFile, TGraph* &g_input
   fin = TFile::Open(inFile);
   fFileOpen = true;
   fin->cd();
-  fin->GetObject("Graph_from_h_input",g_input);
+  fin->GetObject("dNdE_graph",g_input);
 }
 
 void InputFileManager::CheckFile(const char* filename)
