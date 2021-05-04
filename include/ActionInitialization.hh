@@ -31,12 +31,13 @@
 
 class ActionInitialization : public G4VUserActionInitialization
 {
-  void CheckInputs();
   public:
     ActionInitialization();
     virtual ~ActionInitialization();
-
     virtual void Build() const;
+
+  private:
+    void CheckInputs();
 };
 
 #endif
