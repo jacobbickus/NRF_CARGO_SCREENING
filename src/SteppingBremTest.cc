@@ -57,8 +57,8 @@ void SteppingBremTest::UserSteppingAction(const G4Step* aStep)
   {
     return;
   }
-  eventInformation* info =
-            (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+  EventInformation* info =
+            (EventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
   beamEnergy = info->GetBeamEnergy()/(MeV);
 
   nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();

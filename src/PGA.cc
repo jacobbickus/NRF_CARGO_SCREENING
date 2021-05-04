@@ -118,7 +118,7 @@ void PGA::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
 // Pass the event information
-  eventInformation *anInfo = new eventInformation(anEvent);
+  EventInformation *anInfo = new EventInformation(anEvent);
   anInfo->SetWeight(w);
   anInfo->SetBeamEnergy(energy);
   anEvent->SetUserInformation(anInfo);

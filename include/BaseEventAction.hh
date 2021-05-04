@@ -28,7 +28,7 @@
 #include "globals.hh"
 #include "G4Types.hh"
 #include "G4EventManager.hh"
-#include "eventInformation.hh"
+#include "EventInformation.hh"
 #include "Analysis.hh"
 #include "G4RunManager.hh"
 #include "G4Event.hh"

@@ -53,7 +53,7 @@ void PGABremTest::GeneratePrimaries(G4Event* anEvent)
   fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0, 0, 1)); // along z axis
   fParticleGun->GeneratePrimaryVertex(anEvent);
 
-  eventInformation *anInfo = new eventInformation(anEvent);
+  EventInformation *anInfo = new EventInformation(anEvent);
   anInfo->SetWeight(1.);
   anInfo->SetBeamEnergy(energy);
   anEvent->SetUserInformation(anInfo);

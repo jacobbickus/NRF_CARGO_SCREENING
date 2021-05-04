@@ -62,8 +62,8 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     }
 
     // Grab Relevant event information including the particle weight
-    eventInformation* info =
-              (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    EventInformation* info =
+              (EventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     beamEnergy = info->GetBeamEnergy()/(MeV);
 
     if(WEIGHTED)

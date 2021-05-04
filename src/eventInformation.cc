@@ -22,41 +22,41 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "eventInformation.hh"
+#include "EventInformation.hh"
 #include "G4ios.hh"
 
-eventInformation::eventInformation()
+EventInformation::EventInformation()
 {
         weight = 0.;
         beamEnergy = 0.;
 }
 
-eventInformation::eventInformation(const G4Event*)
+EventInformation::EventInformation(const G4Event*)
 {
         weight = 0.; //aTrack->GetWeight();
         beamEnergy = 0.;
 }
 
-eventInformation::eventInformation(const eventInformation* anEventInfo)
+EventInformation::EventInformation(const EventInformation* anEventInfo)
 {
         weight = anEventInfo->GetWeight();
         beamEnergy = anEventInfo->GetBeamEnergy();
 }
 
-eventInformation::~eventInformation()
+EventInformation::~EventInformation()
 {
 }
 
-void eventInformation::SetWeight(G4double x)
+void EventInformation::SetWeight(G4double x)
 {
         weight = x;
 }
 
-void eventInformation::SetBeamEnergy(G4double x)
+void EventInformation::SetBeamEnergy(G4double x)
 {
         beamEnergy = x;
 }
 
-void eventInformation::Print() const
+void EventInformation::Print() const
 {
 }

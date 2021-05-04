@@ -36,7 +36,7 @@
 #include "EventAction.hh"
 #include "EventActionWResponseFunction.hh"
 #include "DetectorConstruction.hh"
-#include "eventInformation.hh"
+#include "EventInformation.hh"
 
 #include "G4SteppingManager.hh"
 #include "G4EventManager.hh"

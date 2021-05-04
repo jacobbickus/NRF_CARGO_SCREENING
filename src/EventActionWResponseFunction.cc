@@ -58,7 +58,7 @@ void EventActionWResponseFunction::EndOfEventAction(const G4Event* anEvent)
 
   if(incident_energy > 0.00001)
   {
-    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    EventInformation* info = (EventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double beam_energy = info->GetBeamEnergy();
     G4double weight = info->GetWeight();
     DetectorResponseFunction *r_function = DetectorResponseFunction::Instance();

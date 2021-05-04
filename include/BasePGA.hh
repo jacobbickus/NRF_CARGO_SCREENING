@@ -35,7 +35,7 @@
 #include "G4Event.hh"
 #include "G4Gamma.hh"
 #include "G4Electron.hh"
-#include "eventInformation.hh"
+#include "EventInformation.hh"
 #include "SourceInformation.hh"
 #include "DetectorInformation.hh"
 #include "InputFileManager.hh"

@@ -64,7 +64,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     if(debug && eventID == 0)
         std::cout << "EventAction::EndOfEventAction -> Beginning" << std::endl;
 
-    eventInformation* info = (eventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
+    EventInformation* info = (EventInformation*)(G4RunManager::GetRunManager()->GetCurrentEvent()->GetUserInformation());
     G4double weight = info->GetWeight();
     G4AnalysisManager* manager = G4AnalysisManager::Instance();
 
