@@ -31,6 +31,8 @@
 #include "SteppingActionFull.hh"
 #include "SteppingBremTest.hh"
 #include "SteppingDetTest.hh"
+#include "SteppingIntObj.hh"
+#include "SteppingWithoutChopper.hh"
 #include "SteppingWResponseFunction.hh"
 #include "StackingAction.hh"
 #include "EventAction.hh"
@@ -44,6 +46,8 @@ extern G4bool debug;
 extern G4bool detTest;
 extern G4bool bremTest;
 extern G4bool WResponseFunction;
+extern G4bool run_without_chopper;
+extern G4bool IntObjTest;
 extern G4bool run_without_chopper;
 
 ActionInitialization::ActionInitialization()
@@ -101,7 +105,22 @@ void ActionInitialization::Build() const
     {
       if(debug)
         std::cout << "ActionInitialization::Build -> SteppingWResponseFunction." << std::endl;
-        SetUserAction(new SteppingWResponseFunction(eventWResponseFunction));
+
+      SetUserAction(new SteppingWResponseFunction(eventWResponseFunction));
+    }
+    else if(IntObjTest)
+    {
+      if(debug)
+        std::cout << "ActionInitialization::Build -> SteppingIntObj." << std::endl;
+
+      SetUserAction(new SteppingIntObj(event));
+    }
+    else if(run_without_chopper)
+    {
+      if(debug)
+        std::cout << "ActionInitialization::Build -> SteppingWithoutChopper." << std::endl;
+
+      SetUserAction(new SteppingWithoutChopper(event));
     }
     else
       SetUserAction(new SteppingActionFull(event));

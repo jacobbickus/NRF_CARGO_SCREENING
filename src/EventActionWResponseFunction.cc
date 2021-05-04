@@ -25,7 +25,7 @@
 
 extern G4bool debug;
 extern G4bool printEvents;
-extern G4String inFile;
+extern G4bool WEIGHTED;
 
 EventActionWResponseFunction::EventActionWResponseFunction()
 : G4UserEventAction(), BaseEventAction()

@@ -27,11 +27,11 @@
 extern G4bool output;
 extern G4bool debug;
 extern G4bool addNRF;
+extern G4bool WEIGHTED;
 
 SteppingBremTest::SteppingBremTest()
 : G4UserSteppingAction(), BaseSteppingAction()
 {
-  WEIGHTED = false;
   if(debug)
     std::cout << "SteppingBremTest::SteppingBremTest Initialized." << std::endl;
 }

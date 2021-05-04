@@ -62,11 +62,16 @@ Example: mantis->CheckEvents("test.root",true, true) would Check WEIGHTED CORREC
 Check Interrogation Object
 ==
 
-void CheckIntObj(const char* onFile, const char* offFile, double Er=1.73354, bool Weighted=false)
+void CheckIntObj(const char* onFilename, const char* offFilename, double Er=1.73354, bool Weighted=false)
 
 DESCRIPTION:
 Draws a 200eV Wide Region centered on Er with 2eV bin widths for both Chopper States (On/Off).
 If the spectra contain weights be sure to add the boolean true to the fourth input.
+
+void CheckIntObjRegion(const char* onFilename, const char* offFilename, double regionCutE, TCut regionCut)
+
+DESCRIPTION:
+Checks the given interrogation object region based on the regionCutE which is the region cut energy. Specify the TCut with regionCut TCut.
 
 ***************************************************************************************************************************************************************
 
@@ -120,6 +125,21 @@ Creates TGraph of either "GaAsP" or "Bialkali" Photocathode Quantum Efficiency
 
 ***************************************************************************************************************************************************************
 
+Create Detector Response Function
+==
+
+void CreateDetectorResponseFunction(const char* filename, const char*, outfilename, double maxE = 1.8, bool drawFigures = false)
+
+DESCRIPTION:
+Create Detector Response Function based on the input file filename which should be a simulation ran with the Detector test flag. The Output will be a file outfilename that can be inputed into a simulation ran with a detector response function. Be sure to specify the maximum energy of the response function and if the response function figures are to be drawn set the 4th input to true.
+
+void CreateOptPerEnergy(const char* filename, double e_cut = 1.4)
+
+DESCRIPTION:
+Creates the number of optical photons emitted per incident energy. A cut can be placed on the Xaxis with e_cut.
+
+***************************************************************************************************************************************************************
+
 Create Scintillation Distribution
 ==
 
@@ -163,16 +183,6 @@ DESCRIPTION:
 Returns energy unit eV from wavelength unit meters.
 Unit options nm mm m km
 
-***************************************************************************************************************************************************************
-
-Help
-==
-
-void Help()
-
-DESCRIPTION:
-Help lists the available function calls and their descriptions.
-To See just the Functions calls try Show().
 
 ***************************************************************************************************************************************************************
 
@@ -226,29 +236,22 @@ This would predict thickness effects of IntObjIn and IntObjOut for the 1.73354 r
 
 ***************************************************************************************************************************************************************
 
-Prepare Analysis
-==
-
-void PrepareAnalysis(vector<string> filebases, bool weighted=false)
-
-DESCRIPTION:
-Prepares files from users filebases vector. If the files have weighted information set the second input to true
-Example: mantis->PrepareAnalysis({"test9","test10"},true)
-Would run CheckDet, CheckEvent and CopyTrees on weighted spectra in files
-test9On-merged.root, test9Off-merged.root, test10On-merged.root and test10Off-merged.root
-
-***************************************************************************************************************************************************************
-
 Prepare Input Spectrum
 ==
 
-void PrepInputSpectrum(const char* bremInputFilename, double deltaE=5.0e-6, string outfilename="brem.root")
+void PrepInputSpectrum(const char*, const char* object = "ChopIn", string outfilename = "brem.root", bool Weighted = false, double deltaE = 0.001, double minimum_energy = 0.)
 
 DESCRIPTION:
 Prepares input spectrum file for Mantis Simulation without importance sampling.
 deltaE is the bin width of the Histogram and if the user wishes a nondefault outfilename enter the third input.
 
-void Sampling(const char* bremInputFilename, string sample_element=U, double deltaE=5.0e-6, bool checkZero=false, double non_nrf_energy_cut=1.5)
+void PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, vector<double> energy_regions, vector<double> bin_widths, bool Weighted = false, bool normalize = true, bool drawWeights = false)
+
+DESCRIPTION:
+Prepares input spectrum file outfilename to input for a simulation ran without the chopper wheel by taking filename and creating a variable bin width histogram to sample from in accordance with energy_regions and bin_widths provided by user. If the data in filename is weighted set Weighted=true. To normalize the data set normalize=true and to draw the weighting distribution set drawWeights=true.
+
+
+void Sampling(const char* filename, const char* object_to_sample, bool Weighted = false, string sample_element = "U", double deltaE = 5.0E-6, bool checkZero = false, double non_nrf_energy_cut = 1.5, double weighting_factor = 10000)
 
 DESCRIPTION:
 Creates an importance sampling distribution and prepares mantis input file brems_distributions.root.
@@ -257,7 +260,7 @@ Example: mantis->Sampling("brem.root","U", 5e-6,true,1.5)
 would create brems_distributions.root with 5e-6 bin widths where if any bin content = 0 that bin would be set to the prior bins content
 the importance sampling distribution energies below 1.5 MeV would have importances 1/1000 of the NRF resonance energies.
 
-void SimpleSampling(const char* bremInputFilename, double deltaE=5.0e-6, double cut_energy=1.5, double weight=10000, bool checkZero=false)
+void SimpleSampling(const char* filename, const char* object_to_sample, bool Weighted = false, double deltaE = 5.00E-6, double deltaE_short = 0.01, double cut_energy1 = 0.5, double cut_energy2 = 1., double weighting_factor = 1000, double weighting_factor2 = 10, bool checkZero = false, bool drawWeights = false)
 
 DESCRIPTION:
 Creates an importance sampling distribution and prepares mantis input file brems_distributions.root.
@@ -271,37 +274,21 @@ the importance sampling distribution energies below 1.5 MeV would have importanc
 Rebin Histograms
 ==
 
-void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName, std::vector<string> OutObjName, int nbins, double Emin, double Emax)
+TGraph* VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, vector<double> energy_regions, vector<double> bin_widths, vector<double> samplev, bool weighted = false, bool normalize = true, bool for_weighted_spectrum = false)
 
 DESCRIPTION:
-Rebins the TTree Objects from multiples files given histogram parameters.
-Example: mantis->RebinHisto({"file1.root","file2.root"},{"IntObjIn","IntObjOut"},{"Rebinned_IntObjIn","Rebinned_IntObjOut"},100,1.7334,1.7336)
-This would rebin the Incident and Emission Interrogation object spectra into TH1D objects Rebinned_IntObjIn and Rebinned_IntObjOut respectively.
-The rebinned histograms would have 100 bins between 1.7334 and 1.7336 MeV.
-
-void RebinHisto(std::vector<string> inFile, std::vector<string> ObjName,std::vector<string> OutObjName, int nbins, double Emin, double Emax, TCut cut1)
-
-DESCRIPTION:
-Rebins the TTree Objects from multiples files given histogram parameters.
-Example: mantis->RebinHisto({"file1.root","file2.root"},{"IntObjIn","IntObjOut"},{"Rebinned_IntObjIn","Rebinned_IntObjOut"},100,1.7334,1.7336, "CreatorProcess == \"Beam\"")
-This would rebin the Incident and Emission Interrogation object spectra into TH1D objects Rebinned_IntObjIn and Rebinned_IntObjOut respectively.
-The rebinned histograms would have 100 bins between 1.7334 and 1.7336 MeV and only contain particles created as primary particles in the beam.
-
-void VarRebin(vector<string>, vector<string>, vector<string>, int, double, double, TCut, double, double)
-
-DESCRIPTION:
-See RebinHisto. This Function allows variable binning.
+Creates a variable bin width histogram of ObjName data from filename and writes the corresponding histogram and TGraph to Outfilename. The Energy regions and bin widths provided guide the variable width binning technique.
 
 ***************************************************************************************************************************************************************
 
 Run Summary
 ==
 
-void RunSummary(const char* onFilename, const char* offFilename, bool zscores=true, bool drawPlots=false)
+void RunSummary(const char* onFile, const char* offFile, bool intObjIn = true, bool weighted = false, bool drawPlots = false, bool drawBeamEnergyPlots = false)
 
 DESCRIPTION:
 Prints the run summary of Chopper On(onFilename) and Chopper Off(offFilename) including
-entries, means and zscores.
+entries and means.
 
 ***************************************************************************************************************************************************************
 
@@ -325,15 +312,19 @@ Example: mantis->Sig2Noise({"TestOn.root","TestOff.root"},"Both", true, true, tr
 ZScore Tests
 ==
 
-void ZScore(const char* filename1, const char* filename2, std::vector<string> ObjectNames, bool weighted=false)
+void ZScore(const char* filenameOn, bool weightedOn, const char* filenameOff, bool weightedOff)
 
 DESCRIPTION:
-Computes weighted ZTest on input 1 filename and input 2 filename for the TTree object names in input 3 string vector.
-Example: mantis->ZScore("TestOn.root", "TestOff.root", {"IntObjIn","DetInfo"}, true)
+Computes weighted ZTest on input 1 filename and input 2 filename for detector information. If the data is weighted apply the appropriate boolean inputs.
 
-void ZScore(double c1, double c2)
+void ZScore(double countsOn, double countsOff)
 
 DESCRIPTION:
 Computes ZScore on values provided.
 
 ZScore = abs(c1 - c2)/(sqrt(pow(sqrt(c1),2) + pow(sqrt(c2),2)))
+
+void ZScore(double countsOn, double errorOn, double countsOff, double errorOff)
+
+DESCRIPTION:
+Computs ZScore on values provided based on errors provided. 

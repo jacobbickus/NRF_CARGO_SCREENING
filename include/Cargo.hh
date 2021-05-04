@@ -44,6 +44,7 @@
 #include "G4Material.hh"
 #include "CargoMessenger.hh"
 #include "DetectorInformation.hh"
+#include "SourceInformation.hh"
 
 
 class G4VPhysicalVolume;
@@ -148,6 +149,7 @@ private:
   void CheckCargoBoxSize();
   void PlaceCargoBoxes();
   void PlaceCargoSpheres();
+  void CheckIntObjAndSource(G4double);
 
 
   G4bool RemoveContainer;

@@ -170,7 +170,7 @@ void BasePGA::SetupNonBremTest()
   beam_size_y = 10.0*mm;
   fParticleGun->SetParticleDefinition(G4Gamma::Definition());
   if(!detTest)
-    beamStart = -100.*cm;
+    beamStart = -135.*cm;
   else
     beamStart = -50.*cm;
   G4cout << "BasePGA::SetupNonBremTest -> Particle Type set to Gamma!" << G4endl;

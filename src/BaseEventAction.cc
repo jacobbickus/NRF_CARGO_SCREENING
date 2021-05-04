@@ -26,18 +26,16 @@
 
 extern G4bool debug;
 extern G4bool printEvents;
-extern G4String inFile;
+extern G4bool WEIGHTED;
 
 BaseEventAction::BaseEventAction()
 :eventInfoFreq(100000), runID(0),runTime(0.), prevRunTime(0.), eventsPerSec(0.),
-totalEventsToRun(0.), timeToFinish(0.), WEIGHTED(false), eventM(NULL)
+totalEventsToRun(0.), timeToFinish(0.), eventM(NULL)
 {
   if(debug)
     std::cout << "BaseEventAction::BaseEventAction Initialized." << std::endl;
 
   eventM = new EventMessenger(this);
-  if(!inFile.compare("importance_sampling_input.root"))
-    WEIGHTED = true;
 
   manager = G4AnalysisManager::Instance();
 }

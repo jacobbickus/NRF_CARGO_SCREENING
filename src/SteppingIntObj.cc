@@ -22,44 +22,39 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "SteppingWResponseFunction.hh"
+#include "SteppingIntObj.hh"
 
-extern G4bool debug;
-extern G4bool addNRF;
-extern G4long seed;
 extern G4bool output;
+extern G4long seed;
+extern G4bool debug;
 extern G4bool WEIGHTED;
 
-SteppingWResponseFunction::SteppingWResponseFunction(EventActionWResponseFunction* event)
+
+SteppingIntObj::SteppingIntObj(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
 {
+  fExpectedNextStatus = Undefined;
   if(debug)
-    std::cout << "SteppingWResponseFunction::SteppingWResponseFunction Initialized." << std::endl;
+    std::cout << "SteppingIntObj::SteppingIntObj Initialized." << std::endl;
 }
 
-SteppingWResponseFunction::~SteppingWResponseFunction()
-{
-}
+SteppingIntObj::~SteppingIntObj()
+{}
 
-void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
+void SteppingIntObj::UserSteppingAction(const G4Step* aStep)
 {
-  //std::cout << "SteppingWResponseFunction::UserSteppingAction -> HERE." << std::endl;
   if(!output)
     return;
 
-  G4StepPoint* endPoint   = aStep->GetPostStepPoint();
-  G4StepPoint* startPoint = aStep->GetPreStepPoint();
-  G4Track* theTrack       = aStep->GetTrack();
+    G4StepPoint* endPoint   = aStep->GetPostStepPoint();
+    G4StepPoint* startPoint = aStep->GetPreStepPoint();
+    G4Track* theTrack       = aStep->GetTrack();
 
     // Run Logical Checks
     if(endPoint == NULL)
-    {
       return; // at the end of the world
-    }
     else if(endPoint->GetPhysicalVolume()==NULL)
-    {
       return;
-    }
 
     // Grab Relevant event information including the particle weight
     eventInformation* info =
@@ -71,6 +66,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
 
     nextStep_VolumeName = endPoint->GetPhysicalVolume()->GetName();
     previousStep_VolumeName = startPoint->GetPhysicalVolume()->GetName();
+
     // kill photons past IntObj
     G4double EndIntObj = kdet->getEndIntObj();
 
@@ -81,7 +77,6 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
       krun->AddStatusKilledPosition();
       return;
     }
-
 
     if(nextStep_VolumeName.compare(0, 3, "Col") == 0)
     {
@@ -102,7 +97,7 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
     trackID = theTrack->GetTrackID();
     energy = theTrack->GetKineticEnergy()/(MeV);
-// ************************************************* Checks and Cuts Complete ************************************************** //
+    gtime = theTrack->GetGlobalTime();
 
     CPName = "beam";
     if(theTrack->GetCreatorProcess() !=0)
@@ -112,27 +107,31 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
     theta = std::asin(std::sqrt(std::pow(p.x(),2)+std::pow(p.y(),2))/p.mag());
     phi = std::asin(p.y()/p.mag());
     G4ThreeVector loc = theTrack->GetPosition();
+
 // **************************************************** Track NRF Materials **************************************************** //
 
     const G4VProcess* process = endPoint->GetProcessDefinedStep();
 
-    if(addNRF)
+    if(process->GetProcessName() == "NRF")
     {
-      // Keep track of Any NRF Created
-      if(drawNRFDataFlag)
-      {
-        if(process->GetProcessName() == "NRF")
-        {
-          krun->AddNRF();
-          const G4TrackVector* emitted_nrf = aStep->GetSecondary();
-          FillNRF(0, loc.z(), emitted_nrf);
-        } // end of process->GetProcessName() == "NRF"
-      } // end of if drawNRFDataFlag
-    } // end of if addNRF
+      krun->AddNRF();
+      const G4TrackVector* emitted_nrf = aStep->GetSecondary();
+      FillNRF(0, loc.z(), emitted_nrf);
+    } // end of process->GetProcessName() == "NRF"
 
 // *********************************************** Track Chopper Interactions **************************************************** //
 
     // Chopper Analysis
+    if(drawChopperIncDataFlag)
+    {
+      // Gammas Incident Chopper Wheel
+      if(nextStep_VolumeName.compare("Chop") == 0
+         && previousStep_VolumeName.compare("Chop") != 0
+         && theTrack->GetParticleDefinition() == G4Gamma::Definition())
+      {
+        FillChopperInc(1, loc.x(), loc.y());
+      }
+    }
 
     // Gammas Exiting Chopper Wheel
     if(nextStep_VolumeName.compare("Chop") != 0
@@ -151,68 +150,39 @@ void SteppingWResponseFunction::UserSteppingAction(const G4Step* aStep)
         return;
       }
       else
-        return;
+      {
+        if(drawChopperOutDataFlag)
+        {
+          FillChopperOut(2);
+          return;
+        }
+        else
+          return;
+      }
     }
 
 // *********************************************** Track Interrogation Object Interactions **************************************************** //
 
     // Incident Interrogation Object
-    if(drawIntObjInDataFlag)
+
+    if(nextStep_VolumeName.compare("IntObj") == 0
+       && previousStep_VolumeName.compare("IntObj") != 0)
     {
-      if(nextStep_VolumeName.compare("IntObj") == 0
-         && previousStep_VolumeName.compare("IntObj") != 0)
-      {
-        FillIntObjIn(1);
-        return;
-      }
+      FillIntObjIn(3);
+      return;
     }
 
     // Exiting Interrogation Object
     if(nextStep_VolumeName.compare("IntObj") != 0
        && previousStep_VolumeName.compare("IntObj") == 0)
     {
-      if(std::abs(phi) > 1)
-      {
-        theTrack->SetTrackStatus(fStopAndKill);
-        krun->AddStatusKilledPhiAngle();
-        return;
-      }
-      else
-      {
-        if(drawIntObjOutDataFlag)
-        {
-          FillIntObjOut(2);
-          return;
-        }// end if drawIntObjOutDataFlag
-        else
-          return;
-      }// end else
+      if(drawIntObjOutDataFlag)
+        FillIntObjOut(4);
+
+      theTrack->SetTrackStatus(fStopAndKill);
+      krun->AddStatusKilledPosition();
+      return;
+
     }// end if exiting Interrogation Object
 
-// *********************************************** Track Shielding Interactions  **************************************************** //
-
-    // Track particles incident shielding from world
-    if(drawShieldingIncDataFlag)
-    {
-      if(nextStep_VolumeName.compare(0,5,"Atten") == 0
-          && previousStep_VolumeName.compare("World") == 0)
-      {
-        FillShielding(3);
-        return;
-      }
-    }
-
-// *********************************************** Track Plexiglass Interactions **************************************************** //
-
-    if(nextStep_VolumeName.compare(0,4,"Plex") == 0
-        && previousStep_VolumeName.compare(0,4,"Last") == 0)
-    {
-      FillPlexi(4);
-      kevent->SetIncidentEnergy(energy/(MeV));
-      krun->AddTotalSurface();
-      krun->AddStatusKilledPosition();
-      theTrack->SetTrackStatus(fStopAndKill);
-      return;
-    }
-
-} // end of user stepping action function
+} // end of SteppingIntObj::UserSteppingAction

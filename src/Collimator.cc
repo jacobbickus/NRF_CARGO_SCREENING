@@ -46,11 +46,10 @@ void Collimator::Construct(G4LogicalVolume* logicWorld, bool checkOverlaps)
   G4double endLinac = detInfo->GetEndLinac();
 
   G4Material *lead = nist->FindOrBuildMaterial("G4_Pb");
-  G4double colimator_size = 50*cm;
+  G4double colimator_size = detInfo->GetCollimatorSize();
   G4double col_position = 1.0*cm + container_z_pos - 1.2192*m - colimator_size; // should go 1cm past the container
   G4double col_edge_position = col_position + colimator_size;
-  G4double rearCol_Z_pos = bremStartPos*cm - linac_size - colimator_size;
-  detInfo->setRearCollimatorPosition(rearCol_Z_pos);
+  G4double rearCol_Z_pos = detInfo->getRearCollimatorPosition();
 
   if(!bremTest)
   {

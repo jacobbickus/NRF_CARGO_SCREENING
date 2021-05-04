@@ -310,7 +310,7 @@ void DetectorResponse()
 }
 
 private:
-G4bool fFactoryOn, WEIGHTED;
+G4bool fFactoryOn;
 G4int start_time, stop_time;
 G4AnalysisManager* manager;
 };

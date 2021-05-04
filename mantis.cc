@@ -41,7 +41,8 @@ G4bool output;
 // String global variables
 G4String macro, root_output_name, gOutName, inFile, response_function_file;
 // boolean global variables
-G4bool run_without_chopper, WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool IntObjTest, run_without_chopper, WResponseFunction, detTest, bremTest, resonanceTest, debug, addNRF, printEvents, SampleEnergyRangebool;
+G4bool WEIGHTED;
 // double global variables
 G4double uniform_width, chosen_energy;
 
@@ -63,21 +64,22 @@ namespace
   void PrintUsage()
   {
     std::cerr << "Usage: " << std::endl
-    << "Example:  ./mantis --macro mantis.in --file_to_sample importance_sampling_input.root -r --detector_response_file DetectorResponse.root"
+    << "Example:  ./mantis --macro mantis.in --file_to_sample importance_sampling_input.root -i -r --detector_response_file DetectorResponse.root"
     << std::endl << std::endl <<  "Would run a simulation using a detector response function found in DetectorResponse.root to predict the detector counts." << std::endl
     << "The input spectrum would be a weighted spectrum read from importance_sampling_input.root." << std::endl
     << "The results would be written to test.root. All user options would be defined in the mantis.in macro file." << std::endl << std::endl
 
     << "mantis [-h --help]                                     Prints this Usage Screen" << std::endl
     << "      [--Macro=mantis.in]                              Macro File to be read for user input options" << std::endl
-    << "      [--File_To_Sample]                               Input File Containing input spectrum (ROOT Format TH1D*) to sample from. Importance sampling filename must be importance_sampling_input.root." << std::endl
+    << "      [--File_To_Sample]                               Input File Containing input spectrum (ROOT Format TH1D*) to sample from. For importance sampling pass the -i --Importance_Sampling_Input_On Flag." << std::endl
     << "      [--Seed=1]                                       Simulation Seed." << std::endl
     << "      [--Output_Filename=test.root]                    Data will be written to this file." << std::endl
     << "      [--Energy]                                       Sets the energy of the primary particle to the user's value in MeV" << std::endl
     << "      [--Detector_Response_File=DetectorResponse.root] Input File with Detector Response Function TProfile" << std::endl
     << "      [--Uniform_Width=0.005]                          Sets the uniform distribution width. Requires SampleEnergyRange Boolean to be passed as true." << std::endl
+    << "      [-i --Importance_Sampling_Input_On=false]        Flag to sample a biased distribution and apply the appropriate weighting." << std::endl
     << "      [-d --Debug=false]                               Runtime Boolean option for developers to place program in debugging mode printing statements at various spots in the program" << std::endl
-    << "      [-i --Force_Isotropic=true]                      Forces nrf isotropic emission." << std::endl
+    << "      [-f --Force_Isotropic=true]                      Forces nrf isotropic emission." << std::endl
     << "      [-n --NRF=true]                                  IF set to false NRF Physics will be removed from physicsList! The default is set to true." << std::endl
     << "      [-p --Print_Events=false]                        Runtime Boolean option to print event tracker to std::cout instead of G4cout to file" << std::endl
     << "      [-r --Detector_Response_Input=false]             Runs Mantis Simulation with Detector Response Function Input" << std::endl
@@ -89,6 +91,7 @@ namespace
     << "      [-t3 --Resonance_Test=false]                     Tests Resonance energies by having the input spectrum a normal distribution centered on Uranium resonance energies." << std::endl
     << "      [-t4 --Sample_Energy_Range=false]                Samples from a uniform distribution centered on user's energy." << std::endl
     << "      [-t5 --Run_Without_Chopper=false]                Runs Simulation Without Chopper Setup by starting beam directly in front of interrogation object. (Requires Incident IntObj Spectrum as Input)." << std::endl
+    << "      [-t6 --IntObj_Test=false]                        Runs simulation killing particles that leave interrogation object (builds interrogation object beam for later runs)" << std::endl
     << std::endl << std::endl;
     exit(1);
   }
@@ -146,6 +149,10 @@ int main(int argc,char **argv)
   uniform_width = 0.005; // units MeV
   G4String RunWithoutChopper_in = "false";
   run_without_chopper = false;
+  G4String RunIntObjTest_in = "false";
+  IntObjTest = false;
+  G4String importance_sampling_input_on_in = "false";
+  WEIGHTED=false;
 
   // Output Defaults
   output = false;
@@ -252,7 +259,7 @@ int main(int argc,char **argv)
           force_isotropic = false;
         }
       }
-      else if (G4String(input) == "-i")
+      else if (G4String(input) == "-f")
       {
         std::cout << "NRF Force Isotropic Turned ON!" << std::endl;
         force_isotropic = true;
@@ -344,11 +351,13 @@ int main(int argc,char **argv)
 
         if(SampleEnergyRange_in == "True" || SampleEnergyRange_in == "true")
           SampleEnergyRangebool = true;
+        std::cout << "Sample Energy Range Set to: " << SampleEnergyRange_in << std::endl;
 
       }
       else if (G4String(input) == "-t4")
       {
         SampleEnergyRangebool = true;
+        std::cout << "Sampling Energy Range Set to: TRUE" << std::endl;
         i=i-1;
       }
       else if (G4String(input) == "--uniform_width")
@@ -359,15 +368,43 @@ int main(int argc,char **argv)
       else if (G4String(input) == "-t5")
       {
         run_without_chopper = true;
-        std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
+        std::cout << "Running Without Chopper Setup: TRUE" << std::endl;
         i=i-1;
       }
-      else if (G4String(input) == "--Run_Without_Chopper")
+      else if (G4String(input) == "--run_without_chopper")
       {
         RunWithoutChopper_in = argv[i+1];
         if(RunWithoutChopper_in == "True" || RunWithoutChopper_in == "true")
           run_without_chopper = true;
-        std::cout << "Running Without Chopper Setup: " << run_without_chopper << std::endl;
+        std::cout << "Running Without Chopper Setup: " << RunWithoutChopper_in << std::endl;
+      }
+      else if (G4String(input) == "-t6")
+      {
+        IntObjTest = true;
+        std::cout << "Running Interrogation Object Test: TRUE" << std::endl;
+        i=i-1;
+      }
+      else if (G4String(input) == "--intobj_test")
+      {
+        RunIntObjTest_in = argv[i+1];
+        if(RunIntObjTest_in == "True" || RunIntObjTest_in == "true")
+          IntObjTest = true;
+        std::cout << "Running Interrogation Object Test: " << RunIntObjTest_in << std::endl;
+      }
+      else if (G4String(input) == "--importance_sampling_input_on")
+      {
+        importance_sampling_input_on_in = argv[i+1];
+
+        if(importance_sampling_input_on_in == "True" || importance_sampling_input_on_in == "true")
+          WEIGHTED=true;
+
+        std::cout << "Conducting Simulation with Importance Sampling Set to: " << importance_sampling_input_on_in << std::endl;
+      }
+      else if (G4String(input) == "-i")
+      {
+        std::cout << "Conducting Simulation with Importance Sampling Set to: TRUE" << std::endl;
+        WEIGHTED=true;
+        i=i-1;
       }
       else
       {
@@ -410,6 +447,11 @@ int main(int argc,char **argv)
   if(bremTest && resonanceTest)
   {
     std::cerr << "FATAL ERROR mantis.cc -> Cannot test bremsstrahlung and resonance during the same run!" << std::endl;
+    exit(1);
+  }
+  if((bremTest || detTest) && WEIGHTED)
+  {
+    std::cerr << "FATAL ERROR mantis.cc -> Cannot conduct brem test or detector response test with a weighting input spectrum!" << std::endl;
     exit(1);
   }
   if(bremTest && detTest)

@@ -27,6 +27,7 @@
 extern G4bool detTest;
 extern G4bool debug;
 extern G4bool run_without_chopper;
+extern G4bool IntObjTest;
 
 DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo, Linac* Linac)
         : G4VUserDetectorConstruction(),
@@ -100,12 +101,8 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
   DetectorInformation* detInfo = DetectorInformation::Instance();
   water_z_pos = detInfo->getRearCollimatorPosition();
   G4double myangle = (180. - theAngle)*pi/180.;
-  G4double z_pos_factor = 0.3602*m;
 
-  if(!run_without_chopper)
-    z_pos_factor = container_z_pos;
-
-  water_x_pos = tan(myangle)*(z_pos_factor - water_z_pos);
+  water_x_pos = tan(myangle)*(container_z_pos - water_z_pos);
 
   if(debug)
   {
@@ -177,7 +174,9 @@ G4LogicalVolume* DetectorConstruction::ConstructAttenuatorsAndPlexiglass(G4Logic
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
   G4Material *attenuator, *attenuator2, *attenuator3;
-  ConstructAttenuatorMaterial(attenuator, attenuator2, attenuator3);
+
+  if(!IntObjTest)
+    ConstructAttenuatorMaterial(attenuator, attenuator2, attenuator3);
 
   G4Element *elO = new G4Element("Oxygen", "O", 8, 16.0*g/mole);
   G4Element *elH = new G4Element("Hydrogen", "H", 1, 1.00794*g/mole);
@@ -234,7 +233,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   DetectorInformation* detInfo = DetectorInformation::Instance();
   G4double bremStartPos = detInfo->GetShiftFactor()/(cm);
   detInfo->setBremStartPosition(bremStartPos);
-  G4double container_z_pos = 1.2192*m + 1.5*m - 135.9*cm - std::abs(bremStartPos)*cm;
+  G4double container_z_pos = 0;
 
   detInfo->setContainerZPosition(container_z_pos);
   G4double container_edge_position = container_z_pos - 1.2192*m;
@@ -242,6 +241,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double linac_size = 4.5*cm;
   detInfo->setLinac_Size(linac_size);
   detInfo->setWaterSizeY(water_size_y);
+  detInfo->SetCollimatorSize(50*cm);
+  detInfo->setRearCollimatorPosition(-linac_size-150*cm);
 
   if(!detTest)
   {
@@ -257,213 +258,218 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 // ******************************************************** Begin Detector Construction *************************************************************** //
 
-  G4LogicalVolume* logicCasing = ConstructAttenuatorsAndPlexiglass(logicWorld, container_z_pos, attenuator, attenuator2, attenuator3);
-  if(tapeThick != 0.01*cm)
+  if(!IntObjTest)
   {
-    G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: "
-    << tapeThick << " cm" << G4endl;
-  }
-
-// Make Teflon tape wrap
-
-  G4VSolid* solidTape = new G4Box("Tape", water_size_x-plexiThickness, water_size_y-plexiThickness, water_size_z-plexiThickness);
-  G4LogicalVolume* logicTape = new G4LogicalVolume(solidTape, teflonTape, "Tape");
-  physTape = new G4PVPlacement(0,G4ThreeVector(0,0,0), logicTape, "Tape", logicCasing, false, 0, checkOverlaps);
-
-// Tub of water
-
-  G4cout << "DetectorConstruction::Construct -> Water Tank X: " << water_size_x/(cm)<< " cm" << G4endl;
-  G4cout << "DetectorConstruction::Construct -> Water Tank Y: " << water_size_y/(cm)<< " cm" << G4endl;
-  G4cout << "DetectorConstruction::Construct -> Water Tank Z: " << water_size_z/(cm) << " cm" << G4endl << G4endl;
-
-  G4Box* solidWater = new G4Box("Water", water_size_x-plexiThickness-tapeThick,
-                                water_size_y-plexiThickness-tapeThick,
-                                water_size_z-plexiThickness-tapeThick);
-  G4LogicalVolume* logicWater =
-          new G4LogicalVolume(solidWater, //its solid
-                              Water, //its material
-                              "Water"); //its name
-
-  physWater = new G4PVPlacement(0, //no rotation
-                                G4ThreeVector(0,0,0),
-                                logicWater, //its logical volume
-                                "Water", //its name
-                                logicTape, //its mother logical volume
-                                false, //no boolean operation
-                                0, //copy number
-                                checkOverlaps); //overlaps checking
-
-  // Conduct Final Tank Position Check
-  if(!detTest)
-  {
-    DefDetPositionConstraintUpper(container_z_pos/(m), water_size_z/(m), water_z_pos/(m));
-    DefDetPositionConstraintLeft(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
-    DefDetPositionConstraintRight(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
-  }
-
-// **************************************************** End of Water Tank Construction Setup ********************************************************* //
-
-
-// ************************************************************** Construct PMTs ********************************************************************* //
-
-  G4cout << G4endl << "DetectorConstruction::Construct -> PC and PMT Information" << G4endl;
-  G4cout << "----------------------------------------------------------------------" << G4endl;
-  G4double PMT_rmin = 0*cm;
-  G4cout << "DetectorConstruction::Construct -> PC Radius: " << PMT_rmax/(cm) << " cm" << G4endl;
-  G4double PMT_z = 7.62*cm; // 3 in PMT
-  G4Tubs* solidPMT = new G4Tubs("PMT", PMT_rmin, PMT_rmax, PMT_z, 0*deg, 360*deg);
-  logicPMT = new G4LogicalVolume(solidPMT, PMT_mat, "PMT");
-
-  G4cout << "The Number of PMTs was set to: " << nPMT << G4endl;
-  G4double PMT_y_pos;
-  std::vector<G4double> PMT_y_posv;
-  if(nPMT>1)
-  {
-    if((PMT_rmax*2)/(cm) > (water_size_y*2./(cm)/nPMT))
+    G4LogicalVolume* logicCasing = ConstructAttenuatorsAndPlexiglass(logicWorld, container_z_pos, attenuator, attenuator2, attenuator3);
+    if(tapeThick != 0.01*cm)
     {
-      G4cerr << "DetectorConstruction::Construct -> ERROR Too many PMTs to fit on Water Surface!"
-      << G4endl << "DetectorConstruction::Construct -> Water Tank Size: " << water_size_y/(cm) << " cm"
-      << G4endl << "DetectorConstruction::Construct -> PMT Diameter: " << (PMT_rmax*2.)/(cm) << " Greater than "
-      << (water_size_y/(cm)/nPMT) << G4endl;
-      exit(10);
+      G4cout << "DetectorConstruction::Construct -> Optical Tape Thickness Changed to: "
+      << tapeThick << " cm" << G4endl;
     }
-    G4double PMT_y_pos_start = 0. - water_size_y + water_size_y/nPMT;
-    PMT_y_posv.push_back(PMT_y_pos_start);
-    for(G4int i=1;i<nPMT;++i)
-    {
-      PMT_y_pos = PMT_y_pos_start + i*(PMT_rmax*2.);
-      PMT_y_posv.push_back(PMT_y_pos);
 
-      if(checkOverlaps)
+  // Make Teflon tape wrap
+
+    G4VSolid* solidTape = new G4Box("Tape", water_size_x-plexiThickness, water_size_y-plexiThickness, water_size_z-plexiThickness);
+    G4LogicalVolume* logicTape = new G4LogicalVolume(solidTape, teflonTape, "Tape");
+    physTape = new G4PVPlacement(0,G4ThreeVector(0,0,0), logicTape, "Tape", logicCasing, false, 0, checkOverlaps);
+
+  // Tub of water
+
+    G4cout << "DetectorConstruction::Construct -> Water Tank X: " << water_size_x/(cm)<< " cm" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Water Tank Y: " << water_size_y/(cm)<< " cm" << G4endl;
+    G4cout << "DetectorConstruction::Construct -> Water Tank Z: " << water_size_z/(cm) << " cm" << G4endl << G4endl;
+
+    G4Box* solidWater = new G4Box("Water", water_size_x-plexiThickness-tapeThick,
+                                  water_size_y-plexiThickness-tapeThick,
+                                  water_size_z-plexiThickness-tapeThick);
+    G4LogicalVolume* logicWater =
+            new G4LogicalVolume(solidWater, //its solid
+                                Water, //its material
+                                "Water"); //its name
+
+    physWater = new G4PVPlacement(0, //no rotation
+                                  G4ThreeVector(0,0,0),
+                                  logicWater, //its logical volume
+                                  "Water", //its name
+                                  logicTape, //its mother logical volume
+                                  false, //no boolean operation
+                                  0, //copy number
+                                  checkOverlaps); //overlaps checking
+
+    // Conduct Final Tank Position Check
+    if(!detTest && !debug)
+    {
+      DefDetPositionConstraintUpper(container_z_pos/(m), water_size_z/(m), water_z_pos/(m));
+      DefDetPositionConstraintLeft(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
+      DefDetPositionConstraintRight(water_size_x/(m), water_x_pos/(m), 180. - theAngle, water_size_z/(m));
+    }
+
+  // **************************************************** End of Water Tank Construction Setup ********************************************************* //
+
+
+  // ************************************************************** Construct PMTs ********************************************************************* //
+
+    G4cout << G4endl << "DetectorConstruction::Construct -> PC and PMT Information" << G4endl;
+    G4cout << "----------------------------------------------------------------------" << G4endl;
+    G4double PMT_rmin = 0*cm;
+    G4cout << "DetectorConstruction::Construct -> PC Radius: " << PMT_rmax/(cm) << " cm" << G4endl;
+    G4double PMT_z = 7.62*cm; // 3 in PMT
+    G4Tubs* solidPMT = new G4Tubs("PMT", PMT_rmin, PMT_rmax, PMT_z, 0*deg, 360*deg);
+    logicPMT = new G4LogicalVolume(solidPMT, PMT_mat, "PMT");
+
+    G4cout << "The Number of PMTs was set to: " << nPMT << G4endl;
+    G4double PMT_y_pos;
+    std::vector<G4double> PMT_y_posv;
+    if(nPMT>1)
+    {
+      if((PMT_rmax*2)/(cm) > (water_size_y*2./(cm)/nPMT))
       {
-        G4cout << "DetectorConstruction::Construct -> PMT Position " << i
-                << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+        G4cerr << "DetectorConstruction::Construct -> ERROR Too many PMTs to fit on Water Surface!"
+        << G4endl << "DetectorConstruction::Construct -> Water Tank Size: " << water_size_y/(cm) << " cm"
+        << G4endl << "DetectorConstruction::Construct -> PMT Diameter: " << (PMT_rmax*2.)/(cm) << " Greater than "
+        << (water_size_y/(cm)/nPMT) << G4endl;
+        exit(10);
+      }
+      G4double PMT_y_pos_start = 0. - water_size_y + water_size_y/nPMT;
+      PMT_y_posv.push_back(PMT_y_pos_start);
+      for(G4int i=1;i<nPMT;++i)
+      {
+        PMT_y_pos = PMT_y_pos_start + i*(PMT_rmax*2.);
+        PMT_y_posv.push_back(PMT_y_pos);
+
+        if(checkOverlaps)
+        {
+          G4cout << "DetectorConstruction::Construct -> PMT Position " << i
+                  << " set to " << PMT_y_posv[i-1]/(cm)<< " cm" << G4endl;
+        }
       }
     }
-  }
-  else
-  {
-    PMT_y_posv.push_back(0);
-  }
-
-  if(detTest)
-  {
-    for(G4int k=0;k<nPMT;++k)
+    else
     {
-      new G4PVPlacement(0,
-                        G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
-                        logicPMT,
-                        "PMT",
-                        logicWater,
-                        false,
-                        k,
-                        checkOverlaps);
+      PMT_y_posv.push_back(0);
+    }
+
+    if(detTest)
+    {
+      for(G4int k=0;k<nPMT;++k)
+      {
+        new G4PVPlacement(0,
+                          G4ThreeVector(0, PMT_y_posv[k], water_size_z - PMT_z - 1.0*cm),
+                          logicPMT,
+                          "PMT",
+                          logicWater,
+                          false,
+                          k,
+                          checkOverlaps);
+      }
+    }
+    else
+    {
+      for(G4int k=0;k<nPMT;++k)
+      {
+        new G4PVPlacement(0,
+                          G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
+                          logicPMT,
+                          "PMT",
+                          logicWater,
+                          false,
+                          k,
+                          checkOverlaps);
+      }
+    }
+
+  // **************************************************** Construct Photocathode ****************************************************** //
+
+  G4double PC_z = 20*nm;
+  G4cout << "DetectorConstruction::Construct -> Photocathode material: " << pc_mat << G4endl << G4endl;
+  if(pc_mat == "GaAsP")
+  {
+    PC_mat = GaAsP;
+  }
+  else if(pc_mat == "Bialkali")
+  {
+    PC_mat = bialkali;
+  }
+  else exit(1);
+
+  G4Tubs* solidPhotoCathode = new G4Tubs("PC", PMT_rmin, PMT_rmax, PC_z, 0*deg, 360.*deg);
+  logicPC = new G4LogicalVolume(solidPhotoCathode, PC_mat, "PC");
+  G4double PMT_window_thickness = 3*mm;
+  physPC = new G4PVPlacement(0,
+                       G4ThreeVector(0,0,PMT_z-PMT_window_thickness),
+                       logicPC,
+                       "PC",
+                       logicPMT, // daughter of PMT logical
+                       false,
+                       0,
+                       checkOverlaps);
+
+
+
+  //
+  // ------------ Generate & Add Material Properties Table ------------
+  //
+
+    MaterialProperties* mp = new MaterialProperties();
+    G4MaterialPropertiesTable* waterMPT = mp->SetWaterProperties();
+    Water->SetMaterialPropertiesTable(waterMPT);
+
+    G4MaterialPropertiesTable* casingMPT = mp->SetCasingProperties();
+    G4MaterialPropertiesTable* casingOPMPT = mp->SetCasingOpticalProperties();
+    G4OpticalSurface *casing_opsurf = new G4OpticalSurface("casingSurface", glisur, polished, dielectric_dielectric);
+    plexiglass->SetMaterialPropertiesTable(casingMPT);
+    casing_opsurf->SetMaterialPropertiesTable(casingOPMPT);
+    new G4LogicalSkinSurface("casing_surf", logicCasing, casing_opsurf);
+
+    G4MaterialPropertiesTable* tapeMPT = mp->SetTapeProperties();
+    G4MaterialPropertiesTable* tapeOPMPT = mp->SetTapeOpticalProperties();
+    G4OpticalSurface *tape_opsurf = new G4OpticalSurface("tapeSurface",glisur, polishedfrontpainted, dielectric_dielectric);
+    tape_opsurf->SetMaterialPropertiesTable(tapeOPMPT);
+    teflonTape->SetMaterialPropertiesTable(tapeMPT);
+    new G4LogicalBorderSurface("tape_surf", physWater, physTape, tape_opsurf);
+
+    G4MaterialPropertiesTable* pmtMPT = mp->SetPMTProperties();
+    G4MaterialPropertiesTable* pmtOPMPT = mp->SetPMTOpticalProperties();
+    G4OpticalSurface* PMT_opsurf = new G4OpticalSurface("PMTSurface",unified,polished,dielectric_metal);
+    PMT_mat->SetMaterialPropertiesTable(pmtMPT);
+    PMT_opsurf->SetMaterialPropertiesTable(pmtOPMPT);
+
+    G4MaterialPropertiesTable* pc_MPT = mp->SetPCProperties(pc_mat);
+    G4OpticalSurface* photocath_opsurf= new G4OpticalSurface("photocath_opsurf");
+    photocath_opsurf->SetType(dielectric_metal);
+    photocath_opsurf->SetFinish(polished);
+    photocath_opsurf->SetPolish(1.0);
+    photocath_opsurf->SetModel(glisur);
+    photocath_opsurf->SetMaterialPropertiesTable(pc_MPT);
+
+    new G4LogicalSkinSurface("photocath_surf", logicPC, photocath_opsurf); // name, physical volume of surface, phsical volume of world?, G4optical surface
+    new G4LogicalSkinSurface("PMT_surf", logicPMT, PMT_opsurf);
+
+    G4MaterialPropertiesTable* airMPT = mp->SetAirProperties();
+    air->SetMaterialPropertiesTable(airMPT);
+
+  // Material Verbosity to print materials properties tables
+    if(material_verbose)
+    {
+      G4cout << "Material Verbose set to True/On!" << G4endl;
+      G4cout << "Material Properties Table for: " << air->GetName() << G4endl;
+      airMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << teflonTape->GetName() << G4endl;
+      tapeOPMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << pc_mat << G4endl;
+      pc_MPT->DumpTable();
+      G4cout << "Material Properties Table for: " << Water->GetName() << G4endl;
+      waterMPT->DumpTable();
+      G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
+      casingOPMPT->DumpTable();
     }
   }
-  else
-  {
-    for(G4int k=0;k<nPMT;++k)
-    {
-      new G4PVPlacement(0,
-                        G4ThreeVector(0, PMT_y_posv[k], -water_size_z + PMT_z + 1.0*cm),
-                        logicPMT,
-                        "PMT",
-                        logicWater,
-                        false,
-                        k,
-                        checkOverlaps);
-    }
-  }
 
-// **************************************************** Construct Photocathode ****************************************************** //
-
-G4double PC_z = 20*nm;
-G4cout << "DetectorConstruction::Construct -> Photocathode material: " << pc_mat << G4endl << G4endl;
-if(pc_mat == "GaAsP")
-{
-  PC_mat = GaAsP;
-}
-else if(pc_mat == "Bialkali")
-{
-  PC_mat = bialkali;
-}
-else exit(1);
-
-G4Tubs* solidPhotoCathode = new G4Tubs("PC", PMT_rmin, PMT_rmax, PC_z, 0*deg, 360.*deg);
-logicPC = new G4LogicalVolume(solidPhotoCathode, PC_mat, "PC");
-G4double PMT_window_thickness = 3*mm;
-physPC = new G4PVPlacement(0,
-                     G4ThreeVector(0,0,PMT_z-PMT_window_thickness),
-                     logicPC,
-                     "PC",
-                     logicPMT, // daughter of PMT logical
-                     false,
-                     0,
-                     checkOverlaps);
-
-
-
-//
-// ------------ Generate & Add Material Properties Table ------------
-//
-
-  MaterialProperties* mp = new MaterialProperties();
-  G4MaterialPropertiesTable* waterMPT = mp->SetWaterProperties();
-  Water->SetMaterialPropertiesTable(waterMPT);
-
-  G4MaterialPropertiesTable* casingMPT = mp->SetCasingProperties();
-  G4MaterialPropertiesTable* casingOPMPT = mp->SetCasingOpticalProperties();
-  G4OpticalSurface *casing_opsurf = new G4OpticalSurface("casingSurface", glisur, polished, dielectric_dielectric);
-  plexiglass->SetMaterialPropertiesTable(casingMPT);
-  casing_opsurf->SetMaterialPropertiesTable(casingOPMPT);
-  new G4LogicalSkinSurface("casing_surf", logicCasing, casing_opsurf);
-
-  G4MaterialPropertiesTable* tapeMPT = mp->SetTapeProperties();
-  G4MaterialPropertiesTable* tapeOPMPT = mp->SetTapeOpticalProperties();
-  G4OpticalSurface *tape_opsurf = new G4OpticalSurface("tapeSurface",glisur, polishedfrontpainted, dielectric_dielectric);
-  tape_opsurf->SetMaterialPropertiesTable(tapeOPMPT);
-  teflonTape->SetMaterialPropertiesTable(tapeMPT);
-  new G4LogicalBorderSurface("tape_surf", physWater, physTape, tape_opsurf);
-
-  G4MaterialPropertiesTable* pmtMPT = mp->SetPMTProperties();
-  G4MaterialPropertiesTable* pmtOPMPT = mp->SetPMTOpticalProperties();
-  G4OpticalSurface* PMT_opsurf = new G4OpticalSurface("PMTSurface",unified,polished,dielectric_metal);
-  PMT_mat->SetMaterialPropertiesTable(pmtMPT);
-  PMT_opsurf->SetMaterialPropertiesTable(pmtOPMPT);
-
-  G4MaterialPropertiesTable* pc_MPT = mp->SetPCProperties(pc_mat);
-  G4OpticalSurface* photocath_opsurf= new G4OpticalSurface("photocath_opsurf");
-  photocath_opsurf->SetType(dielectric_metal);
-  photocath_opsurf->SetFinish(polished);
-  photocath_opsurf->SetPolish(1.0);
-  photocath_opsurf->SetModel(glisur);
-  photocath_opsurf->SetMaterialPropertiesTable(pc_MPT);
-
-  new G4LogicalSkinSurface("photocath_surf", logicPC, photocath_opsurf); // name, physical volume of surface, phsical volume of world?, G4optical surface
-  new G4LogicalSkinSurface("PMT_surf", logicPMT, PMT_opsurf);
-
-  G4MaterialPropertiesTable* airMPT = mp->SetAirProperties();
-  air->SetMaterialPropertiesTable(airMPT);
-
-// Material Verbosity to print materials properties tables
-  if(material_verbose)
-  {
-    G4cout << "Material Verbose set to True/On!" << G4endl;
-    G4cout << "Material Properties Table for: " << air->GetName() << G4endl;
-    airMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << teflonTape->GetName() << G4endl;
-    tapeOPMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << pc_mat << G4endl;
-    pc_MPT->DumpTable();
-    G4cout << "Material Properties Table for: " << Water->GetName() << G4endl;
-    waterMPT->DumpTable();
-    G4cout << "Material Properties Table for: " << plexiglass->GetName() << G4endl;
-    casingOPMPT->DumpTable();
-  }
 
 //always return the physical World!!!
   if(debug)
     G4cout << "DetectorConstruction::Construct -> Constructed!" << G4endl << G4endl;
+
   return physWorld;
 }
 /* ************************************************************************************ */

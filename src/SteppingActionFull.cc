@@ -27,6 +27,7 @@
 extern G4bool output;
 extern G4bool addNRF;
 extern G4bool debug;
+extern G4bool WEIGHTED;
 
 SteppingActionFull::SteppingActionFull(EventAction* event)
 : G4UserSteppingAction(), BaseSteppingAction(), kevent(event)
@@ -276,7 +277,7 @@ void SteppingActionFull::UserSteppingAction(const G4Step* aStep)
 
 // *********************************************** Track Photocathode Interactions **************************************************** //
 
-        // Photocathode Analysis
+    // Photocathode Analysis
 
     if(endPoint->GetStepStatus() == fGeomBoundary)
     {
