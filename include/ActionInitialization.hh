@@ -37,7 +37,7 @@ class ActionInitialization : public G4VUserActionInitialization
     virtual void Build() const;
 
   private:
-    void CheckInputs();
+    void CheckInputs()const;
 };
 
 #endif

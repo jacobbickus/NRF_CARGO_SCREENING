@@ -178,7 +178,7 @@ void ActionInitialization::Build() const
 
 
 
-void ActionInitialization::CheckInputs()
+void ActionInitialization::CheckInputs()const
 {
   // Once again conduct USER ERROR CHECKS
   if(bremTest && detTest)
