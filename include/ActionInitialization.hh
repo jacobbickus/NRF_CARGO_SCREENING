@@ -31,6 +31,7 @@
 
 class ActionInitialization : public G4VUserActionInitialization
 {
+  void CheckInputs();
   public:
     ActionInitialization();
     virtual ~ActionInitialization();
