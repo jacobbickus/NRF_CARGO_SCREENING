@@ -75,6 +75,20 @@ void PGA::GeneratePrimaries(G4Event* anEvent)
       G4double dNdE = g_input->Eval(energy);
       G4double importanceSampling = g_sample->Eval(energy);
       w = dNdE/importanceSampling;
+      int weight_counter = 0;
+      while(w < 0)
+      {
+        weight_counter++;
+        if(weight_counter > 5)
+        {
+          G4cerr << "PGAIntObj::GeneratePrimaries -> ERROR Weight consistently found to be < 0 Breaking Loop and Exiting." << G4endl;
+          exit(100);
+        }
+        energy = h_sample->GetRandom()*MeV;
+        dNdE = g_input->Eval(energy);
+        importanceSampling = g_sample->Eval(energy);
+        w = dNdE/importanceSampling;
+      }
     }
     // User IS NOT USING importance sampling
     else

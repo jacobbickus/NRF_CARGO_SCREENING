@@ -75,9 +75,8 @@ public:
                           bool write2file=false);
     void PrepInputSpectrum(const char*, const char* object="ChopIn",
                           string outfile="brem.root", bool Weighted=false,
-                          double deltaE=0.001, double minimum_energy=0.0);
+                          double deltaE=0.000005, double minimum_energy=0.0);
     void PrepIntObjInputSpectrum(const char* filename, const char* ObjName,
-                                const char* Outfilename,
                                 std::vector<double> energy_regions,
                                 std::vector<double> bin_widths,
                                 bool Weighted=false, bool normalize=true,
@@ -102,7 +101,6 @@ public:
                         double weighting_factor2=10, bool checkZero=false,
                         bool drawWeights=false);
     TGraph* VariableBinWidthRebin(const char* filename, const char* ObjName,
-                                  const char* Outfilename,
                                   std::vector<double> energy_regions,
                                   std::vector<double> bin_widths,
                                   std::vector<double> samplev,
@@ -237,6 +235,7 @@ private:
     void SNR_IntObj(const char*, bool);
     void SNR_Det(const char*, bool, bool, bool, TCut cut1="NA");
     void WriteSampling(TGraph*, TGraph*, TH1D*, double);
+    void WriteSampling(TGraph*, double);
 
     double hc = 6.62607004e-34*299792458;
 
@@ -1651,7 +1650,7 @@ void MantisROOT::PredictThickness(std::vector<string> objects, double resonance_
 
 
 
-void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=10.0e-3, double minimum_energy=0.0)
+void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=0.000005, double minimum_energy=0.0)
 {
   CheckFile(filename);
   TFile *f = new TFile(filename);
@@ -1669,34 +1668,27 @@ void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn
 
   int nbins = (maxE - minE)/deltaE;
 
-  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+  TH1D* dNdE_histogram = new TH1D("dNdE_histogram","dNdE Histogram Spectrum", nbins, minE, maxE);
 
   if(Weighted)
-    tin->Draw("Energy>>h_input","Weight","goff");
+    tin->Draw("Energy>>dNdE_histogram","Weight","goff");
   else
-    tin->Draw("Energy>>h_input","","goff");
+    tin->Draw("Energy>>dNdE_histogram","","goff");
 
-  h_input->Scale(1./h_input->Integral());
-  h_input->GetXaxis()->SetTitle("Energy [MeV]");
+  dNdE_histogram->Scale(1./dNdE_histogram->Integral());
+  dNdE_histogram->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  h_input->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* g_input = new TGraph(h_input);
-  TFile *fout = new TFile(outfile.c_str(),"RECREATE");
-  fout->cd();
-  h_input->Write();
-  g_input->Write();
-  std::cout << "MantisROOT::PrepInputSpectrum -> Spectra written to " << outfile << std::endl;
-  fout->Close();
-  f->cd();
-  f->Close();
+  dNdE_histogram->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* dNdE_graph = new TGraph(dNdE_histogram);
+  WriteSampling(dNdE_graph,deltaE);
 } // end of PrepInputSpectrum Function
 
 
 
 
 
-void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool drawWeights=false)
+void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjName, std::vector<double> energy_regions, std::vector<double> bin_widths, bool Weighted=false, bool normalize=true, bool drawWeights=false)
 {
   CheckFile(filename);
   TFile* f = new TFile(filename);
@@ -1715,25 +1707,30 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
   int energy_end = energy_regions.size()-1;
 
   if(debug)
-    std::cout << "MantisROOT::PrepIntObjInputSpectrum -> End of h_sample_short: " << energy_regions[energy_end] << std::endl;
+    std::cout << "MantisROOT::PrepIntObjInputSpectrum -> End of Energy Region: " << energy_regions[energy_end] << std::endl;
 
-  TH1D* h_sample_short = new TH1D("h_sample_short","Sampling Distribution 100 Bins",100,energy_regions[0],energy_regions[energy_end]);
+  int nbins = (energy_regions[energy_end] - energy_regions[0])/10e-3;
+  if(debug)
+    std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Sampling Number of Bins: " << nbins << std::endl;
+
+  TH1D* sampling_histogram = new TH1D("sampling_histogram","Sampling Distribution Histogram", nbins, energy_regions[0], energy_regions[energy_end]);
   for(int i=0;i<obj->GetEntries();++i)
   {
     obj->GetEntry(i);
+
     if(Weighted)
-      h_sample_short->Fill(energy,weight);
+      sampling_histogram->Fill(energy,weight);
     else
-      h_sample_short->Fill(energy);
+      sampling_histogram->Fill(energy);
   }
 
   if(normalize)
-    h_sample_short->Scale(1./h_sample_short->Integral());
+    sampling_histogram->Scale(1./sampling_histogram->Integral());
 
-  TGraph* g_sample_short = new TGraph(h_sample_short);
-  Double_t* sample = g_sample_short->GetX();
+  TGraph* sampling_graph = new TGraph(sampling_histogram);
+  Double_t* sample = sampling_graph->GetX();
   std::vector<double> samplev;
-  for(int i=0;i<100;++i)
+  for(int i=0;i<nbins;++i)
   {
     if(sample[i] > energy_regions[energy_end-1])
     {
@@ -1743,18 +1740,12 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
       samplev.push_back(sample[i]);
     }
   }
-  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling created." << std::endl;
-
-  TFile* outfile = new TFile(Outfilename,"recreate");
-  outfile->cd();
-  g_sample_short->Write();
-  outfile->Close();
-  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Short Sampling Written to file: " << Outfilename << std::endl;
+  std::cout << "MantisROOT::PrepIntObjInputSpectrum -> Sampling created." << std::endl;
 
 
-  TGraph* g_input_short = VariableBinWidthRebin(filename, ObjName, Outfilename, energy_regions, bin_widths, samplev, Weighted, normalize, true);
+  TGraph* dNdE_graph = VariableBinWidthRebin(filename, ObjName, energy_regions, bin_widths, samplev, Weighted, normalize, true);
 
-  if(g_input_short == 0)
+  if(dNdE_graph == 0)
   {
     std::cout << "MantisROOT::PrepIntObjInputSpectrum -> VariableBinWidthRebin Returned NULL Exiting..." << std::endl;
     return;
@@ -1762,18 +1753,19 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
 
   if(drawWeights)
   {
-    DrawWeights(g_input_short, g_sample_short);
+    DrawWeights(dNdE_graph, sampling_graph);
     TCanvas* c_input_short = new TCanvas("c_input_short","dNdE Distribution",600,400);
     c_input_short->cd();
-    g_input_short->Draw();
+    dNdE_graph->Draw();
     TCanvas* c_sample_short = new TCanvas("c_sample_short","Sampling Distribution",600,400);
     c_sample_short->cd();
-    g_sample_short->Draw();
+    sampling_graph->Draw();
   }
-
   std::cout << "MantisROOT::PrepIntObjInputSpectrum -> COMPLETE." << std::endl;
 
-}
+  WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, 5e-6);
+} // end of PrepIntObjInputSpectrum Function
+
 
 
 void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObjIn=true, bool weighted=false, bool drawPlots=false, bool drawBeamEnergyPlots=false)
@@ -2209,7 +2201,6 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
 void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bool Weighted=false, string sample_element="U", double deltaE_large_bin_width = 0.001, double deltaE_small_bin_width=0.000005, bool checkZero=false, double non_nrf_energy_cut=1.5, double weighting_factor=10000)
 {
 	CheckFile(filename);
-  //TGraph* g_input_short = PrepInputSpectrum(filename, object_to_sample, Weighted, deltaE_large_bin_width);
   double Emax = ReturnMax(filename, object_to_sample);
 	// resonance energies in MeV as calculated by G4NRF
 	vector<double> Evec;
@@ -2260,85 +2251,36 @@ void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bo
 	    E_below_threshold.push_back(Evec[i]);
 	  }
 	}
-  std::vector<double> energy_regions, bin_widths;
-  energy_regions.push_back(0.);
-  energy_regions.push_back(non_nrf_energy_cut);
 
-  for(int i=0;i<E_below_threshold.size();++i)
-  {
-    energy_regions.push_back(E_below_threshold[i]);
-    energy_regions.push_back(E_below_threshold[i] + 100e-6);
-  }
+  // Build dNdE Graph with large bin widths
+  TGraph* dNdE_graph = PrepInputSpectrum(filename, object_to_sample, Weighted, deltaE_large_bin_width);
 
-  energy_regions.push_back(Emax);
-
-  bin_widths.push_back(deltaE_large_bin_width);
-  bin_widths.push_back(deltaE_large_bin_width);
-
-  for(int i=0;i<E_below_threshold.size();++i)
-  {
-    bin_widths.push_back(deltaE_small_bin_width);
-    bin_widths.push_back(deltaE_large_bin_width);
-  }
-
-  if(debug)
-  {
-    for(int i=0;i<energy_regions.size();++i)
-      std::cout << "MantisROOT::Sampling Energy Regions: " << energy_regions[i] << std::endl;
-
-    for(int i=0;i<bin_widths.size();++i)
-      std::cout << "MantisROOT::Sampling Bin Widths: " << bin_widths[i] << std::endl;
-
-  }
-  // Inputs Set Up
   // Create small bin width Sampling Histogram
-  std::vector<double> samplev;
-  TH1D* sampling_small_bin_width_histogram = BuildBremSampling(E_below_threshold, non_nrf_energy_cut, deltaE_small_bin_width, Emax, weighting_factor);
+  TH1D* sampling_histogram = BuildBremSampling(E_below_threshold, non_nrf_energy_cut, deltaE_small_bin_width, Emax, weighting_factor);
 
-  sampling_small_bin_width_histogram->SetTitle("Sampling Histogram");
-  sampling_small_bin_width_histogram->SetName("Sampling_Histogram");
+  sampling_histogram->SetTitle("Sampling Histogram");
+  sampling_histogram->SetName("Sampling_Histogram");
   // Convert to TGraph
-  TGraph* sampling_small_bin_width_graph = new TGraph(sampling_small_bin_width_histogram);
-  sampling_small_bin_width_graph->SetTitle("Sampling TGraph");
-  // Find the last "bins" of the TGraph for matching to input_graph
-  double* samples = sampling_small_bin_width_graph->GetX();
-  int energy_end = energy_regions.size();
-  for(int i=0;i<sampling_small_bin_width_graph->GetN();++i)
-  {
-    if(samples[i] > energy_regions[energy_end - 1])
-    {
-      samplev.push_back(samples[i]);
-    }
-  }
-
-  if(debug)
-  {
-    // show user what values are
-    for(int i=0;i<samplev.size();++i)
-      std::cout << "MantisROOT::Sampling -> Last Bins for Matching: " << samplev[i] << std::endl;
-    sampling_small_bin_width_histogram->Print();
-    std::cout << "MantisROOT::Sampling -> Calling VariableBinWidthRebin..." << std::endl;
-  }
-
-  TGraph* var_bin_input_graph = VariableBinWidthRebin(filename, object_to_sample, "var_bin_input_graph.root",energy_regions, bin_widths, samplev);
+  TGraph* sampling_graph = new TGraph(sampling_histogram);
+  sampling_graph->SetTitle("Sampling TGraph");
 
   // Write to Sampling file
-	WriteSampling(var_bin_input_graph, sampling_small_bin_width_graph, sampling_small_bin_width_histogram, deltaE_small_bin_width);
+	WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, deltaE_small_bin_width);
 
   if(debug)
   {
     std::cout << "MantisROOT::Sampling Displaying Graphs..." << std::endl;
     TCanvas* c_input_graph = new TCanvas("c_input_graph","dNdE Input Graph",600,400);
     c_input_graph->cd();
-    var_bin_input_graph->Draw();
+    dNdE_graph->Draw();
     TCanvas* c_sampling_graph = new TCanvas("c_sampling_graph","Sampling Graph",600,400);
     c_sampling_graph->cd();
-    sampling_small_bin_width_graph->Draw();
+    sampling_graph->Draw();
     TCanvas* c_sampling_histogram = new TCanvas("c_sampling_histogram","Sampling Histogram",600,400);
     c_sampling_histogram->cd();
-    sampling_small_bin_width_histogram->Draw("h");
+    sampling_histogram->Draw("h");
 
-    DrawWeights(var_bin_input_graph, sampling_small_bin_width_graph);
+    DrawWeights(dNdE_graph, sampling_graph);
   }
 
   std::cout << "MantisROOT::Sampling -> COMPLETE!" << std::endl;
@@ -2403,7 +2345,7 @@ void MantisROOT::SimpleSampling(const char* filename, const char* object_to_samp
 
 
 
-TGraph* MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName, const char* Outfilename, std::vector<double> energy_regions, std::vector<double> bin_widths, std::vector<double> samplev, bool Weighted=false, bool normalize=true, bool for_weighted_spectrum=false)
+TGraph* MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjName, std::vector<double> energy_regions, std::vector<double> bin_widths, std::vector<double> samplev, bool Weighted=false, bool normalize=true, bool for_weighted_spectrum=false)
 {
   // Check to make sure file exists
   CheckFile(filename);
@@ -2579,18 +2521,6 @@ TGraph* MantisROOT::VariableBinWidthRebin(const char* filename, const char* ObjN
 
   gObj->SetName("Graph_from_h_input");
 
-  // Write to OutFile
-  TFile *fout;
-  if(!gSystem->AccessPathName(Outfilename))
-    fout = new TFile(Outfilename,"update");
-  else
-    fout = new TFile(Outfilename,"recreate");
-
-  fout->cd();
-  hObj->Write();
-  gObj->Write();
-  std::cout << "Variable Bin Width Histogram written to: " << Outfilename << std::endl;
-  fout->Close();
   return gObj;
 } // end of VariableBinWidthRebin Function
 
@@ -3303,8 +3233,8 @@ void MantisROOT::CopyATreeNoWeight(const char* filename, const char* tObj, const
 void MantisROOT::DrawWeights(TGraph* input, TGraph* sample)
 {
   std::cout << "MantisROOT::DrawWeights -> Drawing Weights..." << std::endl;
-  TCanvas* c1 = new TCanvas("c1","Weighting Spectra",600,400);
-  c1->cd();
+  TCanvas* c_Weighting_Spectra = new TCanvas("c1","Weighting Spectra",600,400);
+  c_Weighting_Spectra->cd();
   gPad->SetTicks(1,1);
   gPad->SetLogy();
   std::vector<double> energies, theweights;
@@ -3503,21 +3433,21 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* filename,  const char* obj, bo
   double minE = tin->GetMinimum("Energy");
   int nbins = (maxE - minE)/deltaE;
 
-  TH1D* h_input = new TH1D("h_input","Input Spectrum", nbins, minE, maxE);
+  TH1D* dNdE_histogram = new TH1D("dNdE_histogram","dNdE Histogram Spectrum", nbins, minE, maxE);
 
   if(Weighted)
-    tin->Draw("Energy>>h_input","Weight","goff");
+    tin->Draw("Energy>>dNdE_histogram","Weight","goff");
   else
-    tin->Draw("Energy>>h_input","","goff");
+    tin->Draw("Energy>>dNdE_histogram","","goff");
 
-  h_input->Scale(1./h_input->Integral());
-  h_input->GetXaxis()->SetTitle("Energy [MeV]");
+  dNdE_histogram->Scale(1./dNdE_histogram->Integral());
+  dNdE_histogram->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  h_input->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* g_input = new TGraph(h_input);
+  dNdE_histogram->GetYaxis()->SetTitle(yTitle.c_str());
+  TGraph* dNdE_graph = new TGraph(dNdE_histogram);
   f->Close();
-  return g_input;
+  return dNdE_graph;
 } // end of PrepInputSpectrum Private Function
 
 
@@ -4193,6 +4123,16 @@ void MantisROOT::WriteSampling(TGraph* dNdE, TGraph* sampling_graph, TH1D* sampl
 } // end of WriteSampling Private Function
 
 
+void MantisROOT::WriteSampling(TGraph* dNdE, double delteE)
+{
+  dNdE->SetNameTitle("dNdE_graph","dNdE TGraph Distribution");
+  // save everything to file
+  TFile *fout = new TFile("importance_sampling_input.root","recreate");
+  fout->cd();
+  dNdE->Write();
+  std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to importance_sampling_input.root" << std::endl;
+  fout->Close();
+}
 // END OF PRIVATE FUNCTIONS
 
 // COMMENTED FUNCTIONS

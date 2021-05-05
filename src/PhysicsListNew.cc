@@ -23,6 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "PhysicsListNew.hh"
+extern G4bool WResponseFunction;
 
 PhysicsListNew::PhysicsListNew(G4bool addNRF_in, G4bool use_xsec_tables_in,
                                G4bool use_xsec_integration_in, G4bool force_isotropic_in,
@@ -61,7 +62,11 @@ void PhysicsListNew::ConstructPhysics()
         G4cout << "PhysicsListNew::ConstructPhysics -> Geant4 10.5 Optical Physics Set." << G4endl;
   #endif
 
-        RegisterPhysics(opticalPhysics);
+        if(!WResponseFunction)
+        {
+          RegisterPhysics(opticalPhysics);
+          G4cout << "PhysicsListNew::ConstructPhysics -> Added Optical Physics to the physicsList." << G4endl;
+        }
 
         // Add NRF to the PhysicsListNew
         if(addNRF)
