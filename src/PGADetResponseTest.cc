@@ -34,6 +34,9 @@ extern G4double uniform_width;
 PGADetResponseTest::PGADetResponseTest()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
+  if(debug)
+    std::cout << "PGADetResponseTest::PGADetResponseTest -> Initialized!" << std::endl;
+    
   SetupNonBremTest();
 
   if(chosen_energy < 0 && !resonanceTest && !SampleEnergyRangebool)

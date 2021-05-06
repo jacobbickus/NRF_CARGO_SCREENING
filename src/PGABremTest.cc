@@ -31,6 +31,9 @@ extern G4bool debug;
 PGABremTest::PGABremTest()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
+  if(debug)
+    std::cout << "PGABremTest::PGABremTest -> Initialized!" << std::endl;
+    
   beam_size = 0.5*mm;
   fParticleGun->SetParticleDefinition(G4Electron::Definition());
   beamStart = 0.*cm; // start brem beam 1 cm behind brem radiator

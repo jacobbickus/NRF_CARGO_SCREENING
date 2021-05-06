@@ -30,6 +30,8 @@ extern G4bool run_without_chopper;
 DetWResponseFunction::DetWResponseFunction(ChopperSetup* Chopper, Collimator* Collimator, Cargo* Cargo)
 : DetectorConstruction(Chopper, Collimator, Cargo)
 {
+  if(debug)
+    std::cout << "DetWResponseFunction::DetWResponseFunction -> Initialized!" << std::endl;
 }
 
 DetWResponseFunction::~DetWResponseFunction()

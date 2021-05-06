@@ -30,6 +30,9 @@ extern G4bool debug;
 PGAIntObj::PGAIntObj()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
+  if(debug)
+    std::cout << "PGAIntObj::PGAIntObj -> Initialized!" << std::endl;
+    
   SetupNonBremTest();
   beamStart = -20*cm;
   sInfo->SetSourceZPosition(beamStart);

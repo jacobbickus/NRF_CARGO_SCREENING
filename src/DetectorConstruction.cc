@@ -47,6 +47,9 @@ DetectorConstruction::DetectorConstruction(ChopperSetup* Chopper, Collimator* Co
         // Messenger
         detectorM(NULL)
 {
+  if(debug)
+    std::cout << "DetectorConstruction::DetectorConstruction -> Initialized!" << std::endl;
+    
   detectorM = new DetectorMessenger(this);
   SetDefaultNistMaterials();
 }

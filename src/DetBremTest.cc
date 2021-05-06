@@ -28,7 +28,10 @@ extern G4bool debug;
 
 DetBremTest::DetBremTest(ChopperSetup* Chopper, Linac* Linac, Collimator* Collimator)
 : DetectorConstruction(Chopper, Collimator, 0, Linac)
-{}
+{
+  if(debug)
+    std::cout << "DetBremTest::DetBremTest -> Initialized!" << std::endl;
+}
 
 DetBremTest::~DetBremTest()
 {}
