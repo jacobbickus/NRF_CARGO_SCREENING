@@ -24,6 +24,8 @@
 
 #include "PhysicsListNew.hh"
 extern G4bool WResponseFunction;
+extern G4bool IntObjTest;
+extern G4bool bremTest;
 
 PhysicsListNew::PhysicsListNew(G4bool addNRF_in, G4bool use_xsec_tables_in,
                                G4bool use_xsec_integration_in, G4bool force_isotropic_in,
@@ -60,13 +62,13 @@ void PhysicsListNew::ConstructPhysics()
         opticalPhysics->SetTrackSecondariesFirst(kScintillation, true);
   #endif
 
-        if(!WResponseFunction)
+        if(!WResponseFunction && !IntObjTest && !bremTest)
         {
           #ifdef G4_OPTPARAM
             G4cout << "PhysicsListNew::ConstructPhysics -> Geant4.10.7 Physics List Used!" << G4endl;
           #else
             G4cout << "PhysicsListNew::ConstructPhysics -> Geant4 10.5 Optical Physics Set." << G4endl;
-          #endif 
+          #endif
 
           RegisterPhysics(opticalPhysics);
           G4cout << "PhysicsListNew::ConstructPhysics -> Added Optical Physics to the physicsList." << G4endl;

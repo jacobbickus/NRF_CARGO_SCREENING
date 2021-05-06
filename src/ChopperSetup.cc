@@ -144,8 +144,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
     Uranium_chopper->AddIsotope(Uranium238, chopper_U238_abundance*perCent);
     chopperMat->AddElement(Uranium_chopper,1);
     G4cout << "ChopperSetup::Construct -> Material: Uranium" << G4endl;
-    G4cout << "ChopperSetup::Construct -> Fission isotope abundance: "
-            << chopper_radio_abundance << " %" << G4endl;
+    G4cout << "ChopperSetup::Construct -> Fission isotope U235 abundance: "
+            << chopper_U235_abundance << " %" << G4endl;
   }
   else if(chopperDensity == 19.6*g/cm3)
   {
@@ -171,8 +171,8 @@ G4VPhysicalVolume* ChopperSetup::Construct(G4LogicalVolume* logicWorld, bool che
     Plutonium_chopper->AddIsotope(Plutonium240, chopper_Pu240_abundance*perCent);
     chopperMat->AddElement(Plutonium_chopper, 1);
     G4cout << "ChopperSetup::Construct -> Material: Plutonium" << G4endl;
-    G4cout << "ChopperSetup::Construct -> Fission isotope abundance: "
-            << chopper_radio_abundance << " %" << G4endl;
+    G4cout << "ChopperSetup::Construct -> Fission isotope Pu239 abundance: "
+            << chopper_Pu239_abundance << " %" << G4endl;
   }
   else if(chopperDensity == 11.34*g/cm3)
   {
