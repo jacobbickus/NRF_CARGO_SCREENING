@@ -35,8 +35,8 @@ PGA::PGA()
 : G4VUserPrimaryGeneratorAction(), BasePGA()
 {
   if(debug)
-    std::Cout << "PGA::PGA -> Initialized!" << std::endl;
-    
+    std::cout << "PGA::PGA -> Initialized!" << std::endl;
+
   SetupNonBremTest();
   if(chosen_energy < 0 && !resonanceTest && !SampleEnergyRangebool)
   {
