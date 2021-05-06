@@ -53,17 +53,21 @@ void PhysicsListNew::ConstructPhysics()
         G4OpticalPhysics* opticalPhysics = new G4OpticalPhysics(0);
   #ifdef G4_OPTPARAM
         auto optParam = G4OpticalParameters::Instance();
-        G4cout << "PhysicsListNew::ConstructPhysics -> Geant4.10.7 Physics List Used!" << G4endl;
   #else
         opticalPhysics->SetWLSTimeProfile("delta");
         opticalPhysics->SetScintillationYieldFactor(1.0); // this would change if the yield changed based on particle type --> not relevant here
         opticalPhysics->SetTrackSecondariesFirst(kCerenkov, true);
         opticalPhysics->SetTrackSecondariesFirst(kScintillation, true);
-        G4cout << "PhysicsListNew::ConstructPhysics -> Geant4 10.5 Optical Physics Set." << G4endl;
   #endif
 
         if(!WResponseFunction)
         {
+          #ifdef G4_OPTPARAM
+            G4cout << "PhysicsListNew::ConstructPhysics -> Geant4.10.7 Physics List Used!" << G4endl;
+          #else
+            G4cout << "PhysicsListNew::ConstructPhysics -> Geant4 10.5 Optical Physics Set." << G4endl;
+          #endif 
+
           RegisterPhysics(opticalPhysics);
           G4cout << "PhysicsListNew::ConstructPhysics -> Added Optical Physics to the physicsList." << G4endl;
         }
