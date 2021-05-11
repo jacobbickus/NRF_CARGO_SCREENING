@@ -1537,6 +1537,7 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
 {
   std::vector<double> countsv;
   std::vector<int> photonsv;
+  int found_files = 0;
   for(int i=filestart;i<filenum;++i)
   {
     string filename = filebase + "-" + std::to_string(i) + ".root";
@@ -1548,6 +1549,7 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
     }
     if(filefound)
     {
+      found_files++;
       countsv.push_back(GetCounts(filename.c_str(),weighted));
     }
     TFile* f = TFile::Open(filename.c_str());
@@ -1573,6 +1575,8 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
   int sd_photons = sqrt(t_photons);
 
   std::cout << "MantisROOT::GetCounts Summary" << std::endl
+  << "Total Files Searched:                " << filenum - filestart << std::endl
+  << "Files Found:                         " << found_files << std::endl
   << "Total Optical Photons:               " << t_counts << std::endl
   << "Optical Photons Variance:            " << variance << std::endl
   << "Optical Photons Standard Deviation:  " << sd_optical_photons << std::endl
