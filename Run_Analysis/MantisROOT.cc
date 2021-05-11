@@ -1559,9 +1559,11 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
   }
   // determine variance
   double variance = 0.;
+  long int t_counts = 0;
   long int t_photons = 0;
   for(int i=0;i<countsv.size();++i)
   {
+    t_counts += countsv[i];
     variance += pow(countsv[i],2);
     t_photons += photonsv[i];
   }
@@ -1570,7 +1572,9 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
   int sd_optical_photons = sqrt(variance);
   int sd_photons = sqrt(t_photons);
 
-  std::cout << "Optical Photons Variance:  " << variance << std::endl
+  std::cout << "MantisROOT::GetCounts Summary" << std::endl
+  << "Total Optical Photons:               " << t_counts << std::endl
+  << "Optical Photons Variance:            " << variance << std::endl
   << "Optical Photons Standard Deviation:  " << sd_optical_photons << std::endl
   << "Incident Photons:                    " << t_photons << std::endl
   << "Incident Photons Standard Deviation: " << sd_photons << std::endl;
