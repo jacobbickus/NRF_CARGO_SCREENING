@@ -64,7 +64,8 @@ public:
     void DrawWeights(TGraph* input, TGraph* sample);
     double Energy2Wave(double energy, string unit="eV");
     void GetCountIntegralAndError(const char* filename, bool weighted=false);
-    void GetCounts(const char* filename, bool weighted=false);
+    double GetCounts(const char* filename, bool weighted=false);
+    void GetCounts(string filebase, int filestart=0, int filenum=1, bool weighted=false);
     void GetScintillationDistribution(const char* filename, bool Corrected=true);
     void Integral(TTree* tree);
     void Integral(std::vector<TTree*> trees);
@@ -1488,7 +1489,7 @@ void MantisROOT::GetCountIntegralAndError(const char* filename, bool weighted=fa
 
 
 
-void MantisROOT::GetCounts(const char* filename, bool weighted=false)
+double MantisROOT::GetCounts(const char* filename, bool weighted=false)
 {
 
   CheckFile(filename);
@@ -1528,11 +1529,54 @@ void MantisROOT::GetCounts(const char* filename, bool weighted=false)
 
   f->Close();
   std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
-
+  return total_histo_counts;
 } // end of GetCounts Function
 
 
+void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool weighted=false)
+{
+  std::vector<double> countsv;
+  std::vector<int> photonsv;
+  for(int i=filestart;i<filenum;++i)
+  {
+    string filename = filebase + "-" + std::to_string(i) + ".root";
+    bool filefound = true;
+    if(gSystem->AccessPathName(filename.c_str()))
+    {
+      std::cout << "File " << filename << " Not Found." << std::endl << "Skipping..." << std::endl;
+      filefound = false;
+    }
+    if(filefound)
+    {
+      countsv.push_back(GetCounts(filename.c_str(),weighted));
+    }
+    TFile* f = TFile::Open(filename.c_str());
+    TTree* tree=0;
+    f->GetObject("DetInfo",tree);
+    photonsv.push_back(tree->GetEntries());
+    delete tree;
+    f->Close();
+  }
+  // determine variance
+  double variance = 0.;
+  long int t_photons = 0;
+  for(int i=0;i<countsv.size();++i)
+  {
+    variance += pow(countsv[i],2);
+    t_photons += photonsv[i];
+  }
+  variance /= (countsv.size() - 1);
 
+  int sd_optical_photons = sqrt(variance);
+  int sd_photons = sqrt(t_photons);
+
+  std::cout << "Optical Photons Variance:  " << variance << std::endl
+  << "Optical Photons Standard Deviation:  " << sd_optical_photons << std::endl
+  << "Incident Photons:                    " << t_photons << std::endl
+  << "Incident Photons Standard Deviation: " << sd_photons << std::endl;
+
+  std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
+}
 
 void MantisROOT::GetScintillationDistribution(const char* filename, bool Corrected=true)
 {
