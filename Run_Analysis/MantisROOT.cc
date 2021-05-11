@@ -1551,13 +1551,13 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
     {
       found_files++;
       countsv.push_back(GetCounts(filename.c_str(),weighted));
+      TFile* f = TFile::Open(filename.c_str());
+      TTree* tree=0;
+      f->GetObject("DetInfo",tree);
+      photonsv.push_back(tree->GetEntries());
+      delete tree;
+      f->Close();
     }
-    TFile* f = TFile::Open(filename.c_str());
-    TTree* tree=0;
-    f->GetObject("DetInfo",tree);
-    photonsv.push_back(tree->GetEntries());
-    delete tree;
-    f->Close();
   }
   // determine variance
   double variance = 0.;
