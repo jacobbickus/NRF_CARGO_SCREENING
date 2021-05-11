@@ -1524,11 +1524,11 @@ double MantisROOT::GetCounts(const char* filename, bool weighted=false)
   double sd_profile = sqrt(total_profile_counts);
   double sd_histo = sqrt(total_histo_counts);
 
-  std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
-            << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << " +- " << sd_histo   << std::endl;
+  //std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
+  //          << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << " +- " << sd_histo   << std::endl;
 
   f->Close();
-  std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
+  //std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
   return total_histo_counts;
 } // end of GetCounts Function
 
