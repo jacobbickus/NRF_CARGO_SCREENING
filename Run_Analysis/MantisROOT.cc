@@ -39,6 +39,7 @@ public:
     void CheckDet(const char* filename, bool weighted=false, int estimate=-1);
     void CheckEvents(const char* filename, bool Weighted=false,
                     bool Corrected=false, bool copy_to_original_file=false);
+    void CheckEventsWResponse(const char* filename, bool Weighted=false);
     void CheckIntObj(const char* onFile, const char* offFile, double Er=1.73354,
                     bool Weighted=false);
     void CheckIntObjRegion(const char* onFilename, const char* offFilename,
@@ -718,6 +719,91 @@ void MantisROOT::CheckEvents(const char* filename, bool Weighted=false, bool Cor
 
   std::cout << "MantisROOT::CheckEvents -> COMPLETE!" << std::endl;
 } // end of CheckEvents Function
+
+
+void MantisROOT::CheckEventsWResponse(const char* filename, bool Weighted=false)
+{
+  CheckFile(filename);
+  TFile* f = TFile::Open(filename);
+  f->cd();
+  TTree *t_nrf, *t_det;
+  f->GetObject("NRF",t_nrf);
+  f->GetObject("DetInfo",t_det);
+  t_nrf->SetEstimate(-1);
+  t_det->SetEstimate(-1);
+
+  int nrf_event, det_event;
+  double det_numpe, weight;
+  t_nrf->SetBranchAddress("EventID", &nrf_event);
+  t_det->SetBranchAddress("EventID", &det_event);
+  t_det->SetBranchAddress("NumPE2",  &det_numpe);
+  t_det->SetBranchAddress("Weight",  &weight);
+
+  std::vector<int> nrf_eventsv, det_eventsv;
+  std::vector<double> det_pev, det_weightv;
+  for(int i=0;i<t_nrf->GetEntries();++i)
+  {
+    t_nrf->GetEntry(i);
+    nrf_eventsv.push_back(nrf_event);
+  }
+  for(int i=0;i<t_det->GetEntries();++i)
+  {
+    t_det->GetEntry(i);
+    det_eventsv.push_back(det_event);
+    det_pev.push_back(det_numpe);
+    det_weightv.push_back(weight);
+  }
+  // erase duplicate NRF events
+  std::sort(nrf_eventsv.begin(), nrf_eventsv.end());
+  nrf_eventsv.erase(unique(nrf_eventsv.begin(), nrf_eventsv.end()),nrf_eventsv.end());
+
+  std::cout << "Checking " << nrf_eventsv.size() << " NRF Events." << std::endl
+  << "Checking " << det_eventsv.size() << " Detected Events." << std::endl;
+
+  int x = 0;
+  std::vector<int> matching_events;
+  std::vector<double> nrf_to_detpe, nrf_to_detweight;
+  for(int i=0;i<nrf_eventsv.size();++i)
+  {
+    x = det_eventsv[i];
+    // Check if NRF EventID is found in DetInfo Vector
+    auto exists = std::find(nrf_eventsv.begin(),nrf_eventsv.end(), x);
+
+    if(exists != nrf_eventsv.end())
+    {
+      // if the eventID is found in detinfo write to new vector
+      matching_events.push_back(x);
+      nrf_to_detpe.push_back(det_pev[i]);
+      nrf_to_detweight.push_back(det_weightv[i]);
+    }
+  }
+
+  string check_filename = "Checked_" + string(filename);
+  TFile* fout = new TFile(check_filename.c_str(),"RECREATE");
+  fout->cd();
+  TTree* t_out = new TTree("DetInfo","Detected NRF Events");
+  int events;
+  double numpe, detweight;
+  t_out->Branch("EventID", &events);
+  t_out->Branch("NumPE2", &numpe);
+  t_out->Branch("Weight", &detweight);
+
+  for(int i=0;i<matching_events.size();++i)
+  {
+    events = matching_events[i];
+    numpe = nrf_to_detpe[i];
+    detweight = nrf_to_detweight[i];
+    t_out->Fill();
+  }
+
+  std::cout << "Total Detected NRF Events: " << t_out->GetEntries() << std::endl;
+
+  t_out->Write();
+  std::cout << "MantisROOT::CheckEventsWResponse -> Written to file: " << check_filename << std::endl;
+  fout->Close();
+
+  std::cout << "MantisROOT::CheckEventsWResponse -> COMPLETE." << std::endl;
+}
 
 
 
@@ -1501,12 +1587,12 @@ double MantisROOT::GetCounts(const char* filename, bool weighted=false)
   tree->SetEstimate(-1);
 
   double weights;
-  double profile_counts;
+  //double profile_counts;
   double histo_counts;
-  double total_profile_counts = 0.;
+  //double total_profile_counts = 0.;
   double total_histo_counts = 0.;
 
-  tree->SetBranchAddress("NumPE", &profile_counts);
+  //tree->SetBranchAddress("NumPE", &profile_counts);
   tree->SetBranchAddress("NumPE2", &histo_counts);
 
   if(weighted)
@@ -1517,12 +1603,9 @@ double MantisROOT::GetCounts(const char* filename, bool weighted=false)
   for(int i=0;i<tree->GetEntries();++i)
   {
     tree->GetEntry(i);
-    total_profile_counts += profile_counts*weights;
+    //total_profile_counts += profile_counts*weights;
     total_histo_counts += histo_counts*weights;
   }
-
-  double sd_profile = sqrt(total_profile_counts);
-  double sd_histo = sqrt(total_histo_counts);
 
   //std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
   //          << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << " +- " << sd_histo   << std::endl;
