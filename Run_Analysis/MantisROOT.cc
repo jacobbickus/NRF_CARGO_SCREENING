@@ -62,11 +62,11 @@ public:
     TGraph* CreateScintillationDistribution(std::vector<double> list_of_energies, std::vector<double> list_of_cross_sections);
     void CreateScintillationDistribution(string a, string b, string c, string d);
     TGraph* CreateScintillationDistribution(double scale=1.);
-    void DrawWeights(TGraph* input, TGraph* sample);
+    void DrawWeights(TGraph* input, TGraph* sample, string canvas_name="c1");
     double Energy2Wave(double energy, string unit="eV");
     void GetCountIntegralAndError(const char* filename, bool weighted=false);
     double GetCounts(const char* filename, bool weighted=false);
-    void GetCounts(string filebase, int filestart=0, int filenum=1, bool weighted=false);
+    //void GetCounts(string filebase, int filestart=0, int filenum=1, bool weighted=false);
     void GetScintillationDistribution(const char* filename, bool Corrected=true);
     void Integral(TTree* tree);
     void Integral(std::vector<TTree*> trees);
@@ -75,8 +75,8 @@ public:
     void PredictThickness(std::vector<string> objects, bool write2file=false);
     void PredictThickness(std::vector<string> objects, double resonance_energy,
                           bool write2file=false);
-    void PrepInputSpectrum(const char*, const char* object="ChopIn",
-                          string outfile="brem.root", bool Weighted=false,
+    void PrepInputSpectrum(const char*, bool drawPlots=false, bool smooth=false,
+                          const char* object="ChopIn", bool Weighted=false,
                           double deltaE=0.000005, double minimum_energy=0.0);
     void PrepIntObjInputSpectrum(const char* filename, const char* ObjName,
                                 std::vector<double> energy_regions,
@@ -87,15 +87,15 @@ public:
                     bool weighted=false, bool drawPlots=false,
                     bool drawBeamEnergyPlots=false);
     void Sampling(const char *filename, const char* object_to_sample,
+                  bool drawPlots=false, bool smooth=false,
                   bool Weighted=false, string sample_element="U",
-                  double deltaE_large_bin_width = 0.001,
-                  double deltaE_small_bin_width=0.000005, bool checkZero=false,
+                  double deltaE=0.000005, bool checkZero=false,
                   double non_nrf_energy_cut=1.5, double weighting_factor=10000);
     void Sig2Noise(std::vector<string> filenames, string object,
                   bool Weighted=false, bool Corrected=false,
                   bool place_cut=false, TCut cut1="NA");
     void SimpleSampling(const char* filename, const char* object_to_sample,
-                        bool Weighted=false,
+                        bool smooth=false, bool Weighted=false,
                         double deltaE_large_bin_width=0.001,
                         double deltaE_small_bin_width=0.000005,
                         double cut_energy1=0.5, double cut_energy2=1.0,
@@ -229,7 +229,7 @@ private:
     double hIntegralReturnWeightedCounts(TTree*, double cut_energy=5e-6);
     double hIntegralReturnWeightedEnergy(TTree*, double cut_energy=5e-6);
     void hIntegral(TTree*, TCut);
-    TGraph* PrepInputSpectrum(const char*, const char*, bool, double);
+    TGraph* PrepInputSpectrum(const char* filename, const char* obj, bool smooth, bool Weighted, double deltaE, bool checkZero);
     void Rescale(const char*, double, bool write2file=false);
     void Rescale(const char*, bool write2file=false);
     double ReturnMax(const char*, const char*);
@@ -238,6 +238,8 @@ private:
     void SNR_Det(const char*, bool, bool, bool, TCut cut1="NA");
     void WriteSampling(TGraph*, TGraph*, TH1D*, double);
     void WriteSampling(TGraph*, double);
+    void WriteSampling(TH1D*);
+    void CheckZeros(TH1D* &hin, int nbins);
 
     double hc = 6.62607004e-34*299792458;
 
@@ -1591,6 +1593,7 @@ double MantisROOT::GetCounts(const char* filename, bool weighted=false)
   double histo_counts;
   //double total_profile_counts = 0.;
   double total_histo_counts = 0.;
+  double sd_counts = 0.;
 
   //tree->SetBranchAddress("NumPE", &profile_counts);
   tree->SetBranchAddress("NumPE2", &histo_counts);
@@ -1605,17 +1608,21 @@ double MantisROOT::GetCounts(const char* filename, bool weighted=false)
     tree->GetEntry(i);
     //total_profile_counts += profile_counts*weights;
     total_histo_counts += histo_counts*weights;
+    sd_counts += pow(histo_counts*weights,2);
   }
 
+  sd_counts = sqrt(sd_counts);
   //std::cout << "MantisROOT::GetCounts -> Profile Counts: " << total_profile_counts << " +- " << sd_profile << std::endl
   //          << "MantisROOT::GetCounts -> Histo Counts:   " << total_histo_counts   << " +- " << sd_histo   << std::endl;
+
+  std::cout << "MantisROOT::GetCounts -> Histo Counts: " << total_histo_counts << " +- " << sd_counts << std::endl;
 
   f->Close();
   //std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
   return total_histo_counts;
 } // end of GetCounts Function
 
-
+/*
 void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool weighted=false)
 {
   std::vector<double> countsv;
@@ -1669,6 +1676,7 @@ void MantisROOT::GetCounts(string filebase, int filestart=0, int filenum=1, bool
   std::cout << "MantisROOT::GetCounts -> COMPLETE." << std::endl;
 }
 
+*/
 void MantisROOT::GetScintillationDistribution(const char* filename, bool Corrected=true)
 {
   CheckFile(filename);
@@ -1785,7 +1793,7 @@ void MantisROOT::PredictThickness(std::vector<string> objects, double resonance_
 
 
 
-void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn", string outfile="brem.root", bool Weighted=false, double deltaE=0.000005, double minimum_energy=0.0)
+void MantisROOT::PrepInputSpectrum(const char* filename, bool drawPlots=false, bool smooth=false, const char* obj="ChopIn", bool Weighted=false, double deltaE=0.000005, double minimum_energy=0.0)
 {
   CheckFile(filename);
   TFile *f = new TFile(filename);
@@ -1801,7 +1809,8 @@ void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn
 
   double maxE = tin->GetMaximum("Energy");
 
-  int nbins = (maxE - minE)/deltaE;
+  int nbins = (maxE - minE)/10e-3;
+  int nbins2 = (maxE - minE)/deltaE;
 
   TH1D* dNdE_histogram = new TH1D("dNdE_histogram","dNdE Histogram Spectrum", nbins, minE, maxE);
 
@@ -1810,13 +1819,48 @@ void MantisROOT::PrepInputSpectrum(const char* filename, const char* obj="ChopIn
   else
     tin->Draw("Energy>>dNdE_histogram","","goff");
 
-  dNdE_histogram->Scale(1./dNdE_histogram->Integral());
+  if(smooth)
+    dNdE_histogram->Smooth(1000);
+
+  //dNdE_histogram->Scale(1./dNdE_histogram->Integral());
   dNdE_histogram->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
-  dNdE_histogram->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* dNdE_graph = new TGraph(dNdE_histogram);
-  WriteSampling(dNdE_graph,deltaE);
+  dNdE_histogram->GetYaxis()->SetTitle("Probability per 10000 eV");
+  TGraph* dNdE_graph1 = new TGraph(dNdE_histogram);
+
+  // Here perform rebinning
+  TH1D* dNdE_histogram_rebinned = new TH1D("dNdE_histogram_rebinned","dNdE Histogram Spectrum",nbins2, 0., maxE);
+  dNdE_histogram_rebinned->GetYaxis()->SetTitle(yTitle.c_str());
+  for(int i=0;i<nbins2;++i)
+  {
+    double this_energy = dNdE_histogram_rebinned->GetXaxis()->GetBinCenter(i);
+    double new_dNdE_value = dNdE_graph1->Eval(this_energy);
+    dNdE_histogram_rebinned->SetBinContent(i,new_dNdE_value);
+  }
+
+  dNdE_histogram_rebinned->Scale(1./dNdE_histogram_rebinned->Integral());
+  TGraph* dNdE_graph = new TGraph(dNdE_histogram_rebinned);
+
+  WriteSampling(dNdE_histogram_rebinned);
+  WriteSampling(dNdE_graph, deltaE);
+
+  if(drawPlots)
+  {
+    TCanvas* c0 = new TCanvas("dNdE_histogram_canvas","dNdE Histogram",600,400);
+    c0->cd();
+    dNdE_histogram->Draw("h");
+    TCanvas* c1 = new TCanvas("dNdE_histogram_rebinned_canvas","dNdE Histogram Rebinned",600,400);
+    c1->cd();
+    dNdE_histogram_rebinned->Draw("h");
+    TCanvas* c2 = new TCanvas("dNdE_graph_canvas2","dNdE TGraph 2",600,400);
+    c2->cd();
+    dNdE_graph1->Draw();
+    TCanvas* c3 = new TCanvas("dNdE_graph_canvas","dNdE TGraph",600,400);
+    c3->cd();
+    dNdE_graph->Draw();
+  }
+  std::cout << "MantisROOT::PrepInputSpectrum -> COMPLETE." << std::endl;
 } // end of PrepInputSpectrum Function
 
 
@@ -1897,7 +1941,6 @@ void MantisROOT::PrepIntObjInputSpectrum(const char* filename, const char* ObjNa
     sampling_graph->Draw();
   }
   std::cout << "MantisROOT::PrepIntObjInputSpectrum -> COMPLETE." << std::endl;
-
   WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, 5e-6);
 } // end of PrepIntObjInputSpectrum Function
 
@@ -2333,9 +2376,10 @@ void MantisROOT::RunSummary(const char* onFile, const char* offFile, bool IntObj
 
 
 
-void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bool Weighted=false, string sample_element="U", double deltaE_large_bin_width = 0.001, double deltaE_small_bin_width=0.000005, bool checkZero=false, double non_nrf_energy_cut=1.5, double weighting_factor=10000)
+void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bool drawPlots=false, bool smooth=false, bool Weighted=false, string sample_element="U", double deltaE=0.000005, bool checkZero=false, double non_nrf_energy_cut=1.5, double weighting_factor=10000)
 {
 	CheckFile(filename);
+  double deltaE_large_bin_width = 0.01;
   double Emax = ReturnMax(filename, object_to_sample);
 	// resonance energies in MeV as calculated by G4NRF
 	vector<double> Evec;
@@ -2388,10 +2432,19 @@ void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bo
 	}
 
   // Build dNdE Graph with large bin widths
-  TGraph* dNdE_graph = PrepInputSpectrum(filename, object_to_sample, Weighted, deltaE_large_bin_width);
+
+  if(debug)
+  {
+    std::cout << "MantisROOT::Sampling -> Prepping Input Spectrum..." << std::endl;
+  }
+
+  TGraph* dNdE_graph = PrepInputSpectrum(filename, object_to_sample, smooth, Weighted, deltaE_large_bin_width, checkZero);
+
+  if(debug)
+    std::cout << "MantisROOT::Sampling -> Input Spectrum Prepped!" << std::endl;
 
   // Create small bin width Sampling Histogram
-  TH1D* sampling_histogram = BuildBremSampling(E_below_threshold, non_nrf_energy_cut, deltaE_small_bin_width, Emax, weighting_factor);
+  TH1D* sampling_histogram = BuildBremSampling(E_below_threshold, non_nrf_energy_cut, deltaE, Emax, weighting_factor);
 
   sampling_histogram->SetTitle("Sampling Histogram");
   sampling_histogram->SetName("Sampling_Histogram");
@@ -2400,9 +2453,9 @@ void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bo
   sampling_graph->SetTitle("Sampling TGraph");
 
   // Write to Sampling file
-	WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, deltaE_small_bin_width);
+	WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, deltaE);
 
-  if(debug)
+  if(debug || drawPlots)
   {
     std::cout << "MantisROOT::Sampling Displaying Graphs..." << std::endl;
     TCanvas* c_input_graph = new TCanvas("c_input_graph","dNdE Input Graph",600,400);
@@ -2463,11 +2516,11 @@ void MantisROOT::Sig2Noise(std::vector<string> filenames, string object, bool We
 
 
 
-void MantisROOT::SimpleSampling(const char* filename, const char* object_to_sample, bool Weighted=false, double deltaE_large_bin_width=0.001, double deltaE_small_bin_width=0.000005, double cut_energy1=0.5, double cut_energy2=1.0, double weighting_factor=1000, double weighting_factor2=10, bool checkZero=false, bool drawWeights=false)
+void MantisROOT::SimpleSampling(const char* filename, const char* object_to_sample, bool smooth=false, bool Weighted=false, double deltaE_large_bin_width=0.001, double deltaE_small_bin_width=0.000005, double cut_energy1=0.5, double cut_energy2=1.0, double weighting_factor=1000, double weighting_factor2=10, bool checkZero=false, bool drawWeights=false)
 {
   TH1D* sampling_histogram = BuildSimpleSample(filename, object_to_sample, deltaE_small_bin_width, cut_energy1, cut_energy2, weighting_factor, weighting_factor2);
   TGraph *sampling_graph = new TGraph(sampling_histogram);
-  TGraph *dNdE_graph = PrepInputSpectrum(filename, object_to_sample, Weighted, deltaE_large_bin_width);
+  TGraph *dNdE_graph = PrepInputSpectrum(filename, object_to_sample, smooth, Weighted, deltaE_large_bin_width, checkZero);
 
   WriteSampling(dNdE_graph, sampling_graph, sampling_histogram, deltaE_small_bin_width);
 
@@ -2756,7 +2809,7 @@ TH1D* MantisROOT::BuildBremSampling(const std::vector<double> E_below_threshold,
 	}
 
 	// normalize h_sample so that its integral is 1
-	h_sample->Scale(1.0/(h_sample->Integral()));
+	h_sample->Scale(1./h_sample->Integral());
   return h_sample;
 } // end of BuildBremSampling Private Function
 
@@ -3365,10 +3418,10 @@ void MantisROOT::CopyATreeNoWeight(const char* filename, const char* tObj, const
 
 
 
-void MantisROOT::DrawWeights(TGraph* input, TGraph* sample)
+void MantisROOT::DrawWeights(TGraph* input, TGraph* sample, string canvas_name="c1")
 {
   std::cout << "MantisROOT::DrawWeights -> Drawing Weights..." << std::endl;
-  TCanvas* c_Weighting_Spectra = new TCanvas("c1","Weighting Spectra",600,400);
+  TCanvas* c_Weighting_Spectra = new TCanvas(canvas_name.c_str(),"Weighting Spectra",600,400);
   c_Weighting_Spectra->cd();
   gPad->SetTicks(1,1);
   gPad->SetLogy();
@@ -3384,6 +3437,13 @@ void MantisROOT::DrawWeights(TGraph* input, TGraph* sample)
   {
     double energy = energies[i];
     double w = input->Eval(energy)/sample->Eval(energy);
+    if(w == 0)
+    {
+      std::cout << "MantisROOT::DrawWeights WARNING Zero Weight Detected!" << std::endl
+      << "Energy: " << energy << " MeV" << std::endl
+      << "dNdE: " << input->Eval(energy) << std::endl << "Sampling: " << sample->Eval(energy)
+      << std::endl;
+    }
     theweights.push_back(w);
   }
 
@@ -3557,7 +3617,7 @@ void MantisROOT::hIntegral(TTree *inObj,TCut cut1)
 
 
 
-TGraph* MantisROOT::PrepInputSpectrum(const char* filename,  const char* obj, bool Weighted, double deltaE)
+TGraph* MantisROOT::PrepInputSpectrum(const char* filename, const char* obj, bool smooth, bool Weighted, double deltaE, bool checkZero)
 {
   CheckFile(filename);
   TFile *f = new TFile(filename);
@@ -3565,22 +3625,52 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* filename,  const char* obj, bo
   TTree* tin;
   f->GetObject(obj, tin);
   double maxE = tin->GetMaximum("Energy");
-  double minE = tin->GetMinimum("Energy");
-  int nbins = (maxE - minE)/deltaE;
-
-  TH1D* dNdE_histogram = new TH1D("dNdE_histogram","dNdE Histogram Spectrum", nbins, minE, maxE);
-
+  int nbins = maxE/deltaE;
+  int nbins2 = maxE/5e-6;
+  TH1D* dNdE_histogram = new TH1D("dNdE_histogram","dNdE Histogram Spectrum", nbins, 0., maxE);
   if(Weighted)
     tin->Draw("Energy>>dNdE_histogram","Weight","goff");
   else
     tin->Draw("Energy>>dNdE_histogram","","goff");
 
-  dNdE_histogram->Scale(1./dNdE_histogram->Integral());
+  if(smooth)
+    dNdE_histogram->Smooth(1000);
+
+  if(debug)
+    dNdE_histogram->Print();
+
+  // check for zeros
+  if(checkZero)
+    CheckZeros(dNdE_histogram, nbins);
+
+  //dNdE_histogram->Scale(1./dNdE_histogram->Integral());
   dNdE_histogram->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
   dNdE_histogram->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* dNdE_graph = new TGraph(dNdE_histogram);
+  TGraph* dNdE_graph1 = new TGraph(dNdE_histogram);
+
+  // Here perform rebinning
+  TH1D* dNdE_histogram_rebinned = new TH1D("dNdE_histogram_rebinned","dNdE Histogram Spectrum",nbins2, 0., maxE);
+  for(int i=0;i<nbins2;++i)
+  {
+    double this_energy = dNdE_histogram_rebinned->GetXaxis()->GetBinCenter(i);
+    double new_dNdE_value = dNdE_graph1->Eval(this_energy);
+    dNdE_histogram_rebinned->SetBinContent(i,new_dNdE_value);
+  }
+
+  if(checkZero)
+    CheckZeros(dNdE_histogram_rebinned,nbins2);
+
+  dNdE_histogram_rebinned->Scale(1./dNdE_histogram_rebinned->Integral());
+
+  if(debug)
+  {
+    std::cout << "MantisROOT::PrepInputSpectrum -> Writing dNdE_histogram..." << std::endl;
+    dNdE_histogram->Print();
+  }
+  WriteSampling(dNdE_histogram_rebinned);
+  TGraph* dNdE_graph = new TGraph(dNdE_histogram_rebinned);
   f->Close();
   return dNdE_graph;
 } // end of PrepInputSpectrum Private Function
@@ -4248,8 +4338,9 @@ void MantisROOT::WriteSampling(TGraph* dNdE, TGraph* sampling_graph, TH1D* sampl
   sampling_graph->GetYaxis()->SetTitle(titleProb.c_str());
 
   // save everything to file
-  TFile *fout = new TFile("importance_sampling_input.root","recreate");
+  TFile *fout = new TFile("importance_sampling_input.root","UPDATE");
   fout->cd();
+
   dNdE->Write();
   sampling_graph->Write();
   sampling_histogram->Write();
@@ -4258,15 +4349,71 @@ void MantisROOT::WriteSampling(TGraph* dNdE, TGraph* sampling_graph, TH1D* sampl
 } // end of WriteSampling Private Function
 
 
+
+
+void MantisROOT::WriteSampling(TH1D* dNdE_histogram)
+{
+  if(debug)
+  {
+    std::cout << "MantisROOT::WriteSampling -> Writing dNdE_histogram..." << std::endl;
+    dNdE_histogram->Print();
+  }
+  TFile* fout = new TFile("importance_sampling_input.root","RECREATE");
+  fout->cd();
+  dNdE_histogram->Write();
+  std::cout << "MantisROOT::WriteSampling -> File Complete. dNdE_histogram saved to importance_sampling_input.root" << std::endl;
+  if(debug)
+    fout->ls();
+  fout->Close();
+}
+
 void MantisROOT::WriteSampling(TGraph* dNdE, double delteE)
 {
   dNdE->SetNameTitle("dNdE_graph","dNdE TGraph Distribution");
   // save everything to file
-  TFile *fout = new TFile("importance_sampling_input.root","recreate");
+  TFile *fout = new TFile("importance_sampling_input.root","UPDATE");
   fout->cd();
   dNdE->Write();
   std::cout << "MantisROOT::WriteSampling -> File Complete. Saved to importance_sampling_input.root" << std::endl;
   fout->Close();
+}
+
+void MantisROOT::CheckZeros(TH1D* &hin, int nbins)
+{
+  if(debug)
+  {
+    std::cout << "MantisROOT::CheckZeros: " << std::endl;
+    hin->Print();
+  }
+
+  for(int i=1; i < nbins - 1; ++i)
+  {
+    if(hin->GetBinContent(i) == 0)
+    {
+      double current_energy = hin->GetXaxis()->GetBinCenter(i);
+      int j = 1;
+      while(hin->GetBinContent(i - j) == 0)
+      {
+        ++j;
+      }
+      double prior_value = hin->GetBinContent(i - j);
+      double prior_energy = hin->GetXaxis()->GetBinCenter(i - j);
+      int k = 1;
+      while(hin->GetBinContent(i + k) == 0)
+      {
+        ++k;
+      }
+      double next_value = hin->GetBinContent(i + k);
+      double next_energy = hin->GetXaxis()->GetBinCenter(i + k);
+
+      // linear interpolation
+      double expected_value = (prior_value*(next_energy - current_energy) + next_value*(current_energy - prior_energy))/(next_energy - prior_energy);
+      // set bin value
+      hin->SetBinContent(i, expected_value);
+      if(debug)
+        std::cout << "Bin: " << i << " , Energy: " << current_energy << " Set to Value: " << expected_value << std::endl;
+    } // end of if dNdE_histogram->GetBinContent(i) == 0
+  } // end of for loop
 }
 // END OF PRIVATE FUNCTIONS
 
