@@ -2438,7 +2438,7 @@ void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bo
     std::cout << "MantisROOT::Sampling -> Prepping Input Spectrum..." << std::endl;
   }
 
-  TGraph* dNdE_graph = PrepInputSpectrum(filename, object_to_sample, smooth, Weighted, deltaE_large_bin_width, checkZero);
+  TGraph* dNdE_graph = PrepInputSpectrum(filename, object_to_sample, smooth, Weighted, deltaE, checkZero);
 
   if(debug)
     std::cout << "MantisROOT::Sampling -> Input Spectrum Prepped!" << std::endl;
@@ -2464,9 +2464,9 @@ void MantisROOT::Sampling(const char *filename, const char* object_to_sample, bo
     TCanvas* c_sampling_graph = new TCanvas("c_sampling_graph","Sampling Graph",600,400);
     c_sampling_graph->cd();
     sampling_graph->Draw();
-    TCanvas* c_sampling_histogram = new TCanvas("c_sampling_histogram","Sampling Histogram",600,400);
-    c_sampling_histogram->cd();
-    sampling_histogram->Draw("h");
+    //TCanvas* c_sampling_histogram = new TCanvas("c_sampling_histogram","Sampling Histogram",600,400);
+    //c_sampling_histogram->cd();
+    //sampling_histogram->Draw("h");
 
     DrawWeights(dNdE_graph, sampling_graph);
   }
@@ -3643,26 +3643,32 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* filename, const char* obj, boo
   if(checkZero)
     CheckZeros(dNdE_histogram, nbins);
 
-  //dNdE_histogram->Scale(1./dNdE_histogram->Integral());
+  dNdE_histogram->Scale(1./dNdE_histogram->Integral());
   dNdE_histogram->GetXaxis()->SetTitle("Energy [MeV]");
   int titleEValue = deltaE*1e6;
   string yTitle = "Probability per " + std::to_string(titleEValue) + " eV";
   dNdE_histogram->GetYaxis()->SetTitle(yTitle.c_str());
-  TGraph* dNdE_graph1 = new TGraph(dNdE_histogram);
+  TGraph* dNdE_graph = new TGraph(dNdE_histogram);
 
   // Here perform rebinning
+  if(debug)
+    std::cout << "MantisROOT::PrepInputSpectrum -> Rebinning..." << std::endl;
+
   TH1D* dNdE_histogram_rebinned = new TH1D("dNdE_histogram_rebinned","dNdE Histogram Spectrum",nbins2, 0., maxE);
   for(int i=0;i<nbins2;++i)
   {
     double this_energy = dNdE_histogram_rebinned->GetXaxis()->GetBinCenter(i);
-    double new_dNdE_value = dNdE_graph1->Eval(this_energy);
+    double new_dNdE_value = dNdE_graph->Eval(this_energy);
     dNdE_histogram_rebinned->SetBinContent(i,new_dNdE_value);
   }
 
+  if(debug)
+    std::cout << "MantisROOT::PrepInputSpectrum -> Rebinning Complete...Checking Zeros..." << std::endl;
+    
   if(checkZero)
     CheckZeros(dNdE_histogram_rebinned,nbins2);
 
-  dNdE_histogram_rebinned->Scale(1./dNdE_histogram_rebinned->Integral());
+  //dNdE_histogram_rebinned->Scale(1./dNdE_histogram_rebinned->Integral());
 
   if(debug)
   {
@@ -3670,7 +3676,7 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* filename, const char* obj, boo
     dNdE_histogram->Print();
   }
   WriteSampling(dNdE_histogram_rebinned);
-  TGraph* dNdE_graph = new TGraph(dNdE_histogram_rebinned);
+  //TGraph* dNdE_graph1 = new TGraph(dNdE_histogram_rebinned);
   f->Close();
   return dNdE_graph;
 } // end of PrepInputSpectrum Private Function
