@@ -731,29 +731,71 @@ void MantisROOT::CheckEventsWResponse(const char* filename, bool Weighted=false)
   TTree *t_nrf, *t_det;
   f->GetObject("NRF",t_nrf);
   f->GetObject("DetInfo",t_det);
-  t_nrf->SetEstimate(-1);
-  t_det->SetEstimate(-1);
+  if(debug)
+  {
+    t_nrf->SetEstimate(1000);
+    t_det->SetEstimate(1000);
+    std::cout << "MantisROOT::CheckEventsWResponse -> Debugging checking 1000 Events" << std::endl;
+  }
+  else
+  {
+    t_nrf->SetEstimate(-1);
+    t_det->SetEstimate(-1);
+  }
 
   int nrf_event, det_event;
-  double det_numpe, weight;
+  double nrf_energy;
+  double det_numpe, weight, beamEnergy;
   t_nrf->SetBranchAddress("EventID", &nrf_event);
+  t_nrf->SetBranchAddress("Energy", &nrf_energy);
+
   t_det->SetBranchAddress("EventID", &det_event);
   t_det->SetBranchAddress("NumPE2",  &det_numpe);
+  t_det->SetBranchAddress("BeamEnergy", &beamEnergy);
   t_det->SetBranchAddress("Weight",  &weight);
 
   std::vector<int> nrf_eventsv, det_eventsv;
   std::vector<double> det_pev, det_weightv;
-  for(int i=0;i<t_nrf->GetEntries();++i)
+  if(debug)
   {
-    t_nrf->GetEntry(i);
-    nrf_eventsv.push_back(nrf_event);
+    for(int i=0;i<1000;++i)
+    {
+      t_nrf->GetEntry(i);
+      if(nrf_energy > 1.65)
+        nrf_eventsv.push_back(nrf_event);
+    }
+
+    for(int i=0;i<1000;++i)
+    {
+      t_det->GetEntry(i);
+      if((beamEnergy < 1.66 && beamEnergy > 1.64) || (beamEnergy < 1.74 && beamEnergy > 1.73))
+      {
+        det_eventsv.push_back(det_event);
+        det_pev.push_back(det_numpe);
+        det_weightv.push_back(weight);
+      }
+    }
+
   }
-  for(int i=0;i<t_det->GetEntries();++i)
+  else
   {
-    t_det->GetEntry(i);
-    det_eventsv.push_back(det_event);
-    det_pev.push_back(det_numpe);
-    det_weightv.push_back(weight);
+    for(unsigned long int i=0;i<t_nrf->GetEntries();++i)
+    {
+      t_nrf->GetEntry(i);
+      if(nrf_energy > 1.65)
+        nrf_eventsv.push_back(nrf_event);
+    }
+
+    for(unsigned long int i=0;i<t_det->GetEntries();++i)
+    {
+      t_det->GetEntry(i);
+      if((beamEnergy < 1.66 && beamEnergy > 1.64) || (beamEnergy < 1.74 && beamEnergy > 1.73))
+      {
+        det_eventsv.push_back(det_event);
+        det_pev.push_back(det_numpe);
+        det_weightv.push_back(weight);
+      }
+    }
   }
   // erase duplicate NRF events
   std::sort(nrf_eventsv.begin(), nrf_eventsv.end());
@@ -765,9 +807,14 @@ void MantisROOT::CheckEventsWResponse(const char* filename, bool Weighted=false)
   int x = 0;
   std::vector<int> matching_events;
   std::vector<double> nrf_to_detpe, nrf_to_detweight;
-  for(int i=0;i<nrf_eventsv.size();++i)
+  for(int i=0;i<det_eventsv.size();++i)
   {
-    x = det_eventsv[i];
+    if(i%100==0)
+    {
+      std::cout << "\r** Checking Entry: " << i << std::flush;
+    }
+
+    x = det_eventsv.at(i);
     // Check if NRF EventID is found in DetInfo Vector
     auto exists = std::find(nrf_eventsv.begin(),nrf_eventsv.end(), x);
 
@@ -775,11 +822,11 @@ void MantisROOT::CheckEventsWResponse(const char* filename, bool Weighted=false)
     {
       // if the eventID is found in detinfo write to new vector
       matching_events.push_back(x);
-      nrf_to_detpe.push_back(det_pev[i]);
-      nrf_to_detweight.push_back(det_weightv[i]);
+      nrf_to_detpe.push_back(det_pev.at(i));
+      nrf_to_detweight.push_back(det_weightv.at(i));
     }
   }
-
+  
   string check_filename = "Checked_" + string(filename);
   TFile* fout = new TFile(check_filename.c_str(),"RECREATE");
   fout->cd();
@@ -792,9 +839,9 @@ void MantisROOT::CheckEventsWResponse(const char* filename, bool Weighted=false)
 
   for(int i=0;i<matching_events.size();++i)
   {
-    events = matching_events[i];
-    numpe = nrf_to_detpe[i];
-    detweight = nrf_to_detweight[i];
+    events = matching_events.at(i);
+    numpe = nrf_to_detpe.at(i);
+    detweight = nrf_to_detweight.at(i);
     t_out->Fill();
   }
 
@@ -3664,7 +3711,7 @@ TGraph* MantisROOT::PrepInputSpectrum(const char* filename, const char* obj, boo
 
   if(debug)
     std::cout << "MantisROOT::PrepInputSpectrum -> Rebinning Complete...Checking Zeros..." << std::endl;
-    
+
   if(checkZero)
     CheckZeros(dNdE_histogram_rebinned,nbins2);
 
